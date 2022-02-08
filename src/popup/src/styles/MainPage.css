@@ -1,6 +1,6 @@
 
 .App .mainPage {
-    background-color: rgb(231, 241, 250);
+    
     border: 1px solid black;
     border-radius: 5px;
     height: 100%;
@@ -32,7 +32,7 @@
   }
 
   .App .mainPage .dashboard {
-    margin: 15px 0px;
+    margin: 0px 0px 15px 0px;
     display: flex;
     justify-content: space-evenly;
     flex-direction: row;
@@ -56,4 +56,34 @@
   .App .mainPage .dashboard .settingsBtn .settingsIcon {
     height: 37px;
     margin: auto;
+  }
+
+  .App .mainPage .statusText {
+    margin: 0px;
+    padding: 0px;
+    font-size: 11px;
+    position: relative;
+    top: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .App .mainPage .logoutBtn {
+    background-color: black;
+    padding: 3px;
+    border-radius: 10px;
+    display: inline-flex;
+    position: relative;
+    top: -23px;
+    cursor: pointer;
+    border: 1px solid black;
+  }
+
+  .App .mainPage .logoutBtn p {
+    color: white;
+    font-size: 9px;
+    font-weight: 500;
+    margin: 0px 5px;
+    letter-spacing: 1px;
   }
