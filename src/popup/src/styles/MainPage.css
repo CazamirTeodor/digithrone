@@ -1,0 +1,59 @@
+
+.App .mainPage {
+    background-color: rgb(231, 241, 250);
+    border: 1px solid black;
+    border-radius: 5px;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .App .mainPage .Title {
+    color: black;
+    font-size: 10px;
+    font-weight: 550;
+    letter-spacing: 2.3px;
+    margin: 0px 0px 10px 0px;
+  }
+
+  .App .mainPage .Banner {
+    color: black;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    font-weight: 450;
+    margin: 10px 0px 0px 0px;
+  }
+
+  .App .mainPage .Username {
+    color: black;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    font-weight: 550;
+    margin: 0px;
+  }
+
+  .App .mainPage .dashboard {
+    margin: 15px 0px;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    vertical-align: middle;
+    align-items: center;
+  }
+
+  .App .mainPage .dashboard .settingsBtn {
+    width: 55px;
+    height: 55px;
+    background-color: rgb(88, 88, 88);
+    border: 1px solid black;
+    border-radius: 12px;
+    display: flex;
+    vertical-align: middle;
+    justify-content: center;
+    flex-direction: row;
+    cursor: pointer;
+  }
+
+  .App .mainPage .dashboard .settingsBtn .settingsIcon {
+    height: 37px;
+    margin: auto;
+  }

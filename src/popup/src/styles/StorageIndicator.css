@@ -1,0 +1,16 @@
+
+.storageIndicator {
+    background-color: rgb(110, 201, 131);
+    height: 55px;
+    width: 55px;
+    border: 1px solid black;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.storageIndicator p {
+    font-size: 9px;
+    font-weight: 600;
+    margin: auto;
+}

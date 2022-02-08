@@ -1,82 +1,16 @@
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: #e3e3e3;
-  letter-spacing: 2px;
-  font-size: 11px;
-}
-
 .App {
   margin: 0px;
   padding: 0px;
   text-align: center;
-  border: 1px solid white;
-  border-radius: 5px;
   height: 190px;
   width: 350px;
-  overflow: hidden;
   font-family: "Helvetica Neue";
 }
 
-.App .loginPage {
-  background-color: rgb(45, 67, 87);
-  height: 100%;
-  width: 100%;
-}
 
-.App .loginPage .Logo { 
+.App .Logo { 
   width: 30px;
   margin: 10px auto 3px auto;
 }
-
-.App .loginPage .Title {
-  color: white;
-  font-size: 10px;
-  font-weight: 550;
-  letter-spacing: 2.3px;
-  margin: 0px 0px 10px 0px;
-}
-
-.App .loginPage .loginForm {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.App .loginPage .loginForm input {
-  text-align: center;
-  color: white;
-  text-decoration: none;
-  width: 245px;
-  margin: 3px auto;
-  background-color: transparent;
-  border: 1px solid white;
-  border-radius: 13px;
-  height: 25px;
-}
-
-.App .loginPage .loginForm .loginBtn {
-  height: 28px;
-  width: 100px;
-  margin: 6px auto;
-  background-color: rgb(134, 177, 161);
-  border-radius: 11px;
-  color: white;
-  display: flex;
-  align-items: center;
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-
-.App .loginPage .loginForm .loginBtn:hover {
-  border: 1px solid white;
-}
-
-
-.App .loginPage .loginForm .loginBtn p {
-  margin: auto;
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: 2px;
-}
-
 
 

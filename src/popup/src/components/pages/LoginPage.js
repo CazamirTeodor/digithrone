@@ -1,6 +1,7 @@
 import React from "react";
 import LoginForm from "../LoginForm";
 import Logo from "../../assets/logo_w.png";
+import "../../styles/LoginPage.css";
 
 class LoginPage extends React.Component {
     render(){
