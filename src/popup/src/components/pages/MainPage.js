@@ -3,7 +3,8 @@ import Logo from "../../assets/logo_b.png";
 import SettingsIcon from "../../assets/settings_w.png";
 import "../../styles/MainPage.css";
 import StorageIndicator from "../StorageIndicator";
-import Switch from "../Switch";
+import SwitchComponent from "../SwitchComponent";
+import { withRouter } from 'react-router-dom';
 
 class MainPage extends React.Component {
     constructor(props)
@@ -19,7 +20,7 @@ class MainPage extends React.Component {
 
     render(){
         return (
-            <div className="mainPage" style={{backgroundColor: this.state.active?"#AFF8CE":"#F8AFAF", transition: "all .5s ease"}}>
+            <div className="page mainPage" style={{backgroundColor: this.state.active?"#AFF8CE":"#F8AFAF", transition: "all .3s ease"}}>
                 <img className="Logo" src={Logo} alt="Logo"/>
                 <p className="Title">DIGITHRONE</p>
                 <p className="Banner">WELCOME BACK,</p>
@@ -27,7 +28,7 @@ class MainPage extends React.Component {
                 <p className="statusText">{this.state.active?"ON":"OFF"}</p>
                 <div className="dashboard">
                     <StorageIndicator/>
-                    <Switch id="status" updateFunction={(status) => {
+                    <SwitchComponent id="status" updateFunction={(status) => {
                         this.setState({
                             active: status.target.checked
                         });
@@ -36,7 +37,7 @@ class MainPage extends React.Component {
                         <img className="settingsIcon" src={SettingsIcon} alt="settingsIcon"/>
                     </div>
                 </div>
-                <div className="logoutBtn">
+                <div className="logoutBtn" onClick={() => this.props.history.push("/")}>
                     <p>LOG OUT</p>
                 </div>
             </div>
@@ -44,4 +45,4 @@ class MainPage extends React.Component {
     }
 }
 
-export default MainPage;
+export default withRouter(MainPage);

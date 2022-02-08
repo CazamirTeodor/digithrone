@@ -1,7 +1,7 @@
 import React from "react";
-import '../styles/Switch.css';
+import '../styles/SwitchComponent.css';
 
-class Switch extends React.Component {
+class SwitchComponent extends React.Component {
     render()
     {
         return (
@@ -15,4 +15,4 @@ class Switch extends React.Component {
     }
 }
 
-export default Switch;
+export default SwitchComponent;
