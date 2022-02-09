@@ -1,0 +1,69 @@
+.modalWindow {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 190px;
+    width: 350px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    background-color: transparent;
+    outline: none;
+}
+
+.modalBody {
+    height: 107px;
+    width: 190px;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, 40%);
+    background-color: white;
+    color: black;
+    text-align: center;
+    border-radius: 15px;
+    border: 1px solid black;
+    box-shadow: 0 2 10px black;
+    backdrop-filter: blur(5px);
+    overflow: hidden;
+}
+
+.modalBody .top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modalBody p {
+    font-weight: 500;
+    margin: 0;
+    font-size: 12px;
+}
+
+.modalBody p.bruh {
+    font-size: 9px !important;
+    margin-bottom: 5px;
+}
+
+.modalIcon {
+    margin-top: 10px;
+    width: 30px;
+}
+
+.modalWindowCloseBtn {
+    transition: 0.5s;
+    flex-shrink: 0;
+    flex-grow: 1;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    background-color: black;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 6px 0px;
+}
+
+.modalWindowCloseBtn:hover {
+    background-color: rgb(134, 177, 161);
+    cursor: pointer;
+}
