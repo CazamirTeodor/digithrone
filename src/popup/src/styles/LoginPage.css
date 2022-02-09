@@ -37,6 +37,7 @@
   }
   
   .App .loginPage .loginForm .loginBtn {
+    transition: 0.2s;
     height: 28px;
     width: 100px;
     margin: 6px auto;
@@ -47,16 +48,17 @@
     align-items: center;
     border: 1px solid transparent;
     cursor: pointer;
+    font-weight: 600;
   }
   
   .App .loginPage .loginForm .loginBtn:hover {
-    border: 1px solid white;
+    background-color: white;
+    color: rgb(134, 177, 161);
   }
   
   
   .App .loginPage .loginForm .loginBtn p {
     margin: auto;
     font-size: 12px;
-    font-weight: 650;
     letter-spacing: 2px;
   }

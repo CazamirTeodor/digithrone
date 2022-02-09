@@ -4,7 +4,7 @@ import SettingsIcon from "../../assets/settings_w.png";
 import "../../styles/MainPage.css";
 import StorageIndicator from "../StorageIndicator";
 import SwitchComponent from "../SwitchComponent";
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 class MainPage extends React.Component {
     constructor(props)
@@ -33,9 +33,11 @@ class MainPage extends React.Component {
                             active: status.target.checked
                         });
                     }}/>
-                    <div className="settingsBtn">
-                        <img className="settingsIcon" src={SettingsIcon} alt="settingsIcon"/>
-                    </div>
+                    <Link to="/settings">
+                        <div className="settingsBtn">
+                            <img className="settingsIcon" src={SettingsIcon} alt="settingsIcon"/>
+                        </div>
+                    </Link>
                 </div>
                 <div className="logoutBtn" onClick={() => this.props.history.push("/")}>
                     <p>LOG OUT</p>

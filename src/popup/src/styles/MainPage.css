@@ -39,6 +39,7 @@
   }
 
   .App .mainPage .dashboard .settingsBtn {
+    text-decoration: none;
     width: 55px;
     height: 55px;
     background-color: rgb(88, 88, 88);
@@ -49,6 +50,10 @@
     justify-content: center;
     flex-direction: row;
     cursor: pointer;
+  }
+
+  .App .mainPage .dashboard .settingsBtn:hover {
+    border: 1px solid white;
   }
 
   .App .mainPage .dashboard .settingsBtn .settingsIcon {
@@ -68,7 +73,9 @@
   }
 
   .App .mainPage .logoutBtn {
+    transition: 0.2s;
     background-color: black;
+    color: white;
     padding: 3px;
     border-radius: 10px;
     display: inline-flex;
@@ -78,8 +85,12 @@
     border: 1px solid black;
   }
 
+  .App .mainPage .logoutBtn:hover {
+    background-color: white;
+    color: black;
+  }
+
   .App .mainPage .logoutBtn p {
-    color: white;
     font-size: 9px;
     font-weight: 500;
     margin: 0px 5px;

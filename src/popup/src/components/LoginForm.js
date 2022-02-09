@@ -4,7 +4,6 @@ class LoginForm extends React.Component{
 
     login = () => {
         this.props.history.push("/dashboard");
-        console.log("Salut");
     }
 
     render(){
