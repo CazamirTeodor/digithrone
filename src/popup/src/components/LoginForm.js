@@ -14,7 +14,7 @@ class LoginForm extends React.Component {
     login = e => {
         e.preventDefault();
 
-        var correct = false;
+        var correct = true;
         if (correct) {
             this.props.history.push("/dashboard");
         }
@@ -53,7 +53,7 @@ class LoginForm extends React.Component {
                 <button type="submit" className="loginBtn">
                     <p>LOG IN</p>
                 </button>
-                <ModalWindow message="Wrong email or password!" show={this.state.showModal} onHide={this.closeModal}/>
+                <ModalWindow message="Wrong email or password!" btn="Sorry :( I'll try again" show={this.state.showModal} onHide={this.closeModal}/>
             </form>
         );
     }

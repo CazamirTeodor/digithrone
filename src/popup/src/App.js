@@ -4,6 +4,7 @@ import './App.css';
 import LoginPage from './components/pages/LoginPage';
 import MainPage from './components/pages/MainPage';
 import SettingsPage from './components/pages/SettingsPage';
+import WebsitesPage from './components/pages/WebsitesPage';
 
 function App() {
   var isLoggedIn = false;
@@ -24,9 +25,8 @@ function App() {
                 <Route path="/dashboard">
                   <MainPage username="TEODOR" />
                 </Route>
-                <Route path="/settings">
-                  <SettingsPage />
-                </Route>
+                <Route path="/settings" component={SettingsPage}/>
+                <Route path="/websites" component={WebsitesPage}/>
               </Switch>
             </CSSTransition>
           </TransitionGroup>

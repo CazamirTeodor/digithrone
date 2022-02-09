@@ -18,7 +18,7 @@ class ModalWindow extends React.Component {
                             <p>{this.props.message}</p>
                         </section>
                         <div className="modalWindowCloseBtn" onClick={this.props.onHide} >
-                            <p>Sorry :( I'll try again</p>
+                            <p>{this.props.btn}</p>
                         </div>
                     </Modal.Body>
                 </Modal>

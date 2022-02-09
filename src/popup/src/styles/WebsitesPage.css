@@ -1,0 +1,58 @@
+.App .websitesPage {
+    
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #E7F1FA;
+  }
+
+  .App .websitesPage .Title {
+    color: black;
+    font-size: 10px;
+    font-weight: 550;
+    letter-spacing: 2.3px;
+    margin: 20px 0px 10px 0px;
+  }
+
+  .App .websitesPage .optionsBtns {
+      position: absolute;
+      width: 100%;
+      bottom: 7px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-evenly;
+  }
+
+  .App .websitesPage .optionsBtns .greyBtn {
+    transition: 0.3s;
+    height: 25px;
+    background-color: #585858;
+    border-radius: 10px;
+    border: 1px solid #585858;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0 40px;
+}
+
+.App .websitesPage .optionsBtns .greyBtn:hover {
+  color: black;
+  background-color: white;
+  border: 1px solid black;
+}
+
+.App .websitesPage .optionsBtns .greyBtn p {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+.App .websitesPage .websitesList {
+    display: block;
+    height: 107px;
+    margin: 0px 25px;
+    overflow-y: scroll;
+    border-bottom: 1px solid black;
+}
