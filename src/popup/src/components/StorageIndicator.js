@@ -3,12 +3,12 @@ import '../styles/StorageIndicator.css';
 
 class StorageIndicator extends React.Component {
     render(){
-        var current = "0.7";
-        var maximum = "2.0";
-        var unit = "GB"
+        var current = 0.5;
+        var maximum = 1.0;
         return (
             <div className="storageIndicator">
-                <p>{current} / {maximum} {unit}</p>
+                <div className="cercle" style={{bottom : `${current / maximum * 100}%`}}></div>
+                <p>{current / maximum * 100}%</p>
             </div>
         );
     }

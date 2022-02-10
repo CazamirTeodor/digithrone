@@ -50,7 +50,6 @@
 }
 
 .App .websitesPage .websitesList {
-    display: block;
     height: 107px;
     margin: 0px 25px;
     overflow-y: scroll;

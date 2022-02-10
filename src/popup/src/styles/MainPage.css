@@ -43,7 +43,7 @@
     width: 55px;
     height: 55px;
     background-color: rgb(88, 88, 88);
-    border: 1px solid black;
+    border: 2px solid black;
     border-radius: 12px;
     display: flex;
     vertical-align: middle;
@@ -53,7 +53,7 @@
   }
 
   .App .mainPage .dashboard .settingsBtn:hover {
-    border: 1px solid white;
+    border: 2px solid white;
   }
 
   .App .mainPage .dashboard .settingsBtn .settingsIcon {

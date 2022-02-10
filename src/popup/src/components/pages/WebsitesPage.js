@@ -9,14 +9,21 @@ class WebsitesPage extends React.Component{
         var websites = [
             'Google',
             'Facebook',
-            'Academia Tehnica Militara',
             'Digital Ocean',
+            'Github',
+            'Bing',
+            'Youtube',
             'Google',
             'Facebook',
             'Academia Tehnica Militara',
             'Google',
             'Facebook',
-            'Academia Tehnica Militara'
+            'Digital Ocean',
+            'Github',
+            'Bing',
+            'Youtube',
+            'Google',
+            'Facebook'
         ]
         return (
             <div className='page websitesPage'>

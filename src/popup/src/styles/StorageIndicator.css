@@ -3,14 +3,43 @@
     background-color: rgb(110, 201, 131);
     height: 55px;
     width: 55px;
-    border: 1px solid black;
+    border: 2px solid black;
     border-radius: 12px;
     display: flex;
     align-items: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .storageIndicator p {
-    font-size: 9px;
-    font-weight: 600;
+    position: absolute;
+    text-shadow: 0 1 20px;
+    text-align: center;
+    width: 100%;
+    font-size: 14px;
+    letter-spacing: 1px;
+    font-weight: 700;
     margin: auto;
+}
+
+.storageIndicator .cercle {
+    border: 1px solid black;
+    position: absolute;
+    border-radius: 46%;
+    content: "";
+    width: 200px;
+    height: 200px;
+    left: -130%;
+    background-color: white;
+    animation: spin 5s infinite linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(0) rotate(360deg);
+    }
 }
