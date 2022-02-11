@@ -1,0 +1,52 @@
+.App .historyPage {
+    
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #E7F1FA;
+  }
+  
+  .App .historyPage .Title {
+    color: black;
+    font-size: 10px;
+    font-weight: 550;
+    letter-spacing: 2.3px;
+    margin: 30px 0px 10px 0px;
+  }
+
+  .App .historyPage .optionBtn {
+      transition: 0.3s;
+      border-radius: 15px;
+      width: 80px;
+      height: 80px;
+      border: 2px solid black;
+      cursor: pointer;
+  }
+
+  .App .historyPage .optionBtn:hover {
+    border: 2px solid white;
+  }
+
+  .App .historyPage .optionBtn.download img {
+      display: block;
+      margin: 24px auto;
+      width: 30px;
+  }
+
+  .App .historyPage .optionBtn.browsing img {
+      display: block;
+      margin: 30px auto;
+      width: 50px;
+  }
+
+  .App .historyPage .separator {
+      width: 1px;
+      height: 120px;
+      background-color: black;
+  }
+
+  .App .historyPage .row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-evenly;
+  }

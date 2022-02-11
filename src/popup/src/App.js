@@ -5,6 +5,7 @@ import LoginPage from './components/pages/LoginPage';
 import MainPage from './components/pages/MainPage';
 import SettingsPage from './components/pages/SettingsPage';
 import WebsitesPage from './components/pages/WebsitesPage';
+import HistoryPage from './components/pages/HistoryPage';
 
 function App() {
   var isLoggedIn = false;
@@ -27,6 +28,7 @@ function App() {
                 </Route>
                 <Route path="/settings" component={SettingsPage}/>
                 <Route path="/websites" component={WebsitesPage}/>
+                <Route path="/history" component={HistoryPage}/>
               </Switch>
             </CSSTransition>
           </TransitionGroup>
