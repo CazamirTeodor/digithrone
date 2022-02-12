@@ -1,0 +1,56 @@
+.dropdown {
+    position: relative;
+    height: 20px;
+    width: 82px;
+    margin-top: 10px;
+    border: 1px solid black;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    background-color: white;
+}
+
+.dropdown .dropdown-icon {
+    display: block; 
+    right: 5%;
+    top: 40%;
+    position: absolute;
+    width: 8px;
+    cursor: pointer;
+}
+
+
+.dropdown .all-options {
+
+    background-color: white;
+    position: absolute;
+    border: 1px solid black;
+    border-radius: 7px;
+    bottom: 22px;
+    left: -1px;
+    width: 80px;
+    max-height: 90px;
+    padding: 1px;
+    overflow-y: scroll;
+}
+
+.dropdown .all-options p {
+    border-radius: 3px;
+    height: 15px;
+    margin: 1px;
+    line-height: 15px;
+}
+
+.dropdown .all-options p:hover{
+    background-color: black;
+    color: white;
+}
+
+.dropdown .chosen-option p {
+    font-weight: 500;
+    font-size: 11px;
+    margin: 0;
+    line-height: 20px;
+    cursor: pointer;
+}
