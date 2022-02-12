@@ -8,7 +8,7 @@ class DropdownList extends React.Component {
 
         this.state = {
             show: false,
-            selectedOption: ''
+            selectedOption: this.props.options[0]
         };
     }
 

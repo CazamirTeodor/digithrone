@@ -9,9 +9,7 @@ class HistoryPage extends React.Component {
         super(props);
         this.state = {
             browsing: false,
-            browsingInterval: 365,
             download: false,
-            downloadInterval: 7
         }
     }
 
@@ -40,7 +38,10 @@ class HistoryPage extends React.Component {
                 <div className="row">
                     <div className="column">
                         <p className="option Title">BROWSING</p>
-                        <div className="optionBtn browsing" style={{backgroundColor: this.state.browsing?"#AFF8CE":"#F8AFAF"}}>
+                        <div className="optionBtn browsing" 
+                            onClick={() => this.setState({...this.state, browsing: !this.state.browsing })} 
+                            style={{backgroundColor: this.state.browsing?"#AFF8CE":"#F8AFAF"}}
+                            >
                             <img className="optionBtnIcon" src={BrowsingIcon} alt="optionIcon" />
                         </div>
                         <DropdownList options={options}/>
@@ -48,7 +49,10 @@ class HistoryPage extends React.Component {
                     <div className="separator"></div>
                     <div className="column">
                         <p className="option Title">DOWNLOADS</p>
-                        <div className="optionBtn download" style={{backgroundColor: this.state.download?"#AFF8CE":"#F8AFAF"}}>
+                        <div className="optionBtn download"
+                            onClick={() => this.setState({...this.state, download: !this.state.download })} 
+                            style={{backgroundColor: this.state.download?"#AFF8CE":"#F8AFAF"}}
+                        >
                             <img className="optionBtnIcon" src={DownloadIcon} alt="optionIcon" />
                         </div>
                         <DropdownList options={options}/>
