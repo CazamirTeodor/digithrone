@@ -13,26 +13,15 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Route render={({ location }) => (
-          <TransitionGroup>
-            <CSSTransition
-              key={location.key}
-              timeout={600}
-              classNames="fade">
-              <Switch location={location}>
-                <Route exact path="/">
-                  {isLoggedIn? <MainPage username={username}/> : <LoginPage />}
-                </Route>
-                <Route path="/dashboard">
-                  <MainPage username="TEODOR" />
-                </Route>
-                <Route path="/settings" component={SettingsPage}/>
-                <Route path="/websites" component={WebsitesPage}/>
-                <Route path="/history" component={HistoryPage}/>
-              </Switch>
-            </CSSTransition>
-          </TransitionGroup>
-        )} />
+        <Route exact path="/">
+          {isLoggedIn ? <MainPage username={username} /> : <LoginPage />}
+        </Route>
+        <Route path="/dashboard">
+          <MainPage username="TEODOR" />
+        </Route>
+        <Route path="/settings" component={SettingsPage} />
+        <Route path="/websites" component={WebsitesPage} />
+        <Route path="/history" component={HistoryPage} />
       </Router>
     </div>
   );

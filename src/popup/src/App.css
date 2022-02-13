@@ -1,10 +1,15 @@
+@font-face {
+  font-family: Helvetica;
+  src: url('./assets/Helvetica.woff');
+}
+
 .App {
   margin: 0px;
   padding: 0px;
   text-align: center;
-  height: 190px;
-  width: 350px;
-  font-family: "Helvetica Neue";
+  height: 192px;
+  width: 352px;
+  font-family: Helvetica;
 }
 
 

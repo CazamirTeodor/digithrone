@@ -23,13 +23,11 @@ class HistoryPage extends React.Component {
 
     render() {
         var options = [
+            'All',
+            'Last day',
             'Last week',
             'Last month',
             'Last year',
-            'Last 5Y',
-            'Last 10Y',
-            'Last 20Y',
-            'Last 30Y'
         ];
         return (
             <div className="page historyPage">
