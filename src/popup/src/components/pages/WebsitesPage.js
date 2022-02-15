@@ -33,7 +33,6 @@ class WebsitesPage extends React.Component {
     }
 
     render() {
-        console.log(this.state);
         return (
             <div className='page websitesPage'>
                 <BackButton route="/settings" />

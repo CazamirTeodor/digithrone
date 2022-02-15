@@ -9,17 +9,19 @@ class WebsiteCard extends React.Component {
         }
     }
 
-    
-    static getDerivedStateFromProps(props, current_state){
-        if (current_state.active !== props.active)
+
+    componentDidUpdate(prev_props)
+    {
+        if (this.props !== prev_props)
         {
-            return {
-                active: props.active
-            }
+            this.setState({
+                active: this.props.active
+            });
         }
     }
 
     toggle = _ => {
+        
         this.setState({
             active: !this.state.active
         })
