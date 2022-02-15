@@ -1,11 +1,10 @@
-import { MemoryRouter as Router, Route, Switch } from 'react-router-dom';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import './App.css';
+import { MemoryRouter as Router, Route } from 'react-router-dom';
 import LoginPage from './components/pages/LoginPage';
 import MainPage from './components/pages/MainPage';
 import SettingsPage from './components/pages/SettingsPage';
 import WebsitesPage from './components/pages/WebsitesPage';
 import HistoryPage from './components/pages/HistoryPage';
+import './App.css';
 
 function App() {
   var isLoggedIn = false;

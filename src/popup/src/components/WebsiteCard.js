@@ -9,6 +9,16 @@ class WebsiteCard extends React.Component {
         }
     }
 
+    
+    static getDerivedStateFromProps(props, current_state){
+        if (current_state.active !== props.active)
+        {
+            return {
+                active: props.active
+            }
+        }
+    }
+
     toggle = _ => {
         this.setState({
             active: !this.state.active
@@ -20,7 +30,7 @@ class WebsiteCard extends React.Component {
             <div className='websiteCard' onClick={this.toggle} style={{backgroundColor: this.state.active?"#B5FFB5":"#FFB5B5", transition: ".3s"}}>
                 <div className='websiteCardWrapper'>
                     <img className="websiteLogo" src={this.props.logo} alt="logo"/>
-                    <text>{this.props.name}</text>
+                    <p>{this.props.name}</p>
                 </div>
 
             </div>

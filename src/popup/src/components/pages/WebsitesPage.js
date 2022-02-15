@@ -1,43 +1,54 @@
 import React from 'react';
 import BackButton from '../BackButton';
-import '../../styles/WebsitesPage.css';
 import WebsiteCard from '../WebsiteCard';
+import '../../styles/WebsitesPage.css';
 
-class WebsitesPage extends React.Component{
-    render()
-    {
-        var websites = [
-            'Google',
-            'Facebook',
-            'Digital Ocean',
-            'Github',
-            'Bing',
-            'Youtube',
-            'Google',
-            'Facebook',
-            'Academia Tehnica Militara',
-            'Google',
-            'Facebook',
-            'Digital Ocean',
-            'Github',
-            'Bing',
-            'Youtube',
-            'Google',
-            'Facebook'
-        ]
+class WebsitesPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            'Google': true,
+            'Facebook': false,
+            'Digital Ocean': false,
+            'Github': true,
+            'Bing': true,
+            'Youtube': false,
+        }
+    }
+
+    disableAll = _ => {
+        var newState = this.state;
+        Object.entries(newState).forEach(([name]) => {
+            newState[name] = false;
+        })
+        this.setState(newState);
+    }
+    
+    enableAll = _ => {
+        var newState = this.state;
+        Object.entries(newState).forEach(([name]) => {
+            newState[name] = true;
+        })
+        this.setState(newState);
+    }
+
+    render() {
+        console.log(this.state);
         return (
             <div className='page websitesPage'>
                 <BackButton route="/settings" />
                 <p className="Title">WEBSITES</p>
 
                 <div className='websitesList'>
-                    {websites.map( website => {
-                        return <WebsiteCard active={true} logo="https://www.google.com/favicon.ico" name={website}/>
-                    })}
+                    {
+                        Object.keys(this.state).map((name) => {
+                            return <WebsiteCard key={name} active={this.state[name]} logo="https://www.google.com/favicon.ico" name={name} />
+                        })
+                    }
                 </div>
                 <div className='optionsBtns'>
-                    <div className="greyBtn"><p>Enable all</p></div>
-                    <div className="greyBtn"><p>Disable all</p></div>
+                    <div className="greyBtn" onClick={this.enableAll}><p>Enable all</p></div>
+                    <div className="greyBtn" onClick={this.disableAll}><p>Disable all</p></div>
                 </div>
             </div>
         );

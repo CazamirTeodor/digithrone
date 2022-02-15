@@ -15,7 +15,7 @@ class SettingsPage extends React.Component{
                     <Link className="greyBtn" to="/websites"><p>Websites</p></Link>
                     <Link className="greyBtn" to="/history"><p>History</p></Link>
                     <div className="greyBtn"><p>Other preferences</p></div>
-                    <div className="redBtn"><p>DELETE ALL DATA</p></div>
+                    <div className="redBtn"><p>Delete all data</p></div>
                 </div>
             </div>
         );
