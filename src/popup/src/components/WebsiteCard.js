@@ -34,7 +34,6 @@ class WebsiteCard extends React.Component {
                     <img className="websiteLogo" src={this.props.logo} alt="logo"/>
                     <p>{this.props.name}</p>
                 </div>
-
             </div>
         );
     }
