@@ -1,5 +1,6 @@
 import React from "react";
 import ModalWindow from "./ModalWindow";
+import axios from 'axios';
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -14,12 +15,20 @@ class LoginForm extends React.Component {
     login = e => {
         e.preventDefault();
 
-        var correct = true;
-        if (correct) {
-            this.props.history.push("/dashboard");
-        }
-        else {
-            console.log("Wrong username or password!");
+        
+        const { email, password } = this.state;
+        const data = {
+            email,
+            password
+        };
+        console.log(data);
+        axios.post('http://localhost:3001/login', data)
+            .then((res) => {
+                if (res.data.message === "Success!") {
+                    this.props.history.push('/dashboard');
+                }
+                else{
+                    console.log("Wrong username or password!");
             this.setState({
                 email: '',
                 password: '',
@@ -27,7 +36,11 @@ class LoginForm extends React.Component {
             });
             document.getElementById('root').style.setProperty('filter', 'blur(5px)');
             
-        }
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
 
     inputHandler = e => {
