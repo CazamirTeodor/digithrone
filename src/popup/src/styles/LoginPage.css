@@ -1,5 +1,5 @@
 .App .loginPage ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: #e3e3e3;
+  color: #343434;
   letter-spacing: 2px;
   font-size: 11px;
 }
@@ -26,12 +26,12 @@
   
   .App .loginPage .loginForm input {
     text-align: center;
-    color: white;
+    color: black;
     text-decoration: none;
     width: 245px;
     margin: 3px auto;
-    background-color: transparent;
-    border: 1px solid white;
+    background-color: white;
+    border: none;
     border-radius: 13px;
     height: 25px;
   }

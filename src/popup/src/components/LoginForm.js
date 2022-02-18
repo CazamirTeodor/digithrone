@@ -1,5 +1,6 @@
 import React from "react";
 import ModalWindow from "./ModalWindow";
+import Loader from "./Loader";
 import axios from 'axios';
 
 class LoginForm extends React.Component {
@@ -8,14 +9,15 @@ class LoginForm extends React.Component {
         this.state = {
             email: '',
             password: '',
-            showModal: false
+            showModal: false,
+            loading: false
         }
     }
 
     login = e => {
         e.preventDefault();
+        this.setState({loading : true});
 
-        
         const { email, password } = this.state;
         const data = {
             email,
@@ -32,7 +34,8 @@ class LoginForm extends React.Component {
             this.setState({
                 email: '',
                 password: '',
-                showModal: true
+                showModal: true,
+                loading: false
             });
             document.getElementById('root').style.setProperty('filter', 'blur(5px)');
             
@@ -67,6 +70,9 @@ class LoginForm extends React.Component {
                     <p>LOG IN</p>
                 </button>
                 <ModalWindow message="Wrong email or password!" btn="Sorry :( I'll try again" show={this.state.showModal} onHide={this.closeModal}/>
+                {
+                    this.state.loading?<Loader />:null
+                }
             </form>
         );
     }
