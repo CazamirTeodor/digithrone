@@ -1,15 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const redis = require('redis');
 const app = express();
+
 const config = require('./config');
 const login_route = require('./routes/login');
 
 
-app.get('/', (req, res) => {
-    console.log('Accessing /');
-    res.send('Salut');
-});
 
 
 app.use(
@@ -18,7 +16,6 @@ app.use(
         credentials: true,
     })
 );
-
 app.use(bodyParser.json());
 app.use(
     bodyParser.urlencoded({ extended: true })

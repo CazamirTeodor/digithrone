@@ -13,12 +13,6 @@
 }
 
 
-.App .Logo { 
-  width: 30px;
-  margin: 10px auto 3px auto;
-}
-
-
 .fade-appear,
 .fade-enter {
     opacity: 0;

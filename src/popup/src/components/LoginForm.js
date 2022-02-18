@@ -16,7 +16,7 @@ class LoginForm extends React.Component {
 
     login = e => {
         e.preventDefault();
-        this.setState({loading : true});
+        this.setState({loading: true});
 
         const { email, password } = this.state;
         const data = {
