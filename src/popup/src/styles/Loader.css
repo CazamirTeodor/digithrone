@@ -19,11 +19,11 @@
 
 @keyframes inv {
     0% {
-
+        filter: contrast(100%) brightness(20%);
     }
 
     100% {
-        filter: invert(1);
+        filter: contrast(150%) brightness(100%);
     }
 }
 
