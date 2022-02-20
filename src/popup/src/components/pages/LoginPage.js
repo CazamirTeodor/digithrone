@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 
 class LoginPage extends React.Component {
     render(){
+        console.log("I have been rendered!");
         return (
             <div className="page loginPage">
                 <img className="Logo" src={Logo} alt="Logo"/>

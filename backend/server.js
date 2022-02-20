@@ -5,17 +5,12 @@ const redis = require('redis');
 const app = express();
 
 const config = require('./config');
-const login_route = require('./routes/login');
+const login_route = require('./routes/user/login');
 
 
 
 
-app.use(
-    cors({
-        origin: 'http://localhost:3000',
-        credentials: true,
-    })
-);
+app.use(cors());
 app.use(bodyParser.json());
 app.use(
     bodyParser.urlencoded({ extended: true })

@@ -1,3 +1,4 @@
+/*global chrome*/
 import React from "react";
 import ModalWindow from "./ModalWindow";
 import Loader from "./Loader";
@@ -23,11 +24,14 @@ class LoginForm extends React.Component {
             email,
             password
         };
-        console.log(data);
+
+
         axios.post('http://localhost:3001/login', data)
             .then((res) => {
                 if (res.data.message === "Success!") {
-                    this.props.history.push('/dashboard');
+                    chrome.storage.local.set({data : res.data.data}, () => {
+                        this.props.history.push('/dashboard');
+                    });
                 }
                 else{
                     console.log("Wrong username or password!");

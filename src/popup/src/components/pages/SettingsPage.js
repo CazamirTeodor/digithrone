@@ -7,6 +7,7 @@ import BackButton from "../BackButton";
 class SettingsPage extends React.Component{
     render()
     {
+        console.log(this.props.history);
         return (
             <div className="page settingsPage">
                 <BackButton route="/dashboard" />
