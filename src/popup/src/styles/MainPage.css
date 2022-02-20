@@ -4,7 +4,12 @@
     border: 1px solid black;
     border-radius: 5px;
   }
-  
+
+  .App .mainPage .Logo { 
+    width: 35px;
+    margin: 10px auto 0px auto;
+  }
+
   .App .mainPage .Title {
     color: black;
     font-size: 10px;

@@ -9,6 +9,7 @@ router.post('/', async (req, res) => {
 
     const correct = await auth.authenticate(email, hashed_password)
     if (correct)
+        // Also send client data to him
         res.send({message : 'Success!'});
     else
         res.send({message: 'Wrong username or password!'});
