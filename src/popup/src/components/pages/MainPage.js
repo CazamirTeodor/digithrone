@@ -28,12 +28,12 @@ class MainPage extends React.Component {
 
     logout = _ => {
         chrome.storage.local.set({'loggedIn' : false}, () => {
-            this.props.history.push('/');
+            this.props.history.push('/login');
         })
     }
 
     render(){
-        console.log(this.props.history);
+        console.log("Dashboard rendered!");
         return (
             <div className="page mainPage" style={{backgroundColor: this.state.active?"#AFF8CE":"#F8AFAF", transition: "all .3s ease"}}>
                 <img className="Logo" src={Logo} alt="Logo"/>

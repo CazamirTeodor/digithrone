@@ -13,26 +13,32 @@ class App extends React.Component {
   {
     super(props);
     this.state = {
-      loggedIn : null
+      loggedIn : false
     }
   }
 
   componentDidMount() {
     chrome.storage.local.get(['loggedIn'], (data) => {
       console.log("I have been called");
-      this.setState({
-        loggedIn: data['loggedIn']
-      })
+      if (data.loggedIn !== undefined)
+        this.setState({
+          loggedIn: data.loggedIn
+        });
     });
   }
 
+ 
+
   render() {
+    console.log("LoggedIn: ", this.state.loggedIn);
     return (
       <div className="App">
         <Router>
           <Route exact path="/">
-            {this.state.loggedIn ? <MainPage/> : <LoginPage />}
+            {this.state.loggedIn ? <Redirect to="/dashboard"/> : <LoginPage/>}
           </Route>
+
+          <Route path="/login" component={LoginPage}/>
           <Route path="/dashboard" component={MainPage}/>
           <Route path="/settings" component={SettingsPage} />
           <Route path="/websites" component={WebsitesPage} />
