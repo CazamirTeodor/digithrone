@@ -13,16 +13,22 @@ class MainPage extends React.Component {
         super(props);
 
         this.state = {
+            data: null,
             name: null,
-            active: false
+            active: null
         };
 
-        chrome.storage.local.set({'loggedIn' : true});
+        
     }
 
     componentDidMount(){
+        chrome.storage.local.set({'loggedIn' : true});
         chrome.storage.local.get(['data'], (data) => {
             this.setState({name: data['data']['name']});
+        })
+
+        chrome.storage.local.get(['active'], (data) => {
+            this.setState({active: data['active']});
         })
     }
 
@@ -32,8 +38,14 @@ class MainPage extends React.Component {
         })
     }
 
+    switchToggle = status => {
+        chrome.storage.local.set({'active' : status.target.checked}, () => {
+            this.setState({active: status.target.checked});
+        });
+    }
+
     render(){
-        console.log("Dashboard rendered!");
+        if (data == )
         return (
             <div className="page mainPage" style={{backgroundColor: this.state.active?"#AFF8CE":"#F8AFAF", transition: "all .3s ease"}}>
                 <img className="Logo" src={Logo} alt="Logo"/>
@@ -43,11 +55,7 @@ class MainPage extends React.Component {
                 <p className="statusText">{this.state.active?"ON":"OFF"}</p>
                 <div className="dashboard">
                     <StorageIndicator/>
-                    <SwitchComponent id="status" updateFunction={(status) => {
-                        this.setState({
-                            active: status.target.checked
-                        });
-                    }}/>
+                    <SwitchComponent id="status" active={this.state.active} toggleFunction={this.switchToggle}/>
                     <Link to="/settings">
                         <div className="settingsBtn">
                             <img className="settingsIcon" src={SettingsIcon} alt="settingsIcon"/>

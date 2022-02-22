@@ -13,7 +13,7 @@ class App extends React.Component {
   {
     super(props);
     this.state = {
-      loggedIn : false
+      data : null
     }
   }
 
@@ -31,6 +31,10 @@ class App extends React.Component {
 
   render() {
     console.log("LoggedIn: ", this.state.loggedIn);
+
+    if (this.state.data == null)
+        return <div className="App"/>
+    else
     return (
       <div className="App">
         <Router>

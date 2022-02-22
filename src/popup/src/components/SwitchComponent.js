@@ -7,7 +7,7 @@ class SwitchComponent extends React.Component {
         return (
         <div>
             <label className="switch">
-                <input type="checkbox" id={this.props.id} onChange={this.props.updateFunction}/>
+                <input type="checkbox" id={this.props.id} onChange={this.props.toggleFunction} checked={this.props.active}/>
                 <span className="slider round"></span>
             </label>
         </div>

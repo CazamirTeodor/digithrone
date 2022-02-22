@@ -1,7 +1,9 @@
 {
-    "users": {
-        "teodor.cazamir@mta.ro": {
-            "pass": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+    "data": {
+        "logged_in": true,
+        "active": true,
+        "user": {
+            "email": "teodorcazamir@mta.ro",
             "name": "Teodor",
             "cookies": {
                 "Google": {
@@ -14,14 +16,7 @@
                         "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
                     ],
                     "Facebook": {
-                        "enabled": false,
-                        "cookies": [
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
-                        ]
+                        "enabled": false
                     }
                 },
                 "history": {
@@ -36,12 +31,7 @@
                     },
                     "download": {
                         "enabled": false,
-                        "interval": 1,
-                        "entries": [
-                            "date time website",
-                            "date time website",
-                            "date time website"
-                        ]
+                        "interval": 1
                     }
                 },
                 "prefferences": {
@@ -49,15 +39,15 @@
                     "another_example": false
                 }
             }
-        }
-    },
-    "blacklist": [
-        "www.timesnewroman.ro",
-        "www.facebook.com",
-        "www.example.com"
-    ],
-    "obfuscated": {
-        "www.xyz.hidden": "decrypt_key",
-        "www.abc.hidden": "decrypt_key"
+        },
+        "blacklist": [
+            "www.timesnewroman.ro",
+            "www.facebook.com",
+            "www.example.com"
+        ],
+        "obfuscated": [
+            "www.xyz.hidden",
+            "www.abc.hidden"
+        ]
     }
 }
