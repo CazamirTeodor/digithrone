@@ -6,48 +6,56 @@ import MainPage from './components/pages/MainPage';
 import SettingsPage from './components/pages/SettingsPage';
 import WebsitesPage from './components/pages/WebsitesPage';
 import HistoryPage from './components/pages/HistoryPage';
+import Loader from './components/Loader';
 import './App.css';
 
 class App extends React.Component {
-  constructor(props)
-  {
+  constructor(props) {
     super(props);
     this.state = {
-      data : null
+      data: undefined
     }
   }
 
   componentDidMount() {
-    chrome.storage.local.get(['loggedIn'], (data) => {
-      console.log("I have been called");
-      if (data.loggedIn !== undefined)
-        this.setState({
-          loggedIn: data.loggedIn
-        });
+    chrome.storage.local.get(['data'], (result) => {
+      if (result.data !== undefined)
+      {
+        console.log(result);
+        if (result.data.logged_in !== undefined)
+        {
+          console.log(result.data.logged_in);
+          this.setState({data: result.data});
+        }
+      }
+      else
+        this.setState({data : null});
     });
   }
 
- 
+
 
   render() {
-    console.log("LoggedIn: ", this.state.loggedIn);
-
-    if (this.state.data == null)
-        return <div className="App"/>
-    else
     return (
       <div className="App">
-        <Router>
-          <Route exact path="/">
-            {this.state.loggedIn ? <Redirect to="/dashboard"/> : <LoginPage/>}
-          </Route>
+        {
+          this.state.data === undefined ?
+            <Loader /> :
+            <Router>
+              <Route exact path="/">
+                { this.state.data === null ? <LoginPage/> :
+                  this.state.data.logged_in ? <Redirect to="/dashboard" /> : <LoginPage />}
+              </Route>
+              <Route path="/login" component={LoginPage} />
+              <Route path="/dashboard">
+                <MainPage data={this.state.data}/>
+              </Route>
+              <Route path="/settings" component={SettingsPage} />
+              <Route path="/websites" component={WebsitesPage} />
+              <Route path="/history" component={HistoryPage} />
+            </Router>
 
-          <Route path="/login" component={LoginPage}/>
-          <Route path="/dashboard" component={MainPage}/>
-          <Route path="/settings" component={SettingsPage} />
-          <Route path="/websites" component={WebsitesPage} />
-          <Route path="/history" component={HistoryPage} />
-        </Router>
+        }
       </div>
     );
   }

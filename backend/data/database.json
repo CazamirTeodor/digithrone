@@ -3,16 +3,20 @@
         "teodor.cazamir@mta.ro": {
             "pass": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
             "name": "Teodor",
-            "cookies": {
-                "Google": {
-                    "enabled": true,
-                    "cookies": [
-                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
-                    ],
+            "cookies": [
+                {
+                    "Google": {
+                        "enabled": true,
+                        "cookies": [
+                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
+                        ]
+                    }
+                },
+                {
                     "Facebook": {
                         "enabled": false,
                         "cookies": [
@@ -23,31 +27,31 @@
                             "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
                         ]
                     }
-                },
-                "history": {
-                    "browsing": {
-                        "enabled": true,
-                        "interval": 7,
-                        "entries": [
-                            "date time website",
-                            "date time website",
-                            "date time website"
-                        ]
-                    },
-                    "download": {
-                        "enabled": false,
-                        "interval": 1,
-                        "entries": [
-                            "date time website",
-                            "date time website",
-                            "date time website"
-                        ]
-                    }
-                },
-                "prefferences": {
-                    "example": true,
-                    "another_example": false
                 }
+            ],
+            "history": {
+                "browsing": {
+                    "enabled": true,
+                    "interval": 7,
+                    "entries": [
+                        "date time website",
+                        "date time website",
+                        "date time website"
+                    ]
+                },
+                "download": {
+                    "enabled": false,
+                    "interval": 1,
+                    "entries": [
+                        "date time website",
+                        "date time website",
+                        "date time website"
+                    ]
+                }
+            },
+            "prefferences": {
+                "example": true,
+                "another_example": false
             }
         }
     },

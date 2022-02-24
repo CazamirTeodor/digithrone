@@ -29,8 +29,17 @@ class LoginForm extends React.Component {
         axios.post('http://localhost:3001/login', data)
             .then((res) => {
                 if (res.data.message === "Success!") {
-                    chrome.storage.local.set({data : res.data.data}, () => {
-                        this.props.history.push('/dashboard');
+                    var updated = res.data.data;
+                    updated.logged_in = true; // User is marked as logged in
+                    updated.active = false; // Extension is not active by default
+                    chrome.storage.local.set({data : updated}, () => {
+                        this.props.history.push({
+                            pathname: '/dashboard',
+                            state: {
+                                active: false,
+                                name: res.data.data.name
+                            }
+                        });
                     });
                 }
                 else{

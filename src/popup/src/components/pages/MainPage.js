@@ -6,59 +6,63 @@ import "../../styles/MainPage.css";
 import StorageIndicator from "../StorageIndicator";
 import SwitchComponent from "../SwitchComponent";
 import { Link, withRouter } from 'react-router-dom';
+import { update } from "lodash";
 
 class MainPage extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
 
-        this.state = {
-            data: null,
-            name: null,
-            active: null
-        };
+        if (this.props.location.state) {
+            this.state = {
+                active: this.props.location.state.active,
+                name: this.props.location.state.name
+            };
+        }
+        else {
+            this.state = {
+                active: this.props.data.active,
+                name: this.props.data.name
+            };
+        }
 
-        
-    }
 
-    componentDidMount(){
-        chrome.storage.local.set({'loggedIn' : true});
-        chrome.storage.local.get(['data'], (data) => {
-            this.setState({name: data['data']['name']});
-        })
-
-        chrome.storage.local.get(['active'], (data) => {
-            this.setState({active: data['active']});
-        })
     }
 
     logout = _ => {
-        chrome.storage.local.set({'loggedIn' : false}, () => {
-            this.props.history.push('/login');
+        chrome.storage.local.get(['data'], (result) => {
+            var updated = result.data;
+            updated.logged_in = false;
+            updated.active = false;
+            chrome.storage.local.set({data: updated}, () => {
+                this.props.history.push('/login');
+            })
         })
     }
 
     switchToggle = status => {
-        chrome.storage.local.set({'active' : status.target.checked}, () => {
-            this.setState({active: status.target.checked});
-        });
+        chrome.storage.local.get(['data'], (result) => {
+            var updated = result.data;
+            updated.active = !this.state.active;
+            chrome.storage.local.set({data: updated}, () => {
+                this.setState({ active: !this.state.active });
+            });
+        })
     }
 
-    render(){
-        if (data == )
+    render() {
         return (
-            <div className="page mainPage" style={{backgroundColor: this.state.active?"#AFF8CE":"#F8AFAF", transition: "all .3s ease"}}>
-                <img className="Logo" src={Logo} alt="Logo"/>
+            <div className="page mainPage" style={{ backgroundColor: this.state.active ? "#AFF8CE" : "#F8AFAF", transition: "all .3s ease" }}>
+                <img className="Logo" src={Logo} alt="Logo" />
                 <p className="Title">DIGITHRONE</p>
                 <p className="Banner">WELCOME BACK,</p>
                 <p className="Username">{this.state.name}</p>
-                <p className="statusText">{this.state.active?"ON":"OFF"}</p>
+                <p className="statusText">{this.state.active ? "ON" : "OFF"}</p>
                 <div className="dashboard">
-                    <StorageIndicator/>
-                    <SwitchComponent id="status" active={this.state.active} toggleFunction={this.switchToggle}/>
+                    <StorageIndicator />
+                    <SwitchComponent id="status" active={this.state.active} toggleFunction={this.switchToggle} />
                     <Link to="/settings">
                         <div className="settingsBtn">
-                            <img className="settingsIcon" src={SettingsIcon} alt="settingsIcon"/>
+                            <img className="settingsIcon" src={SettingsIcon} alt="settingsIcon" />
                         </div>
                     </Link>
                 </div>
