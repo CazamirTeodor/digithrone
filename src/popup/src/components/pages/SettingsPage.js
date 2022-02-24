@@ -10,7 +10,7 @@ class SettingsPage extends React.Component{
         console.log(this.props.history);
         return (
             <div className="page settingsPage">
-                <BackButton route="/dashboard" />
+                <BackButton {...this.props}/>
                 <p className="Title">SETTINGS</p>
                 <div className="settingsBtns">
                     <Link className="greyBtn" to="/websites"><p>Websites</p></Link>

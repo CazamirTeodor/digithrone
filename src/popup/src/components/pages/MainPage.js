@@ -2,11 +2,10 @@
 import React from "react";
 import Logo from "../../assets/logo_b.png";
 import SettingsIcon from "../../assets/settings_w.png";
-import "../../styles/MainPage.css";
 import StorageIndicator from "../StorageIndicator";
 import SwitchComponent from "../SwitchComponent";
 import { Link, withRouter } from 'react-router-dom';
-import { update } from "lodash";
+import "../../styles/MainPage.css";
 
 class MainPage extends React.Component {
     constructor(props) {

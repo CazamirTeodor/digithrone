@@ -35,7 +35,7 @@ class WebsitesPage extends React.Component {
     render() {
         return (
             <div className='page websitesPage'>
-                <BackButton route="/settings" />
+                <BackButton {...this.props}/>
                 <p className="Title">WEBSITES</p>
 
                 <div className='websitesList'>

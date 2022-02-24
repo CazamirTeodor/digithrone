@@ -31,7 +31,7 @@ class HistoryPage extends React.Component {
         ];
         return (
             <div className="page historyPage">
-                <BackButton route="/settings" />
+                <BackButton {...this.props}/>
                 <p className="Title">HISTORY</p>
                 <div className="row">
                     <div className="column">
