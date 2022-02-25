@@ -17,7 +17,7 @@ class LoginForm extends React.Component {
 
     login = e => {
         e.preventDefault();
-        this.setState({loading: true});
+        this.setState({ loading: true });
 
         const { email, password } = this.state;
         const data = {
@@ -32,7 +32,7 @@ class LoginForm extends React.Component {
                     var updated = res.data.data;
                     updated.logged_in = true; // User is marked as logged in
                     updated.active = false; // Extension is not active by default
-                    chrome.storage.local.set({data : updated}, () => {
+                    chrome.storage.local.set({ data: updated }, () => {
                         this.props.history.push({
                             pathname: '/dashboard',
                             state: {
@@ -42,16 +42,16 @@ class LoginForm extends React.Component {
                         });
                     });
                 }
-                else{
+                else {
                     console.log("Wrong username or password!");
-            this.setState({
-                email: '',
-                password: '',
-                showModal: true,
-                loading: false
-            });
-            document.getElementById('root').style.setProperty('filter', 'blur(5px)');
-            
+                    this.setState({
+                        email: '',
+                        password: '',
+                        showModal: true,
+                        loading: false
+                    });
+                    document.getElementById('root').style.setProperty('filter', 'blur(5px)');
+
                 }
             })
             .catch(err => {
@@ -67,10 +67,10 @@ class LoginForm extends React.Component {
     }
 
     closeModal = _ => {
-        document.getElementById('root').style.removeProperty('filter'); 
+        document.getElementById('root').style.removeProperty('filter');
         this.setState({
             ...this.state,
-            showModal : false
+            showModal: false
         })
     }
 
@@ -82,9 +82,9 @@ class LoginForm extends React.Component {
                 <button type="submit" className="loginBtn">
                     <p>LOG IN</p>
                 </button>
-                <ModalWindow message="Wrong email or password!" btn="Sorry :( I'll try again" show={this.state.showModal} onHide={this.closeModal}/>
+                <ModalWindow message="Wrong email or password!" btn="Sorry :( I'll try again" show={this.state.showModal} onHide={this.closeModal} />
                 {
-                    this.state.loading?<Loader />:null
+                    this.state.loading ? <Loader /> : null
                 }
             </form>
         );

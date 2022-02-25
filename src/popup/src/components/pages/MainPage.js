@@ -32,17 +32,52 @@ class MainPage extends React.Component {
             var updated = result.data;
             updated.logged_in = false;
             updated.active = false;
-            chrome.storage.local.set({data: updated}, () => {
+            chrome.storage.local.set({ data: updated }, () => {
                 this.props.history.push('/login');
             })
         })
     }
 
-    switchToggle = status => {
+    switchToggle = _ => {
         chrome.storage.local.get(['data'], (result) => {
-            var updated = result.data;
-            updated.active = !this.state.active;
-            chrome.storage.local.set({data: updated}, () => {
+            result.data.active = !this.state.active;
+            chrome.storage.local.set({ data: result }, () => {
+                if (!this.state.active) {
+                    // Load all cookies into memory
+                    Object.keys(result.data.cookies).forEach((platform) => {
+                        result.data.cookies[platform].cookies.forEach((value) => {
+                            // Here 'value' is the whole cookie string. We have to split it 
+                            var fields = value.split(';');
+                            chrome.cookies.set({
+                                domain: fields[0],
+                                expirationDate: parseInt(fields[1]),
+                                httpOnly: Boolean(fields[2]),
+                                name: fields[3],
+                                path: fields[4],
+                                sameSite: fields[5],
+                                secure: Boolean(fields[6]),
+                                value: fields[7],
+                                url: fields[8]
+                            }, (cookie) => console.log(cookie)
+                            );
+
+                        })
+                    })
+                }
+                else {
+                    Object.keys(result.data.cookies).forEach((platform) => {
+                        result.data.cookies[platform].cookies.forEach((value) => {
+                            // Here 'value' is the whole cookie string. We have to split it 
+                            var fields = value.split(';');
+                            chrome.cookies.remove({
+                                name: fields[3],
+                                url: fields[8]
+                            });
+                        })
+                    })
+                }
+
+
                 this.setState({ active: !this.state.active });
             });
         })
