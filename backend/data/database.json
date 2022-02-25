@@ -3,32 +3,41 @@
         "teodor.cazamir@mta.ro": {
             "pass": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
             "name": "Teodor",
-            "cookies": [
-                {
-                    "Google": {
-                        "enabled": true,
-                        "cookies": [
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
-                        ]
-                    }
+            "cookies": {
+                "Google": {
+                    "logo": "https://www.google.com/favicon.ico",
+                    "enabled": true,
+                    "cookies": [
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
+                    ]
                 },
-                {
-                    "Facebook": {
-                        "enabled": false,
-                        "cookies": [
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
-                            "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
-                        ]
-                    }
+                "Facebook": {
+                    "logo": "https://www.facebook.com/favicon.ico",
+                    "enabled": false,
+                    "cookies": [
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
+                    ]
+                },
+                "Academia Tehnica Militara": {
+                    "logo": "https://www.mta.ro/favicon.ico",
+                    "enabled": true,
+                    "cookies": [
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value",
+                        "domain; expirationDate; hostOnly; httpOnly; name; path; sameSite; secure; session; value"
+                    ]
                 }
-            ],
+            },
             "history": {
                 "browsing": {
                     "enabled": true,
