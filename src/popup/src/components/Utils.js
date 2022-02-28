@@ -41,14 +41,14 @@ function setBlacklist(urls, status) {
     {
         rules.push(
             {
-                id: i + 1,
-                action: { type : "redirect", "redirect" : { "extensionPath" : "/blocked.html"}},
+                id: i + 2,
+                action: { type : "redirect", redirect : { extensionPath : "/blocked.html"}},
                 condition : {
                     urlFilter: urls[i], resourceTypes : ["main_frame"]
                 }
             }
         );
-        ids.push(i + 1);
+        ids.push(i + 2);
     }
 
     if (status){
@@ -65,5 +65,27 @@ function setBlacklist(urls, status) {
 
 }
 
+function setAutoHTTPS(status){
+    var rule = {
+        id: 1,
+        action: { type : "redirect", redirect : { transform : { scheme : "https"}}},
+        condition : {
+            urlFilter: "|http*", resourceTypes : ["main_frame"]
+        }
+    }
 
-export { setCookies, setBlacklist };
+    if (status){
+        chrome.declarativeNetRequest.updateDynamicRules({
+            addRules : [rule],
+            removeRuleIds: [rule.id]
+        })
+    }
+    else{
+        chrome.declarativeNetRequest.updateDynamicRules({
+            removeRuleIds: [rule.id]
+        })
+    }
+}
+
+
+export { setCookies, setBlacklist, setAutoHTTPS };

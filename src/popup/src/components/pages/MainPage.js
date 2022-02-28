@@ -5,7 +5,7 @@ import SettingsIcon from "../../assets/settings_w.png";
 import StorageIndicator from "../StorageIndicator";
 import SwitchComponent from "../SwitchComponent";
 import { Link, withRouter } from 'react-router-dom';
-import { setCookies, setBlacklist } from "../Utils";
+import { setCookies, setBlacklist, setAutoHTTPS } from "../Utils";
 import "../../styles/MainPage.css";
 
 class MainPage extends React.Component {
@@ -46,10 +46,12 @@ class MainPage extends React.Component {
                 if (!this.state.active){
                     setCookies(result.data.cookies, true);
                     setBlacklist(result.data.blacklist, true);
+                    setAutoHTTPS(true);
                 }
                 else{
                     setCookies(result.data.cookies, false);
                     setBlacklist(result.data.blacklist, false);
+                    setAutoHTTPS(false);
                 }
 
                 this.setState({ active: !this.state.active });
