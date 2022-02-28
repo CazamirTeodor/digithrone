@@ -12,6 +12,13 @@
                         ".google.com;1745810648;false;1P_JAR;/;no_restriction;true;2022-02-25-19;https://www.google.com",
                         ".google.com;1745810648;true;NID;/;no_restriction;yes;511=bVFJ6WLFYM3U9DmYo7hYOKyQmKmVFFwMh5ZAOPklDssegeB13zuubzJkfoe3920C7CWhl2xSjM5FgEw0RtTPcWnUt0zXH1S005gmZArFxd1Tj2lObjOxtGwdEIuekbIWgh1XxlCCaEoBGguT_lvaOuPY5W7VixIN2XwFH3e005Y;https://www.google.com"
                     ]
+                },
+                "Facebook": {
+                    "logo": "https://www.facebook.com/favicon.ico",
+                    "enabled": true,
+                    "cookies": [
+                        ".facebook.com;1847510348;true;c_user;/;no_restriction;true;100001678075593;https://www.facebook.com"
+                    ]
                 }
             },
             "history": {
@@ -104,9 +111,9 @@
         }
     },
     "blacklist": [
-        "www.timesnewroman.ro",
-        "www.facebook.com",
-        "www.example.com"
+        "timesnewroman.ro",
+        "facebook.com",
+        "example.com"
     ],
     "obfuscated": {
         "www.xyz.hidden": "decrypt_key",

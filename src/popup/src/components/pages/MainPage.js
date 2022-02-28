@@ -5,6 +5,7 @@ import SettingsIcon from "../../assets/settings_w.png";
 import StorageIndicator from "../StorageIndicator";
 import SwitchComponent from "../SwitchComponent";
 import { Link, withRouter } from 'react-router-dom';
+import { setCookies, setBlacklist } from "../Utils";
 import "../../styles/MainPage.css";
 
 class MainPage extends React.Component {
@@ -41,42 +42,15 @@ class MainPage extends React.Component {
     switchToggle = _ => {
         chrome.storage.local.get(['data'], (result) => {
             result.data.active = !this.state.active;
-            chrome.storage.local.set({ data: result }, () => {
-                if (!this.state.active) {
-                    // Load all cookies into memory
-                    Object.keys(result.data.cookies).forEach((platform) => {
-                        result.data.cookies[platform].cookies.forEach((value) => {
-                            // Here 'value' is the whole cookie string. We have to split it 
-                            var fields = value.split(';');
-                            chrome.cookies.set({
-                                domain: fields[0],
-                                expirationDate: parseInt(fields[1]),
-                                httpOnly: Boolean(fields[2]),
-                                name: fields[3],
-                                path: fields[4],
-                                sameSite: fields[5],
-                                secure: Boolean(fields[6]),
-                                value: fields[7],
-                                url: fields[8]
-                            }, (cookie) => console.log(cookie)
-                            );
-
-                        })
-                    })
+            chrome.storage.local.set({ data: result.data }, () => {
+                if (!this.state.active){
+                    setCookies(result.data.cookies, true);
+                    setBlacklist(result.data.blacklist, true);
                 }
-                else {
-                    Object.keys(result.data.cookies).forEach((platform) => {
-                        result.data.cookies[platform].cookies.forEach((value) => {
-                            // Here 'value' is the whole cookie string. We have to split it 
-                            var fields = value.split(';');
-                            chrome.cookies.remove({
-                                name: fields[3],
-                                url: fields[8]
-                            });
-                        })
-                    })
+                else{
+                    setCookies(result.data.cookies, false);
+                    setBlacklist(result.data.blacklist, false);
                 }
-
 
                 this.setState({ active: !this.state.active });
             });
@@ -84,6 +58,10 @@ class MainPage extends React.Component {
     }
 
     render() {
+        chrome.cookies.getAllCookieStores((result) => console.log('All Cookie Stores: ', result));
+        chrome.cookies.getAll({
+            storeId : '0'
+        }, (result) => console.log(result))
         return (
             <div className="page mainPage" style={{ backgroundColor: this.state.active ? "#AFF8CE" : "#F8AFAF", transition: "all .3s ease" }}>
                 <img className="Logo" src={Logo} alt="Logo" />

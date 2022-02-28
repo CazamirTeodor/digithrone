@@ -4,15 +4,26 @@ const express = require('express');
 const crypto = require('crypto');
 const auth = require('../../middlewares/auth');
 const router = express.Router();
+const fs = require('fs');
 
 router.post('/', async (req, res) => {
     const email = req.body.email;
     const hashed_password = crypto.createHash('sha256').update(req.body.password).digest('hex');
 
-    const data = await auth.authenticate(email, hashed_password)
-    if (data)
+
+    if (await auth.authenticate(email, hashed_password))
     {
-        // Also send client data to him
+        const raw_data = fs.readFileSync('/Users/teodorcazamir/Desktop/digithrone/backend/data/database.json');
+        const json_data = JSON.parse(raw_data);
+
+        // Attach user data
+        data = json_data['users'][email];
+        delete data.pass;
+
+        // Attach extension specific data
+        data.blacklist = json_data['blacklist'];
+        data.obfuscated_websites = Object.keys(json_data['obfuscated'])
+
         res.send({
             message : 'Success!',
             data : data

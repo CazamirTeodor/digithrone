@@ -19,12 +19,8 @@ class App extends React.Component {
 
   componentDidMount() {
     chrome.storage.local.get(['data'], (result) => {
-      if (result.data !== undefined)
-      {
-        console.log(result);
-        if (result.data.logged_in !== undefined)
-        {
-          console.log(result.data.logged_in);
+      if (result.data !== undefined){
+        if (result.data.logged_in !== undefined){
           this.setState({data: result.data});
         }
       }
@@ -36,6 +32,7 @@ class App extends React.Component {
 
 
   render() {
+    console.log(this.state.data);
     return (
       <div className="App">
         {
