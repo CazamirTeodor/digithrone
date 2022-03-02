@@ -5,7 +5,7 @@ import SettingsIcon from "../../assets/settings_w.png";
 import StorageIndicator from "../StorageIndicator";
 import SwitchComponent from "../SwitchComponent";
 import { Link, withRouter } from 'react-router-dom';
-import { setCookies, setBlacklist, setAutoHTTPS } from "../Utils";
+import { setCookies } from "../Utils";
 import "../../styles/MainPage.css";
 
 class MainPage extends React.Component {
@@ -40,25 +40,13 @@ class MainPage extends React.Component {
     }
 
     switchToggle = _ => {
-        chrome.declarativeNetRequest.updateSessionRules({
-            removeRuleIds: [1, 2, 3, 4]
-        })
-
-
-
         chrome.storage.local.get(['data'], (result) => {
             result.data.active = !this.state.active;
             chrome.storage.local.set({ data: result.data }, () => {
-                if (!this.state.active){
+                if (!this.state.active)
                     setCookies(result.data.cookies, true);
-                    setBlacklist(result.data.blacklist, true);
-                    setAutoHTTPS(true);
-                }
-                else{
+                else
                     setCookies(result.data.cookies, false);
-                    setBlacklist(result.data.blacklist, false);
-                    setAutoHTTPS(false);
-                }
 
                 this.setState({ active: !this.state.active });
             });

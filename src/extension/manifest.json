@@ -2,12 +2,13 @@
     "name" : "Digithrone",
     "description" : "Stay safe.",
     "version" : "1.0",
-    "manifest_version" : 3,
+    "manifest_version" : 2,
     "background" : {
-        "service_worker" : "background.js"
+        "scripts" : ["background.js"]
     },
-    "permissions" : ["storage", "activeTab", "scripting"],
-    "action" : {
+    
+    "permissions" : ["<all_urls>", "storage", "cookies", "webRequest", "tabs"],
+    "browser_action" : {
         "default_popup" : "popup.html",
         "default_icon" : {
             "16": "/images/logo16.png",
@@ -21,6 +22,5 @@
         "32": "/images/logo32.png",
         "48": "/images/logo48.png",
         "128": "/images/logo128.png"
-      },
-    "options_page" : "options.html"
+      }
 }
