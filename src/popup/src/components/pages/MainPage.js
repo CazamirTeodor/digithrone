@@ -40,6 +40,12 @@ class MainPage extends React.Component {
     }
 
     switchToggle = _ => {
+        chrome.declarativeNetRequest.updateSessionRules({
+            removeRuleIds: [1, 2, 3, 4]
+        })
+
+
+
         chrome.storage.local.get(['data'], (result) => {
             result.data.active = !this.state.active;
             chrome.storage.local.set({ data: result.data }, () => {
@@ -60,10 +66,12 @@ class MainPage extends React.Component {
     }
 
     render() {
+        /*
         chrome.cookies.getAllCookieStores((result) => console.log('All Cookie Stores: ', result));
         chrome.cookies.getAll({
             storeId : '0'
         }, (result) => console.log(result))
+        */
         return (
             <div className="page mainPage" style={{ backgroundColor: this.state.active ? "#AFF8CE" : "#F8AFAF", transition: "all .3s ease" }}>
                 <img className="Logo" src={Logo} alt="Logo" />

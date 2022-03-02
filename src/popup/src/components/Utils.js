@@ -42,6 +42,7 @@ function setBlacklist(urls, status) {
         rules.push(
             {
                 id: i + 2,
+                priority: 1,
                 action: { type : "redirect", redirect : { extensionPath : "/blocked.html"}},
                 condition : {
                     urlFilter: urls[i], resourceTypes : ["main_frame"]
@@ -52,36 +53,36 @@ function setBlacklist(urls, status) {
     }
 
     if (status){
-        chrome.declarativeNetRequest.updateDynamicRules({
+        chrome.declarativeNetRequest.updateSessionRules({
             addRules : rules,
             removeRuleIds: ids
         })
     }
     else{
-        chrome.declarativeNetRequest.updateDynamicRules({
+        chrome.declarativeNetRequest.updateSessionRules({
             removeRuleIds: ids
         })
     }
-
 }
 
 function setAutoHTTPS(status){
     var rule = {
         id: 1,
-        action: { type : "redirect", redirect : { transform : { scheme : "https"}}},
+        priority: 2,
+        action: { type : "upgradeScheme"},
         condition : {
             urlFilter: "|http*", resourceTypes : ["main_frame"]
         }
     }
 
     if (status){
-        chrome.declarativeNetRequest.updateDynamicRules({
+        chrome.declarativeNetRequest.updateSessionRules({
             addRules : [rule],
             removeRuleIds: [rule.id]
         })
     }
     else{
-        chrome.declarativeNetRequest.updateDynamicRules({
+        chrome.declarativeNetRequest.updateSessionRules({
             removeRuleIds: [rule.id]
         })
     }
