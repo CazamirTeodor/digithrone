@@ -1,2 +1,5 @@
-console.log("From content.js");
-console.log(document.body.innerHTML);
+/*
+window.stop();
+// reset DOM
+console.log("salut")
+*/

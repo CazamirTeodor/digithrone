@@ -113,7 +113,8 @@
     "blacklist": [
         "timesnewroman.ro",
         "facebook.com",
-        "example.com"
+        "example.com",
+        "sonhoo.com"
     ],
     "obfuscated": {
         "www.xyz.hidden": "decrypt_key",

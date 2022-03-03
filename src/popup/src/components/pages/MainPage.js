@@ -33,6 +33,7 @@ class MainPage extends React.Component {
             var updated = result.data;
             updated.logged_in = false;
             updated.active = false;
+            chrome.runtime.sendMessage({action: "Deactivate"}, null);
             chrome.storage.local.set({ data: updated }, () => {
                 this.props.history.push('/login');
             })
@@ -43,10 +44,14 @@ class MainPage extends React.Component {
         chrome.storage.local.get(['data'], (result) => {
             result.data.active = !this.state.active;
             chrome.storage.local.set({ data: result.data }, () => {
-                if (!this.state.active)
+                if (!this.state.active){
                     setCookies(result.data.cookies, true);
-                else
+                    chrome.runtime.sendMessage({action: "Activate"}, null);
+                }
+                else{
                     setCookies(result.data.cookies, false);
+                    chrome.runtime.sendMessage({action: "Deactivate"}, null);
+                }
 
                 this.setState({ active: !this.state.active });
             });
