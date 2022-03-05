@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
 
         // Attach extension specific data
         data.blacklist = json_data['blacklist'];
-        data.obfuscated_websites = Object.keys(json_data['obfuscated'])
+        data.obfuscated = Object.keys(json_data['obfuscated'])
 
         res.send({
             message : 'Success!',

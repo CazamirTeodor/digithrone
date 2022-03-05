@@ -69,7 +69,7 @@ class MainPage extends React.Component {
             <div className="page mainPage" style={{ backgroundColor: this.state.active ? "#AFF8CE" : "#F8AFAF", transition: "all .3s ease" }}>
                 <img className="Logo" src={Logo} alt="Logo" />
                 <p className="Title">DIGITHRONE</p>
-                <p className="Banner">WELCOME BACK,</p>
+                <p className="Banner">WELCOME BACK,</p> 
                 <p className="Username">{this.state.name}</p>
                 <p className="statusText">{this.state.active ? "ON" : "OFF"}</p>
                 <div className="dashboard">

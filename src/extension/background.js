@@ -1,11 +1,21 @@
 function _BlacklistListener(details){
-    console.log("_BlacklistListener");
-    return { redirectUrl : chrome.runtime.getURL("blocked.html") };
+    return { redirectUrl: chrome.runtime.getURL("blocked.html")}
 }
 
 function _HTTPSListener(details){
-  console.log("_HTTPSListener");
+  	console.log("_HTTPSListener");
     return { redirectUrl : details.url.replace('http://', "https://")}
+}
+
+function _ObfuscatedListener(details){
+  console.log("_ObfuscatedListener");
+  return { redirectUrl : "javascript:"}
+  /*
+  	chrome.tabs.executeScript(details.tabId, {
+    file: 'obfuscated.js',
+    runAt: 'document_start',
+  	});
+  */
 }
 
 function setBlacklist(status){
@@ -36,6 +46,22 @@ function setHTTPS(status){
 
 }
 
+function setObfuscated(status){
+
+    if (status){
+        chrome.storage.local.get(['data'], result => {
+        	console.log(result.data.obfuscated)
+            chrome.webRequest.onBeforeRequest.addListener(
+                _ObfuscatedListener, 
+                { urls : result.data.obfuscated.map( website => `*://*.${website}/*`), types: ["main_frame", "sub_frame"]},
+                ["blocking"]);
+        });
+    }
+    else{
+        chrome.webRequest.onBeforeRequest.removeListener(_ObfuscatedListener);
+    }
+}
+
 
 function updatePlatformIcons(){
   chrome.storage.local.get(['data'], result => {
@@ -43,15 +69,21 @@ function updatePlatformIcons(){
   })
 }
 
+chrome.cookies.getAll({
+            storeId : '0'
+        }, (result) => console.log(result));
+
+
 chrome.runtime.onMessage.addListener(message => {
   console.log("Background: I have received a message - ", message);
   if (message.action == "Activate"){
     setHTTPS(true);
     setBlacklist(true);
+    setObfuscated(true);
   }
   else if (message.action == "Deactivate"){
     setHTTPS(false);
     setBlacklist(false);
-
+	setObfuscated(false);
   }
 })
