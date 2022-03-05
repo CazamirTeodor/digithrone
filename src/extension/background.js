@@ -1,22 +1,27 @@
 function _BlacklistListener(details){
-    return { redirectUrl: chrome.runtime.getURL("blocked.html")}
+    return { redirectUrl: chrome.runtime.getURL("blocked.html")};
 }
+
 
 function _HTTPSListener(details){
   	console.log("_HTTPSListener");
     return { redirectUrl : details.url.replace('http://', "https://")}
 }
 
-function _ObfuscatedListener(details){
-  console.log("_ObfuscatedListener");
-  return { redirectUrl : "javascript:"}
-  /*
-  	chrome.tabs.executeScript(details.tabId, {
-    file: 'obfuscated.js',
-    runAt: 'document_start',
-  	});
-  */
+
+function _ObfuscatedListenerRedirect(details){
+  console.log("_ObfuscatedListenerRedirect");
+  return { redirectUrl : "http://google.com/gen_204" }
 }
+
+function _ObfuscatedListenerInject(details){
+	if (details.frameId == 0){
+		console.log("_ObfuscatedListenerInject")
+		console.log(details)
+	}
+	
+}
+
 
 function setBlacklist(status){
     if (status){
@@ -43,8 +48,8 @@ function setHTTPS(status){
     else{
         chrome.webRequest.onBeforeRequest.removeListener(_HTTPSListener);
     }
-
 }
+
 
 function setObfuscated(status){
 
@@ -52,13 +57,19 @@ function setObfuscated(status){
         chrome.storage.local.get(['data'], result => {
         	console.log(result.data.obfuscated)
             chrome.webRequest.onBeforeRequest.addListener(
-                _ObfuscatedListener, 
+                _ObfuscatedListenerRedirect, 
                 { urls : result.data.obfuscated.map( website => `*://*.${website}/*`), types: ["main_frame", "sub_frame"]},
                 ["blocking"]);
+
+            chrome.webNavigation.onCommitted.addListener(
+            	_ObfuscatedListenerInject,
+            	{ urlEquals : "http://google.com/gen_204"}
+            	);
         });
     }
     else{
-        chrome.webRequest.onBeforeRequest.removeListener(_ObfuscatedListener);
+        chrome.webRequest.onBeforeRequest.removeListener(_ObfuscatedListenerRedirect);
+        chrome.webNavigation.onCompleted.removeListener(_ObfuscatedListenerInject);
     }
 }
 
@@ -68,11 +79,6 @@ function updatePlatformIcons(){
     // TODO
   })
 }
-
-chrome.cookies.getAll({
-            storeId : '0'
-        }, (result) => console.log(result));
-
 
 chrome.runtime.onMessage.addListener(message => {
   console.log("Background: I have received a message - ", message);

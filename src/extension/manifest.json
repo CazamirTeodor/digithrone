@@ -7,7 +7,7 @@
         "scripts" : ["background.js"]
     },
     
-    "permissions" : ["<all_urls>", "storage", "cookies", "webRequest", "webRequestBlocking", "tabs"],
+    "permissions" : ["<all_urls>", "activeTab", "storage", "cookies", "webRequest", "webNavigation", "webRequestBlocking", "tabs"],
     "web_accessible_resources" : [
         "blocked.html", "obfuscated.js"
     ],
