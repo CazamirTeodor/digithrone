@@ -9,7 +9,14 @@
     
     "permissions" : ["<all_urls>", "activeTab", "storage", "cookies", "webRequest", "webNavigation", "webRequestBlocking", "tabs"],
     "web_accessible_resources" : [
-        "blocked.html", "obfuscated.js"
+        "blocked.html"
+    ],
+    "content_scripts" : [
+        {
+            "matches" : ["*://localhost/*"],
+            "js" : ["obfuscated.js"],
+            "run_at" : "document_end"
+        }
     ],
     "browser_action" : {
         "default_popup" : "popup.html",

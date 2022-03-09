@@ -1,5 +1,4 @@
-const redis = require('redis');
-const fs = require('fs');
+const database = require('../middlewares/database');
 
 
 // Verifies the email + password and sends back users data and settings
@@ -9,11 +8,10 @@ async function authenticate(email, hashed_password){
     // await redis_client.connect();
     // const password = await redis_client.HGET(email, 'password');
 
-    const raw_data = fs.readFileSync('/Users/teodorcazamir/Desktop/digithrone/backend/data/database.json');
-    const json_data = JSON.parse(raw_data);
-
-    if (email in json_data['users']){
-        if (hashed_password == json_data['users'][email]['pass'])
+    
+    const user = database.getUser(email);
+    if (user){
+        if (hashed_password == user['pass'])
             return true
     }
     return false;

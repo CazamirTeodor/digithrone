@@ -6,6 +6,7 @@ const app = express();
 
 const config = require('./config');
 const login_route = require('./routes/user/login');
+const obfuscated_route = require('./routes/obfuscated');
 
 
 
@@ -18,6 +19,7 @@ app.use(
 
 
 app.use('/login', login_route);
+app.use('/obfuscated', obfuscated_route);
 
 
 app.use((err, req, res, next) => {
