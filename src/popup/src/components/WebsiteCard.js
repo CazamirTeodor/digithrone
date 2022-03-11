@@ -3,6 +3,7 @@ import React from 'react';
 import '../styles/WebsiteCard.css';
 
 class WebsiteCard extends React.Component {
+    
     constructor(props){
         super(props);
         this.state = {
@@ -34,7 +35,9 @@ class WebsiteCard extends React.Component {
 
     render(){
         return (
-            <div className='websiteCard' onClick={this.toggle} style={{backgroundColor: this.state.active?"#B5FFB5":"#FFB5B5", transition: ".3s"}}>
+            <div className='websiteCard' 
+                onClick={this.props.forceActive? null :this.props.this.toggle} 
+                style={{backgroundColor: this.state.active?"#B5FFB5":"#FFB5B5", transition: ".3s"}}>
                 <div className='websiteCardWrapper'>
                     <img className="websiteLogo" src={this.props.logo} alt="logo"/>
                     <p>{this.props.platform}</p>

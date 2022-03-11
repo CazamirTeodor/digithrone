@@ -43,30 +43,3 @@
       font-size: 11px;
       letter-spacing: 0.5px;
   }
-
-  .App .settingsPage .settingsBtns .redBtn {
-    transition: 0.3s;
-    height: 28px;
-    background-color: #CC5555;
-    color: white;
-    border: 1px solid #CC5555;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin: 1px 0px;
-    cursor: pointer;
-  }
-
-  .App .settingsPage .settingsBtns .redBtn:hover {
-    background-color: white;
-    color: #CC5555; 
-}
-
-  .App .settingsPage .settingsBtns .redBtn p {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      margin: 0px 10px;
-
-  }

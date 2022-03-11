@@ -8,52 +8,86 @@ class HistoryPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            browsing: false,
-            download: false,
+            browsing: {
+                active: false,
+                interval: null
+            },
+            downloads: {
+                active: false,
+                interval: null
+            }
         }
     }
 
     // TODO
-    toggle = _ => {
+    setDownloadsOption = option => {
         this.setState({
-            ...this.state
-
+            downloads: {
+                active: this.state.downloads.active,
+                interval: option
+            }
         });
     }
 
+    setBrowsingOption = option => {
+        this.setState({
+            browsing: {
+                active: this.state.browsing.active,
+                interval: option
+            }
+        });
+    }
+
+
     render() {
-        var options = [
-            'All',
-            'Last day',
-            'Last week',
-            'Last month',
-            'Last year',
-        ];
+        var options = {
+            'All' : 0,
+            'Last day' : 1,
+            'Last week' : 7,
+            'Last month' : 30,
+            'Last year' : 365
+        };
+        var styles = {
+            active: { backgroundColor: "#AFF8CE" },
+            inactive: { backgroundColor: "#F8AFAF" }
+        }
+
+        console.log(this.state);
         return (
             <div className="page historyPage">
-                <BackButton {...this.props}/>
+                <BackButton {...this.props} />
                 <p className="Title">HISTORY</p>
                 <div className="row">
                     <div className="column">
                         <p className="option Title">BROWSING</p>
-                        <div className="optionBtn browsing" 
-                            onClick={() => this.setState({...this.state, browsing: !this.state.browsing })} 
-                            style={{backgroundColor: this.state.browsing?"#AFF8CE":"#F8AFAF"}}
-                            >
+                        <div className="optionBtn browsing"
+                            onClick={() => this.setState({
+                                browsing: {
+                                    active: !this.state.browsing.active,
+                                    interval: this.state.browsing.interval
+                                }
+                            })}
+                            style={this.state.browsing.active ? styles.active : styles.inactive}
+                        >
                             <img className="optionBtnIcon" src={BrowsingIcon} alt="optionIcon" />
                         </div>
-                        <DropdownList options={options}/>
+                        <DropdownList options={options} setOption={this.setBrowsingOption} />
                     </div>
                     <div className="separator"></div>
                     <div className="column">
                         <p className="option Title">DOWNLOADS</p>
                         <div className="optionBtn download"
-                            onClick={() => this.setState({...this.state, download: !this.state.download })} 
-                            style={{backgroundColor: this.state.download?"#AFF8CE":"#F8AFAF"}}
+                            onClick={() => this.setState({
+                                downloads: {
+                                    active: !this.state.downloads.active,
+                                    interval: this.state.downloads.interval
+                                }
+                            })}
+                            style={this.state.downloads.active ? styles.active : styles.inactive}
                         >
                             <img className="optionBtnIcon" src={DownloadIcon} alt="optionIcon" />
                         </div>
-                        <DropdownList options={options}/>
+                        <DropdownList options={options} setOption={this.setDownloadsOption} />
                     </div>
                 </div>
             </div>

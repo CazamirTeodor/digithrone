@@ -7,7 +7,6 @@ import BackButton from "../BackButton";
 class SettingsPage extends React.Component{
     render()
     {
-        console.log(this.props.history);
         return (
             <div className="page settingsPage">
                 <BackButton {...this.props}/>
@@ -15,8 +14,6 @@ class SettingsPage extends React.Component{
                 <div className="settingsBtns">
                     <Link className="greyBtn" to="/websites"><p>Websites</p></Link>
                     <Link className="greyBtn" to="/history"><p>History</p></Link>
-                    <div className="greyBtn"><p>Other preferences</p></div>
-                    <div className="redBtn"><p>Delete all data</p></div>
                 </div>
             </div>
         );

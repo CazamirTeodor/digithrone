@@ -1,5 +1,5 @@
 import React from "react";
-import DropdownIcon from '../assets/dropdown-icon.png';
+import DropdownIcon from '../assets/dropdown-icon-b.png';
 import '../styles/DropdownList.css';
 
 class DropdownList extends React.Component {
@@ -8,11 +8,12 @@ class DropdownList extends React.Component {
 
         this.state = {
             show: false,
-            selectedOption: this.props.options[0]
+            selectedOption: Object.keys(this.props.options)[0]
         };
     }
 
     setOption = option => {
+        this.props.setOption(this.props.options[option])
         this.setState({
             show: false,
             selectedOption : option
@@ -34,7 +35,7 @@ class DropdownList extends React.Component {
                 </div>
                 <div className="all-options">
                 {
-                    this.props.options.map((option) => {
+                    Object.keys(this.props.options).map(option => {
                         return <p className="option" onClick={ () => this.setOption(option)}>{option}</p>
                     })
                 }
