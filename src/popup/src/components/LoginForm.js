@@ -3,6 +3,7 @@ import React from "react";
 import ModalWindow from "./ModalWindow";
 import Loader from "./Loader";
 import axios from 'axios';
+import ServerSelector from "./ServerSelector";
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -10,6 +11,7 @@ class LoginForm extends React.Component {
         this.state = {
             email: '',
             password: '',
+            server: null,
             showModal: false,
             loading: false
         }
@@ -68,17 +70,17 @@ class LoginForm extends React.Component {
 
     closeModal = _ => {
         document.getElementById('root').style.removeProperty('filter');
-        this.setState({
-            ...this.state,
-            showModal: false
-        })
+        this.setState({ showModal: false })
     }
+
+    selectServer = server => this.setState({ server: server })
 
     render() {
         return (
             <form className="loginForm" onSubmit={this.login}>
                 <input type="text" value={this.state.email} name="email" placeholder="Email" onChange={this.inputHandler}></input>
                 <input type="password" value={this.state.password} name="password" placeholder="Password" onChange={this.inputHandler}></input>
+                <ServerSelector selectServer={this.selectServer} />
                 <button type="submit" className="loginBtn">
                     <p>LOG IN</p>
                 </button>

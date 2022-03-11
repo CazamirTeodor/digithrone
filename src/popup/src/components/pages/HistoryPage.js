@@ -52,7 +52,6 @@ class HistoryPage extends React.Component {
             inactive: { backgroundColor: "#F8AFAF" }
         }
 
-        console.log(this.state);
         return (
             <div className="page historyPage">
                 <BackButton {...this.props} />

@@ -7,7 +7,7 @@
   margin: 0px;
   padding: 0px;
   text-align: center;
-  height: 192px;
+  height: 220px;
   width: 352px;
   font-family: Helvetica;
 }
@@ -36,6 +36,6 @@
 
 .page {
   position: absolute;
-  height: 190px;
+  height: 218px;
   width: 350px;
 }
