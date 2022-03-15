@@ -1,13 +1,12 @@
-/*global chrome*/
 import React from "react";
 import Logo from "../../assets/logo_b.png";
 import SettingsIcon from "../../assets/settings_w.png";
 import StorageIndicator from "../StorageIndicator";
 import SwitchComponent from "../SwitchComponent";
 import { Link, withRouter } from 'react-router-dom';
-import { setCookies } from "../Utils";
 import "../../styles/MainPage.css";
 
+import { getData, setCookies, setData, sendMessage } from "../Utils";
 class MainPage extends React.Component {
     constructor(props) {
         super(props);
@@ -29,28 +28,29 @@ class MainPage extends React.Component {
     }
 
     logout = _ => {
-        chrome.storage.local.get(['data'], (result) => {
-            var updated = result.data;
+        getData((data) => {
+            var updated = data;
             updated.logged_in = false;
             updated.active = false;
-            chrome.runtime.sendMessage({action: "Deactivate"}, null);
-            chrome.storage.local.set({ data: updated }, () => {
+            sendMessage({ action: "Deactivate" }, null);
+            setData(updated, () => {
                 this.props.history.push('/login');
-            })
+            });
         })
     }
 
     switchToggle = _ => {
-        chrome.storage.local.get(['data'], (result) => {
-            result.data.active = !this.state.active;
-            chrome.storage.local.set({ data: result.data }, () => {
-                if (!this.state.active){
-                    setCookies(result.data.cookies, true);
-                    chrome.runtime.sendMessage({action: "Activate"}, null);
+        getData((data) => {
+            data.active = !this.state.active;
+
+            setData(data, () => {
+                if (!this.state.active) {
+                    setCookies(data.cookies, true);
+                    sendMessage({ action: "Activate" }, null);
                 }
-                else{
-                    setCookies(result.data.cookies, false);
-                    chrome.runtime.sendMessage({action: "Deactivate"}, null);
+                else {
+                    setCookies(data.cookies, false);
+                    sendMessage({ action: "Deactivate" }, null);
                 }
 
                 this.setState({ active: !this.state.active });
@@ -69,7 +69,7 @@ class MainPage extends React.Component {
             <div className="page mainPage" style={{ backgroundColor: this.state.active ? "#AFF8CE" : "#F8AFAF", transition: "all .3s ease" }}>
                 <img className="Logo" src={Logo} alt="Logo" />
                 <p className="Title">DIGITHRONE</p>
-                <p className="Banner">WELCOME BACK,</p> 
+                <p className="Banner">WELCOME BACK,</p>
                 <p className="Username">{this.state.name}</p>
                 <p className="statusText">{this.state.active ? "ON" : "OFF"}</p>
                 <div className="dashboard">

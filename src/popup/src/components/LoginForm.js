@@ -1,9 +1,8 @@
-/*global chrome*/
 import React from "react";
 import ModalWindow from "./ModalWindow";
 import Loader from "./Loader";
 import axios from 'axios';
-import ServerSelector from "./ServerSelector";
+import { setData } from "./Utils";
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -11,7 +10,7 @@ class LoginForm extends React.Component {
         this.state = {
             email: '',
             password: '',
-            server: null,
+            server: '',
             showModal: false,
             loading: false
         }
@@ -28,13 +27,14 @@ class LoginForm extends React.Component {
         };
 
 
-        axios.post('http://localhost:3001/login', data)
+        axios.post(`http://${this.state.server}:3001/login`, data)
             .then((res) => {
                 if (res.data.message === "Success!") {
                     var updated = res.data.data;
                     updated.logged_in = true; // User is marked as logged in
                     updated.active = false; // Extension is not active by default
-                    chrome.storage.local.set({ data: updated }, () => {
+
+                    setData(updated, () => {
                         this.props.history.push({
                             pathname: '/dashboard',
                             state: {
@@ -70,17 +70,18 @@ class LoginForm extends React.Component {
 
     closeModal = _ => {
         document.getElementById('root').style.removeProperty('filter');
-        this.setState({ showModal: false })
+        this.setState({
+            ...this.state,
+            showModal: false
+        })
     }
-
-    selectServer = server => this.setState({ server: server })
 
     render() {
         return (
             <form className="loginForm" onSubmit={this.login}>
                 <input type="text" value={this.state.email} name="email" placeholder="Email" onChange={this.inputHandler}></input>
                 <input type="password" value={this.state.password} name="password" placeholder="Password" onChange={this.inputHandler}></input>
-                <ServerSelector selectServer={this.selectServer} />
+                <input type="text" value={this.state.server} name="server" placeholder="Server" onChange={this.inputHandler}></input>
                 <button type="submit" className="loginBtn">
                     <p>LOG IN</p>
                 </button>

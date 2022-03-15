@@ -1,20 +1,21 @@
 .serverSelector {
-    position: relative;
+    position: absolute;
+    right: 5px;
+    top: 3px;
     height: 20px;
-    width: 105px;
-    margin-top: 6px;
-    border: 1px solid black;
-    border-radius: 15px;
+    width: 110px;
     cursor: pointer;
     font-size: 10px;
+    color: white;
+    font-weight: 300;
     letter-spacing: 0.5px;
-    background-color: white;
-}
+    background-color: transparent;
+} 
 
 .serverSelector .dropdown-icon {
     display: block; 
-    right: 5%;
-    top: 40%;
+    right: 0px;
+    top: 35%;
     position: absolute;
     width: 8px;
     cursor: pointer;
@@ -27,9 +28,9 @@
     position: absolute;
     border: 1px solid black;
     border-radius: 7px;
-    bottom: 22px;
+    top: 22px;
     left: -1px;
-    width: 103px;
+    width: 108px;
     max-height: 90px;
     padding: 1px;
     overflow-y: scroll;
@@ -40,6 +41,7 @@
     height: 15px;
     margin: 1px;
     line-height: 15px;
+    color: black;
 }
 
 .serverSelector .all-options p:hover{
@@ -53,4 +55,8 @@
     margin: 0;
     line-height: 20px;
     cursor: pointer;
+}
+
+.serverSelector .chosen-option:hover{
+    font-weight: 700 !important;
 }

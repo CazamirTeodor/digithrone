@@ -1,9 +1,9 @@
-/*global chrome*/
 import React from 'react';
 import BackButton from '../BackButton';
 import WebsiteCard from '../WebsiteCard';
 import '../../styles/WebsitesPage.css';
 import Loader from '../Loader';
+import { getData, setData } from '../Utils';
 
 class WebsitesPage extends React.Component {
     constructor(props) {
@@ -14,9 +14,9 @@ class WebsitesPage extends React.Component {
     }
 
     componentDidMount() {
-        chrome.storage.local.get(['data'], (result) => {
-            if (result.data)
-                this.setState({ data: result.data })
+        getData((data) => {
+            if (data)
+                this.setState({ data: data })
         });
     }
 
@@ -29,24 +29,20 @@ class WebsitesPage extends React.Component {
     }
 
     setAll = (value) => {
-        chrome.storage.local.get(['data'], (result) => {
-            Object.keys(result.data.cookies).forEach( (platform) => {
-                result.data.cookies[platform].enabled = value;
+        getData((data) => {
+            Object.keys(data.cookies).forEach( (platform) => {
+                data.cookies[platform].enabled = value;
             });
 
-            chrome.storage.local.set({data : result.data}, () => {
+            setData({data : data}, () => {
                 this.setState({
-                    data: result.data
+                    data: data
                 })
             })
         })
     }
 
     enableAll = _ => {
-        
-
-
-
         var newState = this.state;
         Object.entries(newState).forEach(([name]) => {
             newState[name] = true;

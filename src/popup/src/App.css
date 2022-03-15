@@ -7,35 +7,13 @@
   margin: 0px;
   padding: 0px;
   text-align: center;
-  height: 220px;
+  height: 192px;
   width: 352px;
   font-family: Helvetica;
 }
 
-
-.fade-appear,
-.fade-enter {
-    opacity: 0;
-    z-index: 1;
-}
-.fade-appear-active,
-.fade-enter.fade-enter-active {
-    opacity: 1;
-    transition: opacity 300ms linear 300ms;
-}
-
-.fade-exit {
-    opacity: 1;
-}
-
-.fade-exit.fade-exit-active {
-    opacity: 0;
-    transition: opacity 300ms linear;
-}
-
-
 .page {
   position: absolute;
-  height: 218px;
+  height: 190px;
   width: 350px;
 }
