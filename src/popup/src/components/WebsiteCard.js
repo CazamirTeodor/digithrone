@@ -1,4 +1,6 @@
 import React from 'react';
+import Lock from  '../assets/lock.png';
+import NoLogo from '../assets/no-logo.png';
 import '../styles/WebsiteCard.css';
 
 import { getData, setData } from './Utils';
@@ -7,7 +9,8 @@ class WebsiteCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            active: this.props.active
+            active: this.props.active,
+            disabled: this.props.disabled
         }
     }
 
@@ -15,17 +18,16 @@ class WebsiteCard extends React.Component {
     componentDidUpdate(prev_props) {
         if (this.props !== prev_props) {
             this.setState({
-                active: this.props.active
+                active: this.props.active,
+                disabled: this.props.disabled
             });
         }
     }
 
-    toggle = event => {
-        console.log(event.target);
+    toggle = _ => {
         getData((data) => {
-            console.log("Data is ", data);
             data.cookies[this.props.platform].enabled = !this.state.active;
-            setData({ data: data }, () => {
+            setData(data, () => {
                 this.setState({
                     active: !this.state.active
                 })
@@ -34,10 +36,28 @@ class WebsiteCard extends React.Component {
     }
 
     render() {
+        const style = {
+            on : {
+                backgroundColor : "#53A551",
+                filter: "grayscale(0%)"
+            },
+            off : {
+                filter: "grayscale(100%)"
+            },
+            disabled : {
+                filter: "grayscale(100%)"
+            }
+        }
+
         return (
-            <div className='websiteCard' onClick={this.toggle} style={{ backgroundColor: this.state.active ? "#53A551" : "#D13023", transition: ".3s" }}>
+            <div className='websiteCard' 
+                onClick={this.state.disabled? null : this.toggle} 
+                style={ 
+                    this.state.disabled ? 
+                    style.disabled : 
+                    this.state.active ? style.on : style.off}>
                 <div className='websiteCardWrapper'>
-                    <img className="websiteLogo" src={this.props.logo} alt="logo" />
+                    <img className="websiteLogo" src={this.state.disabled? Lock: this.props.logo === undefined? NoLogo :`data:image/jpeg;base64,${this.props.logo}`} alt="logo" />
                     <p>{this.props.platform}</p>
                 </div>
             </div>

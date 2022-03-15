@@ -26,5 +26,5 @@ function getObfuscated(){
 
 
 module.exports = {
-    getUser , getBlacklist, getObfuscated
+    getUser , getBlacklist, getObfuscated, get
 }

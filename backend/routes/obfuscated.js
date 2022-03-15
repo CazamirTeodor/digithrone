@@ -2,18 +2,16 @@ const express = require('express');
 const router = express.Router();
 const database = require('../middlewares/database');
 const { deobfuscate } = require('../middlewares/deobfuscator');
-const {spawn} = require('child_process');
-const ph = require('path');
 
 router.post('/:website*', async (req, res) => {
     let hasCookie = true; // For now
 
-    if (hasCookie){
+    if (hasCookie) {
         const website = req.params.website;
         const path = req.params[0];
-        
+
         const obf_websites = database.getObfuscated();
-        if (website in obf_websites){
+        if (website in obf_websites) {
             const ip = obf_websites[website]['ip'];
             const port = obf_websites[website]['port'];
             //const url = `${ip}:${port}/${path}`;
@@ -26,12 +24,14 @@ router.post('/:website*', async (req, res) => {
             res.sendFile(ph.resolve(ph.join(__dirname, 'index.html')))
             console.log('File sent!')
     });
+
         }
-        else{
+        else {
             res.send(`${website}/${path} Not a valid website`);
         }
     }
-    else{
+    else {
+        parse
         res.send('You are not logged in');
     }
 
