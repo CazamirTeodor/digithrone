@@ -1,36 +1,55 @@
 .websiteCard {
-    height: 20px;
-    background-color: green;
-    border: 1px solid black;
+    position: relative;
+    height: 55px;
+    width: 50px;
     border-radius: 5px;
-    display: inline-block;
-    
+
+    display: grid;
+    background-color: white;
+    transition: 0.3s;
     cursor: pointer;
-    margin: 2px;
-    padding: 0px 2px;
+    margin: 5px;
+    padding: 0px;
 }
 
-.websiteCard:hover {
-    border: 1px solid white;
+.websiteCard:hover{
+    height: 65px;
+    width: 60px;
+    margin: 0px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
+
+
 
 .websiteCardWrapper {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     display: flex;
     align-items: center;
-    flex-direction: row;
+    flex-direction: column;
     vertical-align: middle;
-    margin-top: 2px;
+    background-color: white;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    margin-top: 3px;
 }
 
 .websiteCardWrapper img {
-    width: 16px;
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+
     height: auto;
 }
 
+
 .websiteCardWrapper p {
-    font-size: 10px;
+    position: absolute;
+    bottom: 0px;
+    font-size: 0.9vw;
     font-weight: 400;
     letter-spacing: 0.5px;
-    margin: 0 2px;
-    padding-top: 1px;
+    margin: 0;
 }

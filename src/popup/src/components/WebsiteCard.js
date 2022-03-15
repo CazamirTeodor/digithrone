@@ -20,9 +20,10 @@ class WebsiteCard extends React.Component {
         }
     }
 
-    toggle = _ => {
-
+    toggle = event => {
+        console.log(event.target);
         getData((data) => {
+            console.log("Data is ", data);
             data.cookies[this.props.platform].enabled = !this.state.active;
             setData({ data: data }, () => {
                 this.setState({
@@ -34,7 +35,7 @@ class WebsiteCard extends React.Component {
 
     render() {
         return (
-            <div className='websiteCard' onClick={this.toggle} style={{ backgroundColor: this.state.active ? "#B5FFB5" : "#FFB5B5", transition: ".3s" }}>
+            <div className='websiteCard' onClick={this.toggle} style={{ backgroundColor: this.state.active ? "#53A551" : "#D13023", transition: ".3s" }}>
                 <div className='websiteCardWrapper'>
                     <img className="websiteLogo" src={this.props.logo} alt="logo" />
                     <p>{this.props.platform}</p>

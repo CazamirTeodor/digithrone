@@ -30,11 +30,11 @@ class WebsitesPage extends React.Component {
 
     setAll = (value) => {
         getData((data) => {
-            Object.keys(data.cookies).forEach( (platform) => {
+            Object.keys(data.cookies).forEach((platform) => {
                 data.cookies[platform].enabled = value;
             });
 
-            setData({data : data}, () => {
+            setData({ data: data }, () => {
                 this.setState({
                     data: data
                 })
@@ -54,32 +54,38 @@ class WebsitesPage extends React.Component {
         return (
 
             <div className='page websitesPage'>
-                {this.state.data === undefined ?
-                    <Loader /> :
-                    <div>
-                        <BackButton {...this.props} />
-                        <p className="Title">WEBSITES</p>
+                <BackButton {...this.props} />
+                <p className="Title">WEBSITES</p>
+                {
+                    this.state.data === undefined ?
+                        <Loader /> :
+                        <div>
+                            <div className='websitesList'>
+                                {
+                                    Object.keys(this.state.data.cookies).map((platform) => {
+                                        console.log(platform);
+                                        return <WebsiteCard
+                                            key={platform}
+                                            active={this.state.data.cookies[platform].enabled}
+                                            logo={this.state.data.cookies[platform].logo}
+                                            platform={platform}
 
-                        <div className='websitesList'>
-                            {
-                                Object.keys(this.state.data.cookies).map((platform) => {
-                                    console.log(platform);
-                                    return <WebsiteCard
-                                        key={platform}
-                                        active={this.state.data.cookies[platform].enabled}
-                                        logo={this.state.data.cookies[platform].logo}
-                                        platform={platform}
-
-                                    />
-                                })
-                            }
+                                        />
+                                    })
+                                }
+                            </div>
                         </div>
-                        <div className='optionsBtns'>
-                            <div className="greyBtn" onClick={() => this.setAll(true)}><p>Enable all</p></div>
-                            <div className="greyBtn" onClick={() => this.setAll(false)}><p>Disable all</p></div>
-                        </div>
-                    </div>
                 }
+
+                {
+                    /*
+                    <div className='optionsBtns'>
+                        <div className="greyBtn" onClick={() => this.setAll(true)}><p>Enable all</p></div>
+                        <div className="greyBtn" onClick={() => this.setAll(false)}><p>Disable all</p></div>
+                    </div>
+                    */
+                }
+
             </div>
         );
     }
