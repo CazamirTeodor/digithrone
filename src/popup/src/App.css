@@ -7,13 +7,14 @@
   margin: 0px;
   padding: 0px;
   text-align: center;
-  height: 192px;
+  height: 198px;
   width: 352px;
   font-family: Helvetica;
 }
 
 .page {
   position: absolute;
-  height: 190px;
+  overflow: hidden;
+  height: 196px;
   width: 350px;
 }

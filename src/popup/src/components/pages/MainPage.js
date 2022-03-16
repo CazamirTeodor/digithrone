@@ -1,7 +1,7 @@
 import React from "react";
 import Logo from "../../assets/logo_b.png";
-import SettingsIcon from "../../assets/settings_w.png";
-import StorageIndicator from "../StorageIndicator";
+import CookiesIcon from "../../assets/cookies-colored.png";
+import HistoryIcon from "../../assets/history-colored.png";
 import SwitchComponent from "../SwitchComponent";
 import { Link, withRouter } from 'react-router-dom';
 import "../../styles/MainPage.css";
@@ -67,23 +67,32 @@ class MainPage extends React.Component {
         */
         return (
             <div className="page mainPage" style={{ backgroundColor: this.state.active ? "#AFF8CE" : "#F8AFAF", transition: "all .3s ease" }}>
-                <img className="Logo" src={Logo} alt="Logo" />
-                <p className="Title">DIGITHRONE</p>
-                <p className="Banner">WELCOME BACK,</p>
-                <p className="Username">{this.state.name}</p>
-                <p className="statusText">{this.state.active ? "ON" : "OFF"}</p>
-                <div className="dashboard">
-                    <StorageIndicator />
-                    <SwitchComponent id="status" active={this.state.active} toggleFunction={this.switchToggle} />
-                    <Link to="/settings">
-                        <div className="settingsBtn">
-                            <img className="settingsIcon" src={SettingsIcon} alt="settingsIcon" />
+                <section className="header">
+                    <div className="Title">
+                        <img className="Logo" src={Logo} alt="Logo" />
+                        <p>DIGITHRONE</p>
+                    </div>
+                    <p className="Username">{this.state.name}</p>
+                    <div className="logoutBtn" onClick={this.logout}>
+                        <p>LOG OUT</p>
+                    </div>
+                </section>
+                <section className="dashboard">
+                    <Link to="/history">
+                        <div className="dashboardBtn">
+                            <img className="historyIcon" src={HistoryIcon} alt="historyIcon" />
+                            <p>History</p>
                         </div>
                     </Link>
-                </div>
-                <div className="logoutBtn" onClick={this.logout}>
-                    <p>LOG OUT</p>
-                </div>
+                    <SwitchComponent id="status" active={this.state.active} toggleFunction={this.switchToggle} />
+                    <Link to="/cookies">
+                        <div className="dashboardBtn">
+                            <img className="cookiesIcon" src={CookiesIcon} alt="cookiesIcon" />
+                            <p>Cookies</p>
+                        </div>
+                    </Link>
+                </section>
+
             </div>
         );
     }

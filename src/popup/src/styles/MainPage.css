@@ -5,76 +5,43 @@
     border-radius: 5px;
   }
 
-  .App .mainPage .Logo { 
-    width: 35px;
-    margin: 10px auto 0px auto;
+  .App .mainPage .header {
+    position: relative;
+    height: 28px;
+    background-color: white;
+  }
+  
+  .App .mainPage .header .Title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
 
-  .App .mainPage .Title {
+  .App .mainPage .header .Title img { 
+    height: 19px;
+    margin-right: 5px;
+  }
+
+  .App .mainPage .header .Title p { 
     color: black;
     font-size: 10px;
     font-weight: 550;
     letter-spacing: 2.3px;
-    margin: 0px 0px 10px 0px;
-  }
-
-  .App .mainPage .Banner {
-    color: black;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    font-weight: 450;
-    margin: 10px 0px 0px 0px;
+    margin: 0;
   }
 
   .App .mainPage .Username {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translate(0, -50%);
     color: black;
     font-size: 10px;
     letter-spacing: 1.5px;
-    font-weight: 550;
-    margin: 0px;
-  }
-
-  .App .mainPage .dashboard {
-    margin: 0px 0px 15px 0px;
-    display: flex;
-    justify-content: space-evenly;
-    flex-direction: row;
-    vertical-align: middle;
-    align-items: center;
-  }
-
-  .App .mainPage .dashboard .settingsBtn {
-    text-decoration: none;
-    width: 55px;
-    height: 55px;
-    background-color: rgb(88, 88, 88);
-    border: 2px solid black;
-    border-radius: 12px;
-    display: flex;
-    vertical-align: middle;
-    justify-content: center;
-    flex-direction: row;
-    cursor: pointer;
-  }
-
-  .App .mainPage .dashboard .settingsBtn:hover {
-    border: 2px solid white;
-  }
-
-  .App .mainPage .dashboard .settingsBtn .settingsIcon {
-    height: 37px;
-    margin: auto;
-  }
-
-  .App .mainPage .statusText {
-    margin: 0px;
-    padding: 0px;
-    font-size: 11px;
-    position: relative;
-    top: 11px;
     font-weight: 600;
-    letter-spacing: 1px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0px;
   }
 
   .App .mainPage .logoutBtn {
@@ -83,22 +50,79 @@
     background-color: black;
     color: white;
     padding: 3px;
-    border-radius: 10px;
-    display: inline-flex;
-    position: relative;
-    top: -23px;
+    border-radius: 5px;
+    width: 60px;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translate(0, -50%);
+    right: 5px;
     cursor: pointer;
     border: 1px solid black;
   }
 
-  .App .mainPage .logoutBtn:hover {
+  .App .mainPage .header .logoutBtn:hover {
     background-color: white;
     color: black;
   }
 
-  .App .mainPage .logoutBtn p {
+  .App .mainPage .header .logoutBtn p {
     font-size: 9px;
     font-weight: 500;
     margin: 0px 5px;
     letter-spacing: 1px;
   }
+
+  .App .mainPage .dashboard {
+    margin: 0px 10% 15px 10%;
+    display: grid;
+    grid-template-columns: 30% 30% 30%;
+    grid-template-rows: 70px;
+    grid-column-gap: 10px;
+    align-items: center;
+
+
+    justify-content: center;
+    justify-items: center;
+    align-content: center;
+  }
+
+  .App .mainPage .dashboard .dashboardBtn {
+    position: relative;
+    display: grid;
+    width: 60px;
+    height: 60px;
+    background-color: rgb(120, 13, 13);
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    filter: grayscale(100%);
+  }
+
+  .App .mainPage .dashboard .dashboardBtn:hover {
+    background-color: white;
+    color: black;
+    filter: grayscale(0%);
+    height: 65px;
+    width: 65px;
+    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+  }
+
+  .App .mainPage .dashboard .dashboardBtn .cookiesIcon, .historyIcon {
+    height: 47%;
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    transform: translate(-50%, -48%);
+  }
+
+  .App .mainPage .dashboard .dashboardBtn p {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    bottom: 3px;
+    margin: 0;
+    font-size: 10px;
+  }
+

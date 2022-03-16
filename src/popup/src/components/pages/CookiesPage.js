@@ -1,11 +1,11 @@
 import React from 'react';
 import BackButton from '../BackButton';
 import WebsiteCard from '../WebsiteCard';
-import '../../styles/WebsitesPage.css';
+import '../../styles/CookiesPage.css';
 import Loader from '../Loader';
 import { getData, setData } from '../Utils';
 
-class WebsitesPage extends React.Component {
+class CookiesPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -61,7 +61,7 @@ class WebsitesPage extends React.Component {
 
     render() {
         return (
-            <div className='page websitesPage'>
+            <div className='page cookiesPage'>
                 <BackButton {...this.props} />
                 <p className="Title">WEBSITES</p>
                 <input name="searchTerm" type="text" placeholder='Search platform' value={this.state.searchTerm} onChange={this.inputHandler} />
@@ -103,4 +103,4 @@ class WebsitesPage extends React.Component {
         );
     }
 }
-export default WebsitesPage;
+export default CookiesPage;

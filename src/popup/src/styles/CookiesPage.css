@@ -1,11 +1,11 @@
-.App .websitesPage {
+.App .cookiesPage {
     
     border: 1px solid black;
     border-radius: 5px;
     background-color: #E7F1FA;
   }
 
-  .App .websitesPage .Title {
+  .App .cookiesPage .Title {
     color: black;
     font-size: 10px;
     font-weight: 550;
@@ -13,7 +13,7 @@
     margin: 10px 0px 5px 0px;
   }
 
-  .App .websitesPage .optionsBtns {
+  .App .cookiesPage .optionsBtns {
       position: absolute;
       width: 100%;
       bottom: 7px;
@@ -23,7 +23,7 @@
       justify-content: space-evenly;
   }
 
-  .App .websitesPage .optionsBtns .greyBtn {
+  .App .cookiesPage .optionsBtns .greyBtn {
     transition: 0.3s;
     height: 25px;
     background-color: #585858;
@@ -38,18 +38,18 @@
     padding: 0 40px;
 }
 
-.App .websitesPage .optionsBtns .greyBtn:hover {
+.App .cookiesPage .optionsBtns .greyBtn:hover {
   color: black;
   background-color: white;
   border: 1px solid black;
 }
 
-.App .websitesPage .optionsBtns .greyBtn p {
+.App .cookiesPage .optionsBtns .greyBtn p {
     font-size: 11px;
     letter-spacing: 0.5px;
 }
 
-.App .websitesPage input[name="searchTerm"] {
+.App .cookiesPage input[name="searchTerm"] {
   background-color: white;
   text-align: center;
   height: 15px;
@@ -59,7 +59,7 @@
   margin-bottom: 3px;
 }
 
-.App .websitesPage .websitesList {
+.App .cookiesPage .websitesList {
     display: grid;
     margin-left: -10px;
     grid-template-columns: 50px 50px 50px 50px 50px;

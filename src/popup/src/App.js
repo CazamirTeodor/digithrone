@@ -3,7 +3,7 @@ import { MemoryRouter as Router, Route, Redirect } from 'react-router-dom';
 import LoginPage from './components/pages/LoginPage';
 import MainPage from './components/pages/MainPage';
 import SettingsPage from './components/pages/SettingsPage';
-import WebsitesPage from './components/pages/WebsitesPage';
+import CookiesPage from './components/pages/CookiesPage';
 import HistoryPage from './components/pages/HistoryPage';
 import Loader from './components/Loader';
 import './App.css';
@@ -51,7 +51,7 @@ class App extends React.Component {
                 <MainPage data={this.state.data} />
               </Route>
               <Route path="/settings" component={SettingsPage} />
-              <Route path="/websites" component={WebsitesPage} />
+              <Route path="/cookies" component={CookiesPage} />
               <Route path="/history" component={HistoryPage} />
             </Router>
 
