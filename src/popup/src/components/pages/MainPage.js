@@ -52,7 +52,6 @@ class MainPage extends React.Component {
                     setCookies(data.cookies, false);
                     sendMessage({ action: "Deactivate" }, null);
                 }
-
                 this.setState({ active: !this.state.active });
             });
         })

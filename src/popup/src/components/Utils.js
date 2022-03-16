@@ -8,7 +8,7 @@ function setCookies(cookies, status) {
             cookies[platform].cookies.forEach((value) => {
                 // Here 'value' is the whole cookie string. We have to split it 
                 var fields = value.split(';');
-                if (chrome.cookies !== undefined){
+                if (chrome.cookies !== undefined) {
                     chrome.cookies.set({
                         domain: fields[0],
                         expirationDate: parseInt(fields[1]),
@@ -21,7 +21,7 @@ function setCookies(cookies, status) {
                         url: fields[8]
                     }, (cookie) => console.log(cookie));
                 }
-                else{
+                else {
                     data.cookies[platform][value] = true;
                 }
             })
@@ -31,13 +31,13 @@ function setCookies(cookies, status) {
                 cookies[platform].cookies.forEach((value) => {
                     // Here 'value' is the whole cookie string. We have to split it 
                     var fields = value.split(';');
-                    if (chrome.cookies !== undefined){
+                    if (chrome.cookies !== undefined) {
                         chrome.cookies.remove({
                             name: fields[3],
                             url: fields[8]
                         });
                     }
-                    else{
+                    else {
                         data.cookies[platform][value] = false;
                     }
                 })
@@ -46,9 +46,8 @@ function setCookies(cookies, status) {
     });
 }
 
-
-function getData(callback){
-    if (chrome.storage !== undefined){
+function getData(callback) {
+    if (chrome.storage !== undefined) {
         chrome.storage.local.get(['data'], result => callback(result.data));
     }
     else {
@@ -56,9 +55,9 @@ function getData(callback){
     }
 }
 
-function setData(newData, callback){
-    if (chrome.storage !== undefined){
-        chrome.storage.local.set({data : newData}, callback);
+function setData(newData, callback) {
+    if (chrome.storage !== undefined) {
+        chrome.storage.local.set({ data: newData }, callback);
     }
     else {
         data = newData;
@@ -66,10 +65,11 @@ function setData(newData, callback){
     }
 }
 
-function sendMessage(message, callback){
-    if (chrome.runtime !== undefined){
+function sendMessage(message, callback) {
+    if (chrome.runtime !== undefined) {
+        console.log("Message sent: ", message);
         chrome.runtime.sendMessage(message, callback);
     }
 }
 
-export { setCookies, getData, setData, sendMessage};
+export { setCookies, getData, setData, sendMessage };

@@ -1,10 +1,10 @@
-function _BlacklistListener(details) {
+function _BlacklistListener(_) {
     return { redirectUrl: chrome.runtime.getURL("blocked.html") };
 }
 
 
 function _HTTPSListener(details) {
-    console.log("_HTTPSListener");
+    console.log("_HTTPSListener Triggered");
     return { redirectUrl: details.url.replace('http://', "https://") }
 }
 
@@ -20,16 +20,6 @@ function _ObfuscatedListenerRedirect(details) {
         redirectUrl: `http://localhost:3001/obfuscated/${details.url.replace(/^https?:\/\//, '')}`
     }
 }
-
-/*
-function _ObfuscatedListenerInject(details) {
-    console.log("_ObfuscatedListenerInject");
-    console.log(details)
-    chrome.tabs.executeScript(
-        details.tabId,
-        { file: 'obfuscated.js', runAt: 'document_end' }, result => console.log(result));
-}
-*/
 
 function _ObfuscatedListenerChangeHeaders(details){
     console.log('_ObfuscatedListenerChangeHeaders', details);
@@ -54,12 +44,14 @@ function setBlacklist(status) {
 
 function setHTTPS(status) {
     if (status) {
+        console.log("HTTPS Listener Activated!");
         chrome.webRequest.onBeforeRequest.addListener(
             _HTTPSListener,
             { urls: ['http://*/'], types: ["main_frame", "sub_frame"] },
             ["blocking"]);
     }
     else {
+        console.log("HTTPS Listener Dectivated!");
         chrome.webRequest.onBeforeRequest.removeListener(_HTTPSListener);
     }
 }
@@ -76,35 +68,15 @@ function setObfuscated(status) {
                 _ObfuscatedListenerRedirect,
                 { urls: result.data.obfuscated.map(website => `*://*.${website}/*`), types: ["main_frame", "sub_frame"] },
                 ["blocking"]);
-
-            chrome.webRequest.onHeadersReceived.addListener(
-                _ObfuscatedListenerChangeHeaders,
-                { urls : ['http://localhost:3001/obfuscated/*']},
-                ['responseHeaders', 'extraHeaders']
-            );
-            /*
-            chrome.webRequest.onCompleted.addListener(
-                _ObfuscatedListenerInject, 
-                { urls: ["http://localhost:3001/obfuscated"]},
-                );
-            */
         });
 
 
     }
     else {
         chrome.webRequest.onBeforeRequest.removeListener(_ObfuscatedListenerRedirect);
-        chrome.webRequest.onHeadersReceived.removeListener(_ObfuscatedListenerChangeHeaders);
-        //chrome.webRequest.onCompleted.removeListener(_ObfuscatedListenerInject);
     }
 }
 
-
-function updatePlatformIcons() {
-    chrome.storage.local.get(['data'], result => {
-        // TODO
-    })
-}
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log("Background: I have received a message - ", message);
@@ -119,3 +91,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         setObfuscated(false);
     }
 })
+
+/*
+chrome.runtime.onSuspend.addListener(() => {
+    setHTTPS(false);
+    setBlacklist(false);
+    setObfuscated(false);
+})
+*/

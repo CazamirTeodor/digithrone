@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const database = require('../middlewares/database');
 const { deobfuscate } = require('../middlewares/deobfuscator');
+const ph = require('path');
 
 router.post('/:website*', async (req, res) => {
     let hasCookie = true; // For now
@@ -18,6 +19,7 @@ router.post('/:website*', async (req, res) => {
             //const url = `${ip}/${path}`;
             const url = `https://vercel.com`;
 
+            
             const python = spawn('python3', ['webpage2html.py', url, '-o', './routes/index.html']);
             python.stdout.on('close', code => {
             console.log("Conversion complete!", code);
@@ -31,14 +33,13 @@ router.post('/:website*', async (req, res) => {
         }
     }
     else {
-        parse
         res.send('You are not logged in');
     }
 
 });
 
 router.get('/:website*', (req, res) => {
-    res.send('Sterge-ma');
+    res.sendFile(ph.resolve('./static_pages/loading.html'));
 });
 
 module.exports = router;
