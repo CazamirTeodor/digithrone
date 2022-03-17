@@ -65,6 +65,33 @@ function setData(newData, callback) {
     }
 }
 
+function parseCookie(cookie) {
+    let fields = cookie.domain.split('.');
+    var host;
+
+    if (fields.slice(-2).join('.') === "co.uk") {
+        host = fields[fields.length - 3];
+    }
+    else {
+        host = fields[fields.length - 2];
+    }
+
+    return {
+        host: host,
+        tld: fields.pop()
+    }
+}
+
+function getMemoryCookies(callback) {
+    if (chrome.cookies !== undefined) {
+        //chrome.cookies.getAllCookieStores((result) => console.log('All Cookie Stores: ', result));
+        chrome.cookies.getAll({ storeId: '0' }, result => callback(result));
+    }
+    else {
+        callback([{ domain: "test.com", enabled: false }]);
+    }
+}
+
 function sendMessage(message, callback) {
     if (chrome.runtime !== undefined) {
         console.log("Message sent: ", message);
@@ -72,4 +99,4 @@ function sendMessage(message, callback) {
     }
 }
 
-export { setCookies, getData, setData, sendMessage };
+export { getMemoryCookies, setCookies, parseCookie, getData, setData, sendMessage };

@@ -1,25 +1,41 @@
+/*global chrome*/
 import React from 'react';
 import BackButton from '../BackButton';
 import WebsiteCard from '../WebsiteCard';
 import '../../styles/CookiesPage.css';
 import Loader from '../Loader';
-import { getData, setData } from '../Utils';
+import { getData, setData, parseCookie, getMemoryCookies } from '../Utils';
 
 class CookiesPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            cookies: undefined,
+            cloud_cookies: undefined,
+            chrome_cookies : undefined,
             searchTerm: ''
         }
     }
 
     componentDidMount() {
         getData((data) => {
-            if (data){
+            getMemoryCookies((result) => {
+                var chrome_cookies = {};
 
-            }
-                this.setState({ cookies: data.cookies })
+                result.forEach(cookie => {
+                    var cookie_data = parseCookie(cookie);
+                    var host = cookie_data.host;
+                    var tld = cookie_data.tld;
+                    if (host === undefined) return
+                    console.log(`http://${host}.${tld}/favicon.ico`);
+                    if (!(host in chrome_cookies))
+                        chrome_cookies[host] = {
+                            enabled: true,
+                            logo_url: `http://${host}.${tld}/favicon.ico`
+                        };
+                })
+                
+                this.setState({ cloud_cookies: data.cookies, chrome_cookies: chrome_cookies })
+            })
         });
     }
 
@@ -60,31 +76,50 @@ class CookiesPage extends React.Component {
     }
 
     render() {
+        console.log(this.state.chrome_cookies, this.state.cloud_cookies);
         return (
             <div className='page cookiesPage'>
                 <BackButton {...this.props} />
                 <p className="Title">WEBSITES</p>
                 <input name="searchTerm" type="text" placeholder='Search platform' value={this.state.searchTerm} onChange={this.inputHandler} />
                 {
-                    this.state.cookies === undefined ?
+                    ((this.state.cloud_cookies === undefined) && 
+                    (this.state.chrome_cookies === undefined)) ?
                         <Loader /> :
                         <div>
                             <div className='websitesList'>
                                 {
-                                    Object.keys(this.state.cookies).sort().map((platform) => {
+                                    /*
+                                    Object.keys(this.state.cloud_cookies).sort().map((platform) => {
                                         if (platform.toLowerCase().startsWith(this.state.searchTerm.toLowerCase())) {
                                             return <WebsiteCard
                                                 key={platform}
-                                                active={this.state.cookies[platform].enabled}
-                                                disabled={"force" in this.state.cookies[platform] ? true : false}
-                                                logo={this.state.cookies[platform].logo}
+                                                active={this.state.cloud_cookies[platform].enabled}
+                                                disabled={"force" in this.state.cloud_cookies[platform] ? true : false}
                                                 platform={platform}
                                             />
                                         }
-                                        else{
+                                        else {
                                             return null;
                                         }
                                     })
+                                    */
+                                    Object.keys(this.state.chrome_cookies).sort().map((platform) => {
+                                        if (platform.toLowerCase().startsWith(this.state.searchTerm.toLowerCase())) {
+                                            return <WebsiteCard
+                                                key={platform}
+                                                active={this.state.chrome_cookies[platform].enabled}
+                                                disabled={"force" in this.state.chrome_cookies[platform] ? true : false}
+                                                logo_url={this.state.chrome_cookies[platform].logo_url}
+                                                platform={platform}
+                                            />
+                                        }
+                                        else {
+                                            return null;
+                                        }
+                                    })
+
+                                    //console.log("These are the memory cookies ", chrome_cookies, Object.getOwnPropertyNames(chrome_cookies), Object.getOwnPropertyNames(chrome_cookies).sort())
                                 }
                             </div>
                         </div>

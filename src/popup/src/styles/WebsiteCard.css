@@ -53,4 +53,9 @@
     font-weight: 400;
     letter-spacing: 0.5px;
     margin: 0;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 45px;
 }

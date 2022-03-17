@@ -58,12 +58,6 @@ class MainPage extends React.Component {
     }
 
     render() {
-        /*
-        chrome.cookies.getAllCookieStores((result) => console.log('All Cookie Stores: ', result));
-        chrome.cookies.getAll({
-            storeId : '0'
-        }, (result) => console.log(result))
-        */
         return (
             <div className="page mainPage" style={{ backgroundColor: this.state.active ? "#AFF8CE" : "#F8AFAF", transition: "all .3s ease" }}>
                 <section className="header">

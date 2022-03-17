@@ -20,13 +20,10 @@ class App extends React.Component {
 
   componentDidMount() {
     getData( (data) => {
-      console.log("Entering callback ", data);
       if ((data !== undefined) && ("logged_in" in data)) {
           this.setState({ data: data });
       }
-      else
-      {
-        console.log("Setting data to null for ", this);
+      else{
         this.setState({ data: null });
       }
     });
@@ -35,7 +32,6 @@ class App extends React.Component {
 
 
   render() {
-    console.log(this.state);
     return (
       <div className="App">
         {
