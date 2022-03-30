@@ -29,12 +29,12 @@ class WebsiteCard extends React.Component {
                 reader.onload = function(){ callback(this.result) } ;
                 reader.readAsDataURL(blob) ;
             }) ) ;
-
         if (response_status === 200)
             this.setState({logo_data : data});
     }
 
     componentDidUpdate(prev_props) {
+        console.log("Component updated!");
         if (this.props !== prev_props) {
             this.setState({
                 active: this.props.active,
@@ -64,8 +64,6 @@ class WebsiteCard extends React.Component {
                 filter: "grayscale(100%)"
             }
         }
-
-        console.log(this.props.logo_url);
 
         return (
             <div className='websiteCard'

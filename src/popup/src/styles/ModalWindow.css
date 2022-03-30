@@ -10,6 +10,7 @@
     outline: none;
 }
 
+
 .modalBody {
     height: 105px;
     width: 190px;
@@ -24,7 +25,18 @@
     border: 1px solid black;
     box-shadow: 0 2 10px black;
     backdrop-filter: blur(5px);
+    animation: progressive 0.5s;
     overflow: hidden;
+}
+
+@keyframes progressive {
+    0% {
+        filter: blur(0px);
+    }
+
+    100% {
+        filter: blur(5px);
+    }
 }
 
 .modalBody .top {

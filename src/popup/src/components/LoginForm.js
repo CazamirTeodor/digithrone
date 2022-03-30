@@ -25,6 +25,7 @@ class LoginForm extends React.Component {
             email,
             password
         };
+        
 
 
         axios.post(`http://${this.state.server}:3001/login`, data)
@@ -33,12 +34,15 @@ class LoginForm extends React.Component {
                     var updated = res.data.data;
                     updated.logged_in = true; // User is marked as logged in
                     updated.active = false; // Extension is not active by default
+                    updated.server = this.state.server;
+                    updated.backendUp = true;
 
                     setData(updated, () => {
                         this.props.history.push({
                             pathname: '/dashboard',
                             state: {
                                 active: false,
+                                backendUp: true,
                                 name: res.data.data.name
                             }
                         });

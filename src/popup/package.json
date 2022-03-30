@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.17.2",
+    "@craco/craco": "^6.4.3",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -13,10 +14,11 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "browserify-css": "^0.15.0",
     "cross-fetch": "^3.1.5",
+    "path": "^0.12.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router": "^5.2.0",
-    "react-scripts": "5.0.0",
+    "react-scripts": "^5.0.0",
     "url-parse": "^1.5.10",
     "vinyl-source-stream": "^2.0.0",
     "web-vitals": "^2.1.4"
@@ -24,8 +26,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test --env=jsdom"
   },
   "eslintConfig": {
     "extends": [

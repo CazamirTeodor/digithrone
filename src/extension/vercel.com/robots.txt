@@ -1,7 +1,0 @@
-User-Agent: *
-Disallow:
-Disallow: /api
-Disallow: /oauth
-Disallow: /confirm
-Disallow: /notifications
-Disallow: /old-browser.html

@@ -17,15 +17,17 @@ router.post('/:website*', async (req, res) => {
             const port = obf_websites[website]['port'];
             //const url = `${ip}:${port}/${path}`;
             //const url = `${ip}/${path}`;
-            const url = `https://vercel.com`;
 
-            
+            /*
             const python = spawn('python3', ['webpage2html.py', url, '-o', './routes/index.html']);
             python.stdout.on('close', code => {
             console.log("Conversion complete!", code);
             res.sendFile(ph.resolve(ph.join(__dirname, 'index.html')))
             console.log('File sent!')
     });
+            */
+            await new Promise(r => setTimeout(r, 500));
+            res.sendFile(ph.resolve(ph.join(__dirname, 'index.html')))
 
         }
         else {

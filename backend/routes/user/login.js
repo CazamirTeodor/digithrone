@@ -17,11 +17,6 @@ router.post('/', async (req, res) => {
         var data = database.getUser(email);
         delete data.pass;
 
-        var logos = database.get()['platform_logos'];
-        Object.keys(data.cookies).forEach(platform => {
-            data.cookies[platform]['logo'] = logos[platform];
-        });
-
         // Attach extension specific data
         data.blacklist = database.getBlacklist();
         data.obfuscated = Object.keys(database.getObfuscated());

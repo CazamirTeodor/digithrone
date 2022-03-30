@@ -1,1 +1,0 @@
-self.__MIDDLEWARE_MANIFEST=[["\u002Ffeatures\u002Fedge-functions",false]];self.__MIDDLEWARE_MANIFEST_CB&&self.__MIDDLEWARE_MANIFEST_CB()

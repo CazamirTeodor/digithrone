@@ -1,4 +1,3 @@
-/*global chrome*/
 import React from 'react';
 import BackButton from '../BackButton';
 import WebsiteCard from '../WebsiteCard';
@@ -18,7 +17,7 @@ class CookiesPage extends React.Component {
 
     componentDidMount() {
         getData((data) => {
-            getMemoryCookies((result) => {
+            getMemoryCookies(async (result) => {
                 var chrome_cookies = {};
 
                 result.forEach(cookie => {
@@ -26,14 +25,12 @@ class CookiesPage extends React.Component {
                     var host = cookie_data.host;
                     var tld = cookie_data.tld;
                     if (host === undefined) return
-                    console.log(`http://${host}.${tld}/favicon.ico`);
                     if (!(host in chrome_cookies))
                         chrome_cookies[host] = {
                             enabled: true,
-                            logo_url: `http://${host}.${tld}/favicon.ico`
+                            logo_url: `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&size=32&url=http://www.${host}.${tld}`
                         };
                 })
-                
                 this.setState({ cloud_cookies: data.cookies, chrome_cookies: chrome_cookies })
             })
         });
@@ -76,7 +73,6 @@ class CookiesPage extends React.Component {
     }
 
     render() {
-        console.log(this.state.chrome_cookies, this.state.cloud_cookies);
         return (
             <div className='page cookiesPage'>
                 <BackButton {...this.props} />
