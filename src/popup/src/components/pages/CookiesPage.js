@@ -3,7 +3,7 @@ import BackButton from '../BackButton';
 import WebsiteCard from '../WebsiteCard';
 import '../../styles/CookiesPage.css';
 import Loader from '../Loader';
-import { getData, setData, parseCookie, getMemoryCookies } from '../Utils';
+import { getData, setData, parseCookie, getCookies } from '../Utils';
 
 class CookiesPage extends React.Component {
     constructor(props) {
@@ -17,7 +17,7 @@ class CookiesPage extends React.Component {
 
     componentDidMount() {
         getData((data) => {
-            getMemoryCookies(async (result) => {
+            getCookies(async (result) => {
                 var chrome_cookies = {};
 
                 result.forEach(cookie => {

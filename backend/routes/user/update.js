@@ -1,1 +1,0 @@
-// Updates user's data periodically

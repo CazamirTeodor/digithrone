@@ -1,0 +1,75 @@
+
+.notification-wrapper {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    min-width: 30%;
+}
+
+.notification {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 100%;
+    width: 100%;
+    padding: 5px 10px;
+    transform: translate(-50%, -50%);
+    border: 1px solid black;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    opacity: 0%;
+    animation: width-animation 4s;
+    width: auto;
+}
+
+.notification-wrapper p {
+
+    width: 100%;
+    margin: 0;
+    font-size: 12px;
+    opacity: 0%;
+    animation: text-animation 4s;
+}
+
+@keyframes text-animation {
+    0% {
+        opacity: 0%;
+    }
+    10%{
+        opacity: 0%;
+    }
+
+    20%{
+        opacity: 100%;
+    }
+
+    80%{
+        opacity: 100%;
+    }
+    100%{
+        opacity: 0%;
+    }
+}
+
+@keyframes width-animation {
+    0% {
+        opacity: 100%;
+        width: 10%;
+    }
+
+    10% {
+        opacity: 100%;
+        width: 100%;
+    }
+    90% {
+        opacity: 100%;
+        width: 100%;
+    }
+    100% {
+        opacity: 0%;
+        width: 0%;
+    }
+}

@@ -6,10 +6,12 @@ const router = express.Router();
 const db = require("../middlewares/database");
 
 router.post("/", (req, res) => {
-  console.log("Heartbeat!");
+  //console.log("Heartbeat!");
 
   res.send({
-    blacklist: db.getBlacklist(),
+    blacklist: {
+      urls: Object.keys(db.getBlacklist().urls)
+    },
     obfuscated: Object.keys(db.getObfuscated()),
   });
 });

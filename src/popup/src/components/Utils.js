@@ -79,13 +79,33 @@ function parseCookie(cookie) {
   };
 }
 
-function getMemoryCookies(callback) {
+function getCookies(callback) {
   if (chrome.cookies !== undefined) {
     //chrome.cookies.getAllCookieStores((result) => console.log('All Cookie Stores: ', result));
     chrome.cookies.getAll({ storeId: "0" }, (result) => callback(result));
   } else {
     callback([{ domain: "google.com", enabled: false }]);
   }
+}
+
+function getCookie(name, url, callback) {
+  if (chrome.cookies !== undefined) {
+    chrome.cookies.get({ name: name, url: url }, (cookie) => {
+      callback(cookie);
+    });
+  }
+}
+
+function getAuthCookie(callback) {
+  getData((data) => {
+    const port = 3001;
+    const server = data.server;
+    const scheme = "http";
+
+    getCookie("digithrone-auth-cookie", `${scheme}://${server}:${port}`, 
+      (cookie) => callback(cookie)
+    )
+  });
 }
 
 function sendMessage(message, callback) {
@@ -95,11 +115,67 @@ function sendMessage(message, callback) {
   }
 }
 
+// Sends request to the backend server
+function sendRequest({
+  route = "/",
+  server = null,
+  body = {},
+  method = "POST",
+  maxTries = 3,
+  timeout = 3000
+}, callback) {
+  getData(async (data) => {
+    const backend_port = 3001;
+    const backend_ip = server? server : data.server;
+    const scheme = "http";
+
+    const controller = new AbortController();
+
+    var tries = 0;
+    while (tries < maxTries) {
+      try {
+        var id = setTimeout(() => controller.abort(), timeout);
+        const res = await fetch(
+          `${scheme}://${backend_ip}:${backend_port}${route}`,
+          {
+            method: method,
+            credentials: "include",
+            timeout: timeout,
+            signal: controller.signal,
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify(body),
+          }
+        );
+
+        clearTimeout(id);
+        switch (res.status) {
+          case 200:
+            callback(res);
+            return;
+          default:
+            console.log("Trying...");
+            tries += 1;
+        }
+      } catch (e) {
+        clearTimeout(id);
+        console.log("Trying...");
+        //console.log(e);
+        await new Promise(r => setTimeout(r, timeout));
+        tries += 1;
+      }
+    }
+    callback(null);
+  });
+}
+
 export {
-  getMemoryCookies,
+  getCookies,
+  getCookie,
+  getAuthCookie,
   setCookies,
   parseCookie,
   getData,
   setData,
-  sendMessage
+  sendMessage,
+  sendRequest,
 };

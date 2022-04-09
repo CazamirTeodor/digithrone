@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter as Router, Route, Redirect } from 'react-router-dom';
 import LoginPage from './components/pages/LoginPage';
 import MainPage from './components/pages/MainPage';
-import SettingsPage from './components/pages/SettingsPage';
+import PasswordsPage from './components/pages/PasswordsPage';
 import CookiesPage from './components/pages/CookiesPage';
 import HistoryPage from './components/pages/HistoryPage';
 import Loader from './components/Loader';
@@ -46,9 +46,9 @@ class App extends React.Component {
               <Route path="/dashboard">
                 <MainPage data={this.state.data} />
               </Route>
-              <Route path="/settings" component={SettingsPage} />
-              <Route path="/cookies" component={CookiesPage} />
               <Route path="/history" component={HistoryPage} />
+              <Route path="/cookies" component={CookiesPage} />
+              <Route path="/passwords" component={PasswordsPage} />
             </Router>
 
         }

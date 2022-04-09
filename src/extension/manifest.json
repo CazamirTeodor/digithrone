@@ -7,15 +7,15 @@
         "scripts" : ["background.js"]
     },
     
-    "permissions" : ["<all_urls>", "activeTab", "storage", "cookies", "webRequest", "webNavigation", "webRequestBlocking", "tabs"],
+    "permissions" : ["<all_urls>", "activeTab", "storage", "cookies", "webRequest", "webNavigation", "webRequestBlocking", "tabs", "contextMenus"],
     "web_accessible_resources" : [
-        "blocked.html"
+        "/pages/*"
     ],
 
     "content_scripts" : [
         {
             "matches" : ["*://localhost/*"],
-            "js" : ["obfuscated.js"],
+            "js" : ["/pages/obfuscated/obfuscated.js"],
             "run_at" : "document_end"
         }
     ],

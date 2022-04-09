@@ -4,7 +4,7 @@ import '../../styles/SettingsPage.css';
 import { Link } from 'react-router-dom';
 import BackButton from "../BackButton";
 
-class SettingsPage extends React.Component{
+class PasswordsPage extends React.Component{
     render()
     {
         return (
@@ -20,4 +20,4 @@ class SettingsPage extends React.Component{
     }
 }
 
-export default SettingsPage;
+export default PasswordsPage;

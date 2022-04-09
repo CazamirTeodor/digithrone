@@ -2,11 +2,18 @@ import React from "react";
 import Logo from "../../assets/logo_b.png";
 import CookiesIcon from "../../assets/cookies-colored.png";
 import HistoryIcon from "../../assets/history-colored.png";
+import PasswordsIcon from "../../assets/lock.png";
 import SwitchComponent from "../SwitchComponent";
 import { Link, withRouter } from "react-router-dom";
 import "../../styles/MainPage.css";
 
-import { getData, setCookies, setData, sendMessage } from "../Utils";
+import {
+  getData,
+  setCookies,
+  setData,
+  sendMessage,
+} from "../Utils";
+import Notification from "../Notification";
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -17,43 +24,51 @@ class MainPage extends React.Component {
         active: this.props.location.state.active,
         name: this.props.location.state.name,
         backendUp: this.props.location.state.backendUp,
+        notificationMsg: this.props.location.state.notificationMsg, // Notifies the user that the cookie is available for a limited ammount of time
         heartbeatFunction: undefined,
+        cookieExpires: this.props.location.state.cookieExpires
       };
+      console.log("State set from location.state");
     } else {
       this.state = {
         active: this.props.data.active,
         name: this.props.data.name,
+        notificationMsg: undefined,
         backendUp: this.props.data.backendUp,
       };
+      console.log("State set from data");
     }
   }
 
   componentDidMount() {
-    this.setState({ heartbeatFunction: setInterval(this.heartbeat, 2500) });
+    if (this.props.location.state){
+      var state = this.props.location.state;
+      state.notificationMsg = undefined;
+      this.props.history.replace(this.props.location.pathname, state);
+    }
+    this.setState({heartbeatFunction: setInterval(this.heartbeat, 2500)});
   }
 
   heartbeat = () => {
     getData((data) => {
       if (data.backendUp && !this.state.backendUp) {
-        this.setState({ backendUp: true });
-        console.log("Backend is online!");
+        this.setState({ backendUp: true, notificationMsg: "backend-up" });
       } else if (!data.backendUp && this.state.backendUp) {
-        this.setState({ backendUp: false });
-        console.log("Backend is offline!");
+        this.setState({ backendUp: false, notificationMsg: "backend-down" });
       }
     });
   };
 
   logout = () => {
-    getData((data) => {
-      var updated = data;
-      updated.logged_in = false;
-      updated.active = false;
-      delete updated.server;
-      clearInterval(this.state.heartbeatFunction);
-      sendMessage({ action: "Deactivate" }, null);
-      setData(updated, () => {
-        this.props.history.push("/login");
+    var data = {};
+    data.logged_in = false;
+
+    sendMessage({ action: "LoggedOut" }, () => {
+      setData(data, () => {
+        clearInterval(this.state.heartbeatFunction);
+        setData(data, () => {
+          this.props.history.push("/login");
+        });
       });
     });
   };
@@ -86,6 +101,37 @@ class MainPage extends React.Component {
         offline: { backgroundColor: "#D21D1D" },
       },
     };
+    var notification;
+    console.log("this.state.notificationMsg :>> ", this.state.notificationMsg);
+    if (this.state.notificationMsg) {
+      switch (this.state.notificationMsg) {
+        case "logged-in":
+          notification = (
+            <Notification
+              msg={`${this.state.cookieExpires} hours until authentication cookie is invalidated!`}
+              type="neutral"
+            />
+          );
+          break;
+        case "backend-up":
+          notification = (
+            <Notification msg="Backend went online!" type="green" />
+          );
+          break;
+        case "backend-down":
+          notification = (
+            <Notification msg="Backend went offline!" type="red" />
+          );
+          break;
+        default:
+          break;
+      }
+      // Removes element after notification shown
+      setTimeout(() => {
+        this.setState({ notificationMsg: undefined });
+      }, 4000);
+    } else notification = null;
+
     return (
       <div
         className="page mainPage"
@@ -121,25 +167,28 @@ class MainPage extends React.Component {
         <section className="settings">
           <Link to="/history">
             <div className="settingsBtn">
-              <img
-                className="historyIcon"
-                src={HistoryIcon}
-                alt="historyIcon"
-              />
+              <img className="btnIcon" src={HistoryIcon} alt="historyIcon" />
               <p>History</p>
             </div>
           </Link>
           <Link to="/cookies">
             <div className="settingsBtn">
-              <img
-                className="cookiesIcon"
-                src={CookiesIcon}
-                alt="cookiesIcon"
-              />
+              <img className="btnIcon" src={CookiesIcon} alt="cookiesIcon" />
               <p>Cookies</p>
             </div>
           </Link>
+          <Link to="/passwords">
+            <div className="settingsBtn">
+              <img
+                className="btnIcon"
+                src={PasswordsIcon}
+                alt="passwordsIcon"
+              />
+              <p>Passwords</p>
+            </div>
+          </Link>
         </section>
+        {notification}
       </div>
     );
   }

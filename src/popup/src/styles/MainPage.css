@@ -1,6 +1,5 @@
 .App .mainPage {
   border: 1px solid black;
-  border-radius: 5px;
   transition: all .3s ease;
 }
 
@@ -97,7 +96,7 @@
   width: 100%;
 
   display: grid;
-  grid-template-columns: 49% 49%;
+  grid-template-columns: 32% 32% 32%;
   column-gap: 2%;
 }
 
@@ -119,8 +118,7 @@
 }
 
 
-.App .mainPage .settings .settingsBtn .cookiesIcon,
-.historyIcon {
+.App .mainPage .settings .settingsBtn .btnIcon {
   height: 47%;
   position: absolute;
   left: 50%;
