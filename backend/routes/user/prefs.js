@@ -3,8 +3,10 @@ const router = express.Router();
 const db = require('../../middlewares/database');
 
 
-router.post("/prefs", (req, res) => {
-    const user = db.getUser(cookie)
+router.post("/", (req, res) => {
+    console.log("You are authorized!");
+    const user = res.locals.user;
+    res.send({message: `Request made by ${user}`})
 });
 
 

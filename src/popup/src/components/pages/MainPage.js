@@ -7,12 +7,7 @@ import SwitchComponent from "../SwitchComponent";
 import { Link, withRouter } from "react-router-dom";
 import "../../styles/MainPage.css";
 
-import {
-  getData,
-  setCookies,
-  setData,
-  sendMessage,
-} from "../Utils";
+import { getData, setData, sendMessage } from "../Utils";
 import Notification from "../Notification";
 
 class MainPage extends React.Component {
@@ -26,7 +21,6 @@ class MainPage extends React.Component {
         backendUp: this.props.location.state.backendUp,
         notificationMsg: this.props.location.state.notificationMsg, // Notifies the user that the cookie is available for a limited ammount of time
         heartbeatFunction: undefined,
-        cookieExpires: this.props.location.state.cookieExpires
       };
       console.log("State set from location.state");
     } else {
@@ -41,16 +35,16 @@ class MainPage extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.location.state){
+    if (this.props.location.state) {
       var state = this.props.location.state;
       state.notificationMsg = undefined;
       this.props.history.replace(this.props.location.pathname, state);
     }
-    this.setState({heartbeatFunction: setInterval(this.heartbeat, 2500)});
+    this.setState({ heartbeatFunction: setInterval(this.heartbeat, 2500) });
   }
 
   heartbeat = () => {
-    getData((data) => {
+    getData(["backendUp"], (data) => {
       if (data.backendUp && !this.state.backendUp) {
         this.setState({ backendUp: true, notificationMsg: "backend-up" });
       } else if (!data.backendUp && this.state.backendUp) {
@@ -60,33 +54,22 @@ class MainPage extends React.Component {
   };
 
   logout = () => {
-    var data = {};
-    data.logged_in = false;
-
     sendMessage({ action: "LoggedOut" }, () => {
-      setData(data, () => {
+      setData({ logged_in: false }, () => {
         clearInterval(this.state.heartbeatFunction);
-        setData(data, () => {
-          this.props.history.push("/login");
-        });
+        this.props.history.push("/login");
       });
     });
   };
 
   switchToggle = () => {
-    getData((data) => {
-      data.active = !this.state.active;
-
-      setData(data, () => {
-        if (!this.state.active) {
-          setCookies(data.cookies, true);
-          sendMessage({ action: "Activate" }, null);
-        } else {
-          setCookies(data.cookies, false);
-          sendMessage({ action: "Deactivate" }, null);
-        }
-        this.setState({ active: !this.state.active });
-      });
+    setData({ active: !this.state.active }, () => {
+      if (!this.state.active) {
+        sendMessage({ action: "Activate" }, null);
+      } else {
+        sendMessage({ action: "Deactivate" }, null);
+      }
+      this.setState({ active: !this.state.active });
     });
   };
 
@@ -108,7 +91,9 @@ class MainPage extends React.Component {
         case "logged-in":
           notification = (
             <Notification
-              msg={`${this.state.cookieExpires} hours until authentication cookie is invalidated!`}
+              msg={
+                "Your session will be invalidated on logout or on browser close!"
+              }
               type="neutral"
             />
           );

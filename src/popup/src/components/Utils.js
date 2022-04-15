@@ -46,21 +46,23 @@ function setCookies(cookies, status) {
   });
 }
 
-function getData(callback) {
-  if (chrome.storage !== undefined) {
-    chrome.storage.local.get(["data"], (result) => callback(result.data));
+function getData(keys, callback) {
+  if (chrome.storage) {
+    chrome.storage.local.get(keys, (result) => callback(result));
   } else {
     callback(data);
   }
 }
 
-function setData(newData, callback) {
-  if (chrome.storage !== undefined) {
-    chrome.storage.local.set({ data: newData }, callback);
+function setData(items, callback) {
+  if (chrome.storage) {
+    chrome.storage.local.set(items, callback);
   } else {
-    data = newData;
-    callback();
+    for (const key of Object.keys(items)) {
+      data[key] = items[key];
+    }
   }
+  callback();
 }
 
 function parseCookie(cookie) {
@@ -80,7 +82,7 @@ function parseCookie(cookie) {
 }
 
 function getCookies(callback) {
-  if (chrome.cookies !== undefined) {
+  if (chrome.cookies) {
     //chrome.cookies.getAllCookieStores((result) => console.log('All Cookie Stores: ', result));
     chrome.cookies.getAll({ storeId: "0" }, (result) => callback(result));
   } else {
@@ -89,44 +91,46 @@ function getCookies(callback) {
 }
 
 function getCookie(name, url, callback) {
-  if (chrome.cookies !== undefined) {
-    chrome.cookies.get({ name: name, url: url }, (cookie) => {
-      callback(cookie);
-    });
-  }
-}
-
-function getAuthCookie(callback) {
-  getData((data) => {
-    const port = 3001;
-    const server = data.server;
-    const scheme = "http";
-
-    getCookie("digithrone-auth-cookie", `${scheme}://${server}:${port}`, 
-      (cookie) => callback(cookie)
-    )
+  chrome?.cookies.get({ name: name, url: url }, (cookie) => {
+    callback(cookie);
   });
 }
 
+
+// function getSessionCookie(callback) {
+//   getData(['server'], (data) => {
+//     const port = 3001;
+//     const server = data.server;
+//     const scheme = "http";
+
+//     getCookie(
+//       "digithrone-auth-cookie",
+//       `${scheme}://${server}:${port}`,
+//       (cookie) => callback(cookie)
+//     );
+//   });
+//}
+
 function sendMessage(message, callback) {
-  if (chrome.runtime !== undefined) {
-    console.log("Message sent: ", message);
-    chrome.runtime.sendMessage(message, callback);
-  }
+  console.log("Message sent: ", message);
+  chrome?.runtime.sendMessage(message, callback);
 }
 
 // Sends request to the backend server
-function sendRequest({
-  route = "/",
-  server = null,
-  body = {},
-  method = "POST",
-  maxTries = 3,
-  timeout = 3000
-}, callback) {
-  getData(async (data) => {
+function sendRequest(
+  {
+    route = "/",
+    server = null,
+    body = {},
+    method = "POST",
+    maxTries = 3,
+    timeout = 3000,
+  },
+  callback
+) {
+  getData(['server'], async (data) => {
     const backend_port = 3001;
-    const backend_ip = server? server : data.server;
+    const backend_ip = server ?? data.server;
     const scheme = "http";
 
     const controller = new AbortController();
@@ -142,7 +146,7 @@ function sendRequest({
             credentials: "include",
             timeout: timeout,
             signal: controller.signal,
-            headers: { "Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
           }
         );
@@ -160,7 +164,7 @@ function sendRequest({
         clearTimeout(id);
         console.log("Trying...");
         //console.log(e);
-        await new Promise(r => setTimeout(r, timeout));
+        await new Promise((r) => setTimeout(r, timeout));
         tries += 1;
       }
     }
@@ -171,7 +175,6 @@ function sendRequest({
 export {
   getCookies,
   getCookie,
-  getAuthCookie,
   setCookies,
   parseCookie,
   getData,

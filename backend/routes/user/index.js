@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const login_route = require("./login");
+const prefs_route = require("./prefs");
+//const sync_route = require("../sync");
 
-
-router.use("/login", login_route);
-//router.use("/cookies", cookies_router);
+router.use("/prefs", prefs_route);
+//router.use("/sync", generateSession, sync_route);
 
 
 module.exports = router;

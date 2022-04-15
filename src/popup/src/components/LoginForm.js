@@ -1,7 +1,6 @@
 import React from "react";
 import Loader from "./Loader";
-import axios from "axios";
-import { setData, sendMessage, sendRequest, getAuthCookie } from "./Utils";
+import { setData, sendMessage, sendRequest} from "./Utils";
 import Notification from "./Notification";
 
 class LoginForm extends React.Component {
@@ -42,35 +41,23 @@ class LoginForm extends React.Component {
           var json = await res.json();
           if (json.message === "Success!") {
             console.log("Success!");
-
-            var updated = json.data;
-            updated.logged_in = true;
-            updated.active = false;
-            updated.server = this.state.server;
-            updated.blacklist.reports = {};
-            updated.backendUp = true;
-            setData(updated, () => {
+            
+            json.logged_in = true;
+            json.active = false;
+            json.server = this.state.server;
+            json.blacklist.reports = {};
+            json.backendUp = true;
+            setData(json, () => {
               sendMessage({ action: "LoggedIn" }, null);
 
-              getAuthCookie((cookie) => {
-                const expiration_time = new Date(cookie.expirationDate);
-                const now_time = new Date(Date.now());
-                var seconds = Math.floor((expiration_time - now_time) / 1000);
-                var minutes = Math.floor(seconds / 60);
-                var hours = Math.floor(minutes / 60);
-                var days = Math.floor(hours / 24);
-                hours = hours - days * 24;
-
-                this.props.history.push({
-                  pathname: "/dashboard",
-                  state: {
-                    active: false,
-                    backendUp: true,
-                    name: json.data.name,
-                    notificationMsg: "logged-in",
-                    cookieExpires: hours,
-                  },
-                });
+              this.props.history.push({
+                pathname: "/dashboard",
+                state: {
+                  active: false,
+                  backendUp: true,
+                  name: json.data.name,
+                  notificationMsg: "logged-in",
+                },
               });
             });
           } else {
