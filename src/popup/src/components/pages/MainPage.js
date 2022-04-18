@@ -68,6 +68,11 @@ class MainPage extends React.Component {
       } else {
         sendMessage({ action: "Deactivate" }, null);
       }
+      if (this.props.location.state) {
+        var state = this.props.location.state;
+        state.active = !this.props.location.state.active;
+        this.props.history.replace(this.props.location.pathname, state);
+      }
       this.setState({ active: !this.state.active });
     });
   };
