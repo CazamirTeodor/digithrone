@@ -36,6 +36,7 @@ class WebsiteCard extends React.Component {
     if (response_status === 200) this.setState({ logo_data: data });
   }
 
+  /*
   componentDidUpdate(prev_props) {
     console.log("Component updated!");
     if (this.props !== prev_props) {
@@ -45,10 +46,18 @@ class WebsiteCard extends React.Component {
       });
     }
   }
+  */
 
-  toggle = (_) => {
-    this.setState({
-      active: !this.state.active,
+  toggle = (e) => {
+    getData("prefferences", (data) => {
+      data.prefferences.cookies[this.props.platform].active =
+        !this.state.active;
+      setData(data, () => {
+        console.log("Updated!", !this.state.active);
+        this.setState({
+          active: !this.state.active,
+        });
+      });
     });
   };
 
@@ -87,10 +96,7 @@ class WebsiteCard extends React.Component {
             }
             alt="logo"
           />
-          <p>
-            {this.props.platform.charAt(0).toUpperCase() +
-              this.props.platform.slice(1)}
-          </p>
+          <p>{this.props.platform}</p>
         </div>
       </div>
     );

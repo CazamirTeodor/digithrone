@@ -19,10 +19,9 @@ class MainPage extends React.Component {
         active: this.props.location.state.active,
         name: this.props.location.state.name,
         backendUp: this.props.location.state.backendUp,
-        notificationMsg: this.props.location.state.notificationMsg, // Notifies the user that the cookie is available for a limited ammount of time
+        notificationMsg: this.props.location.state.notificationMsg,
         heartbeatFunction: undefined,
       };
-      console.log("State set from location.state");
     } else {
       this.state = {
         active: this.props.data.active,
@@ -30,7 +29,6 @@ class MainPage extends React.Component {
         notificationMsg: undefined,
         backendUp: this.props.data.backendUp,
       };
-      console.log("State set from data");
     }
   }
 
@@ -40,6 +38,7 @@ class MainPage extends React.Component {
       state.notificationMsg = undefined;
       this.props.history.replace(this.props.location.pathname, state);
     }
+    console.log('this.state :>> ', this.state);
     this.setState({ heartbeatFunction: setInterval(this.heartbeat, 2500) });
   }
 
@@ -85,7 +84,6 @@ class MainPage extends React.Component {
       },
     };
     var notification;
-    console.log("this.state.notificationMsg :>> ", this.state.notificationMsg);
     if (this.state.notificationMsg) {
       switch (this.state.notificationMsg) {
         case "logged-in":

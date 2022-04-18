@@ -1,6 +1,6 @@
 import React from "react";
 import Loader from "./Loader";
-import { setData, sendMessage, sendRequest} from "./Utils";
+import { setData, sendMessage, sendRequest } from "./Utils";
 import Notification from "./Notification";
 
 class LoginForm extends React.Component {
@@ -35,13 +35,11 @@ class LoginForm extends React.Component {
 
     this.setState({ loading: true });
     sendRequest(
-      { server: this.state.server, route: "/user/login", body: body },
+      { server: this.state.server, route: "/login", body: body },
       async (res) => {
         if (res) {
           var json = await res.json();
           if (json.message === "Success!") {
-            console.log("Success!");
-            
             json.logged_in = true;
             json.active = false;
             json.server = this.state.server;
@@ -49,13 +47,13 @@ class LoginForm extends React.Component {
             json.backendUp = true;
             setData(json, () => {
               sendMessage({ action: "LoggedIn" }, null);
-
+              console.log("Logged in!");
               this.props.history.push({
                 pathname: "/dashboard",
                 state: {
-                  active: false,
-                  backendUp: true,
-                  name: json.data.name,
+                  active: json.active,
+                  backendUp: json.backendUp,
+                  name: json.name,
                   notificationMsg: "logged-in",
                 },
               });

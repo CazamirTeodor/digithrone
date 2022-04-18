@@ -30,47 +30,47 @@ function _ObfuscatedListenerRedirect(details) {
 
 function _StorageListener(data, areaName) {
   console.log("data :>> ", data);
-
   // On logout
-  if (!data.data.newValue.logged_in) {
+  if (!data?.logged_in?.newValue) {
     return;
   }
 
-  if (
-    !equalArrays(
-      data.data.newValue.blacklist.urls,
-      data.data.oldValue.blacklist.urls
-    ) ||
-    !equalArrays(
-      Object.keys(data.data.newValue.blacklist.reports),
-      Object.keys(data.data.oldValue.blacklist.reports)
-    ) ||
-    !data.data.oldValue
-  ) {
-    setBlacklist(false);
-    setBlacklist(true);
-    console.log("Blacklist updated!");
+  if (data?.blacklist) {
+    if (
+      !equalArrays(
+        data.blacklist.urls.newValue,
+        data.blacklist.urls.oldValue
+      ) ||
+      !equalArrays(
+        Object.keys(data.blacklist.reports.newValue),
+        Object.keys(data.blacklist.reports.newValue)
+      ) ||
+      !data.blacklist.oldValue
+    ) {
+      setBlacklist(false);
+      setBlacklist(true);
+      console.log("Blacklist updated!");
+    }
   }
 
-  if (
-    !equalArrays(
-      data.data.newValue.obfuscated,
-      data.data.oldValue.obfuscated
-    ) ||
-    !data.data.oldValue
-  ) {
-    setObfuscated(false);
-    setObfuscated(true);
-    console.log("Obfuscated updated!");
+  if (data?.obfuscated) {
+    if (
+      !equalArrays(data.obfuscated.newValue, data.obfuscated.obfuscated) ||
+      !data.obfuscated.oldValue
+    ) {
+      setObfuscated(false);
+      setObfuscated(true);
+      console.log("Obfuscated updated!");
+    }
   }
 }
 
 function setBlacklist(status) {
   if (status) {
-    chrome.storage.local.get(["data"], (result) => {
+    chrome.storage.local.get(["blacklist"], (result) => {
       var urls = [];
 
-      var blacklist = result.data.blacklist;
+      var blacklist = result.blacklist;
       var url_arrays = [blacklist.urls, Object.keys(blacklist.reports)];
 
       for (var i = 0; i < url_arrays.length; i++) {
@@ -116,11 +116,11 @@ function setHTTPS(status) {
 
 function setObfuscated(status) {
   if (status) {
-    chrome.storage.local.get(["data"], (result) => {
+    chrome.storage.local.get(["obfuscated"], (result) => {
       chrome.webRequest.onBeforeRequest.addListener(
         _ObfuscatedListenerRedirect,
         {
-          urls: result.data.obfuscated.map((website) => `*://*.${website}/*`),
+          urls: result.obfuscated.map((website) => `*://*.${website}/*`),
           types: ["main_frame", "sub_frame"],
         },
         ["blocking"]
@@ -145,54 +145,55 @@ function equalArrays(arr1, arr2) {
 
 function heartbeat() {
   console.log("Heartbeat");
-  chrome.storage.local.get(["data"], (result) => {
-    if (result.data !== undefined) {
-      if (result.data.logged_in) {
-        fetch(`http://${result.data.server}:3001/heartbeat`, { method: "POST" })
-          .then(async (res) => {
-            if (res.status !== 200 && result.data.backendUp) {
-              result.data.backendUp = false;
-              console.log("Backend is offline!");
-              chrome.storage.local.set({ data: result.data });
-            } else if (res.status === 200) {
-              if (!result.data.backendUp) {
-                result.data.backendUp = true;
-                console.log("Backend is online!");
-              }
-              res = await res.json();
+  chrome.storage.local.get(
+    ["data", "logged_in", "server", "backendUp", "blacklist", "obfuscated"],
+    (result) => {
+      if (result) {
+        if (result.logged_in) {
+          fetch(`http://${result.server}:3001/heartbeat`, { method: "POST" })
+            .then(async (res) => {
+              if (res.status !== 200 && result.backendUp) {
+                result.backendUp = false;
+                console.log("Backend is offline!");
+                chrome.storage.local.set(result);
+              } else if (res.status === 200) {
+                if (!result.backendUp) {
+                  result.backendUp = true;
+                  console.log("Backend is online!");
+                }
+                res = await res.json();
 
-              if (
-                !equalArrays(res.blacklist.urls, result.data.blacklist.urls)
-              ) {
-                result.data.blacklist.urls = res.blacklist.urls;
-              }
+                if (!equalArrays(res.blacklist.urls, result.blacklist.urls)) {
+                  result.blacklist.urls = res.blacklist.urls;
+                }
 
-              if (!equalArrays(res.obfuscated, result.data.obfuscated)) {
-                result.data.obfuscated = res.obfuscated;
-              }
+                if (!equalArrays(res.obfuscated, result.obfuscated)) {
+                  result.obfuscated = res.obfuscated;
+                }
 
-              chrome.storage.local.set({ data: result.data });
-            }
-          })
-          .catch((err) => {
-            console.log("err :>> ", err);
-            if (result.data.backendUp) {
-              result.data.backendUp = false;
-              console.log("Backend is offline!");
-              chrome.storage.local.set({ data: result.data }, () =>
-                console.log("Storage updated!")
-              );
-            }
-          });
+                chrome.storage.local.set(result);
+              }
+            })
+            .catch((err) => {
+              console.log("err :>> ", err);
+              if (result.backendUp) {
+                result.backendUp = false;
+                console.log("Backend is offline!");
+                chrome.storage.local.set(result, () =>
+                  console.log("Storage updated!")
+                );
+              }
+            });
+        }
       }
     }
-  });
+  );
 }
 
 function report_url(data, tab) {
-  chrome.storage.local.get(["data"], (result) => {
-    result.data.url = tab.url;
-    chrome.storage.local.set({ data: result.data }, () => {
+  chrome.storage.local.get(["url"], (result) => {
+    result.url = tab.url;
+    chrome.storage.local.set(result, () => {
       chrome.tabs.update(tab.id, {
         url: chrome.runtime.getURL("/pages/report/build/index.html"),
       });
@@ -200,7 +201,7 @@ function report_url(data, tab) {
   });
 }
 
-function updateUser(){
+function updateUser() {
   console.log("User updated!");
 }
 
@@ -219,7 +220,9 @@ function setUserAutoUpdater(status) {
 }
 
 setInterval(heartbeat, 5000);
-chrome.cookies.onChanged.addListener((details) => console.log('Cookie changed details :>> ', details))
+chrome.cookies.onChanged.addListener((details) =>
+  console.log("Cookie changed details :>> ", details)
+);
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.action) {
     case "Activate": {

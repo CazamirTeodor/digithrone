@@ -20,9 +20,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/login", login_route);
 
+app.use("/heartbeat", heartbeat_route);
 app.use(authenticate);
 app.use("/user", user_route);
-app.use("/heartbeat", heartbeat_route);
 
 // app.use() // Limit so only the extension can do these requests
 app.use("/obfuscated", obfuscated_route);

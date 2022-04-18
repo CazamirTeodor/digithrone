@@ -2,7 +2,6 @@
 
 const express = require("express");
 const crypto = require("crypto");
-const auth = require("../middlewares/auth");
 const database = require("../middlewares/database");
 const router = express.Router();
 const cors = require("cors");

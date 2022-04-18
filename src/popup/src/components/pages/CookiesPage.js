@@ -17,20 +17,25 @@ class CookiesPage extends React.Component {
   componentDidMount() {
     getData(["prefferences"], (data) => {
       getCookies(async (result) => {
-        var chrome_cookies = {};
-
         result.forEach((cookie) => {
           var cookie_data = parseCookie(cookie);
-          var host = cookie_data.host;
-          var tld = cookie_data.tld;
-          if (host === undefined) return;
-          if (!(host in chrome_cookies))
-            chrome_cookies[host] = {
-              enabled: true,
-              logo_url: `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&size=32&url=http://www.${host}.${tld}`,
+
+          const host = cookie_data.host
+            ? cookie_data.host.charAt(0).toUpperCase() +
+              cookie_data.host.substring(1).toLowerCase()
+            : null;
+          if (host) {
+            if (host in data.prefferences.cookies) return;
+
+            data.prefferences.cookies[host] = {
+              domain: cookie_data.domain,
+              active: true,
             };
+          }
         });
-        this.setState({ cookies: data.prefferences.cookies });
+        setData(data, () => {
+          this.setState({ cookies: data.prefferences.cookies });
+        });
       });
     });
   }
@@ -58,37 +63,35 @@ class CookiesPage extends React.Component {
         ) : (
           <div>
             <div className="websitesList">
-              {
-                Object.keys(this.state.cookies)
-                  .sort()
-                  .map((platform) => {
-                    if (
-                      platform
-                        .toLowerCase()
-                        .startsWith(this.state.searchTerm.toLowerCase())
-                    ) {
-                      return (
-                        <WebsiteCard
-                          key={platform}
-                          active={this.state.cookies[platform].enabled}
-                          disabled={
-                            "forced" in this.state.cookies[platform]
-                              ? true
-                              : false
-                          }
-                          logo_url={
-                            this.state.cookies[platform].logo_url
-                          }
-                          platform={platform}
-                        />
-                      );
-                    } else {
-                      return null;
-                    }
-                  })
+              {Object.keys(this.state.cookies)
+                .sort()
+                .map((platform) => {
+                  if (
+                    platform
+                      .toLowerCase()
+                      .startsWith(this.state.searchTerm.toLowerCase())
+                  ) {
 
-                
-              }
+                    const domain = this.state.cookies[platform].domain;
+                    var logo_url = domain.replace(/^www\./, "");
+                    logo_url = domain.replace(/^\./, "");
+                    return (
+                      <WebsiteCard
+                        key={platform}
+                        active={this.state.cookies[platform].active}
+                        disabled={
+                          "forced" in this.state.cookies[platform]
+                            ? true
+                            : false
+                        }
+                        logo_url={`https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&size=32&url=http://www.${logo_url}`}
+                        platform={platform}
+                      />
+                    );
+                  } else {
+                    return null;
+                  }
+                })}
             </div>
           </div>
         )}

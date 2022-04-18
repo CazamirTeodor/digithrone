@@ -1,4 +1,3 @@
-const express = require("express");
 const fs = require("fs");
 const { v1: uuidv1, v4: uuidv4 } = require("uuid");
 

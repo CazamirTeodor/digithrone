@@ -62,7 +62,6 @@ function setData(items, callback) {
       data[key] = items[key];
     }
   }
-  callback();
 }
 
 function parseCookie(cookie) {
@@ -77,7 +76,8 @@ function parseCookie(cookie) {
 
   return {
     host: host,
-    tld: fields.pop(),
+    tld: fields[fields.length - 1],
+    domain: fields.join("."),
   };
 }
 
@@ -112,7 +112,6 @@ function getCookie(name, url, callback) {
 //}
 
 function sendMessage(message, callback) {
-  console.log("Message sent: ", message);
   chrome?.runtime.sendMessage(message, callback);
 }
 
