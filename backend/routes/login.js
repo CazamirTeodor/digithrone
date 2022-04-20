@@ -6,7 +6,7 @@ const database = require("../middlewares/database");
 const router = express.Router();
 const cors = require("cors");
 const corsOptions = { 
-  origin: "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp",
+  //origin: "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp",
   credentials: true,
 };
 

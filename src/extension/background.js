@@ -35,6 +35,8 @@ function _StorageListener(data, areaName) {
     return;
   }
 
+  if (data?.prefferences) console.log("Prefferences updated!");
+
   if (data?.blacklist) {
     if (
       !equalArrays(
@@ -63,6 +65,46 @@ function _StorageListener(data, areaName) {
       console.log("Obfuscated updated!");
     }
   }
+}
+
+function _RequestListener(details) {
+  if (
+    details.initiator ==
+      "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp" ||
+    details.url.startsWith(
+      "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
+    )
+  )
+    return {};
+  console.log("details :>> ", details);
+
+  var result = fetch("http://localhost:3001/request", {
+    method: "POST",
+    body: JSON.stringify(details),
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      switch (res.status) {
+        case "Allow":
+          chrome.tabs.update(details.tabId, { url: details.url }, () =>
+            console.log("Redirected!")
+          );
+          break;
+        case "Deny":
+          chrome.tabs.update(
+            details.tabId,
+            { url: chrome.runtime.getURL("/pages/blocked/blocked.html") },
+            () => console.log("Redirected!")
+          );
+      }
+    });
+  return { redirectUrl: "javascript:" };
+  // Get all prefferences
+
+  // Get all cookies that match that domain from the backend
+
+  // Apply them to the request headers
 }
 
 function setBlacklist(status) {
@@ -130,6 +172,20 @@ function setObfuscated(status) {
     chrome.webRequest.onBeforeRequest.removeListener(
       _ObfuscatedListenerRedirect
     );
+  }
+}
+
+function setRequestListener(status) {
+  if (status) {
+    console.log("RequestListener activated!");
+    chrome.webRequest.onBeforeRequest.addListener(
+      _RequestListener,
+      { urls: ["<all_urls>"], types: ["main_frame"] },
+      ["blocking"]
+    );
+  } else {
+    console.log("RequestListener deactivated!");
+    chrome.webRequest.onBeforeRequest.removeListener(_RequestListener);
   }
 }
 
@@ -220,23 +276,23 @@ function setUserAutoUpdater(status) {
 }
 
 setInterval(heartbeat, 5000);
-chrome.cookies.onChanged.addListener((details) =>
-  console.log("Cookie changed details :>> ", details)
-);
+chrome.cookies.onChanged.addListener((details) => null);
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.action) {
     case "Activate": {
-      setHTTPS(true);
-      setBlacklist(true);
-      setObfuscated(true);
-      setUserAutoUpdater(true);
+      //setHTTPS(true);
+      //setBlacklist(true);
+      //setObfuscated(true);
+      setRequestListener(true);
+      //setUserAutoUpdater(true);
       break;
     }
     case "Deactivate": {
-      setHTTPS(false);
-      setBlacklist(false);
-      setObfuscated(false);
-      setUserAutoUpdater(false);
+      //setHTTPS(false);
+      //setBlacklist(false);
+      //setObfuscated(false);
+      setRequestListener(false);
+      //setUserAutoUpdater(false);
       break;
     }
     case "LoggedIn": {
@@ -250,10 +306,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
     }
     case "LoggedOut": {
-      setHTTPS(false);
-      setBlacklist(false);
-      setObfuscated(false);
-      setUserAutoUpdater(false);
+      // setHTTPS(false);
+      // setBlacklist(false);
+      // setObfuscated(false);
+      // setUserAutoUpdater(false);
       chrome.contextMenus.removeAll();
       chrome.storage.onChanged.removeListener(_StorageListener);
       break;

@@ -1,6 +1,12 @@
 /*global chrome*/
 
-var data = {};
+var data = {
+  logged_in : true,
+  active: true,
+  name: "C. Teodor",
+  backendUp: true,
+  server: 'localhost',
+};
 
 function setCookies(cookies, status) {
   Object.keys(cookies).forEach((platform) => {
@@ -50,7 +56,11 @@ function getData(keys, callback) {
   if (chrome.storage) {
     chrome.storage.local.get(keys, (result) => callback(result));
   } else {
-    callback(data);
+    const selected = {};
+    for (var key of keys){
+      selected[key] = data[key];
+    }
+    callback(selected);
   }
 }
 
@@ -127,6 +137,7 @@ function sendRequest(
   },
   callback
 ) {
+
   getData(['server'], async (data) => {
     const backend_port = 3001;
     const backend_ip = server ?? data.server;

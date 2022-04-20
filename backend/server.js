@@ -7,6 +7,7 @@ const cookie_parser = require("cookie-parser");
 
 const config = require("./config");
 const login_route = require("./routes/login");
+const request_route = require("./routes/request");
 const obfuscated_route = require("./routes/obfuscated");
 const heartbeat_route = require("./routes/heartbeat");
 const report_route = require("./routes/report");
@@ -23,6 +24,7 @@ app.use("/login", login_route);
 app.use("/heartbeat", heartbeat_route);
 app.use(authenticate);
 app.use("/user", user_route);
+app.use("/request", request_route);
 
 // app.use() // Limit so only the extension can do these requests
 app.use("/obfuscated", obfuscated_route);

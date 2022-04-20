@@ -38,8 +38,10 @@ class MainPage extends React.Component {
       state.notificationMsg = undefined;
       this.props.history.replace(this.props.location.pathname, state);
     }
-    console.log('this.state :>> ', this.state);
-    this.setState({ heartbeatFunction: setInterval(this.heartbeat, 2500) });
+    console.log("this.state :>> ", this.state);
+
+    if (!this.state.heartbeatFunction)
+      this.setState({ heartbeatFunction: setInterval(this.heartbeat, 2500) });
   }
 
   heartbeat = () => {
