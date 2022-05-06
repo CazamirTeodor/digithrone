@@ -38,6 +38,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(config["SERVER_PORT"], () => {
-  console.log(config);
+  //console.log(config);
   console.log(`Server listening on ${config["SERVER_PORT"]}`);
 });

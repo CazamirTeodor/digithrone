@@ -2,10 +2,16 @@
 
 const express = require("express");
 const crypto = require("crypto");
-const database = require("../middlewares/database");
+const {
+  validateCredentials,
+  generateSession,
+  getBlacklist,
+  getObfuscated,
+  getUser,
+} = require("../middlewares/database");
 const router = express.Router();
 const cors = require("cors");
-const corsOptions = { 
+const corsOptions = {
   //origin: "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp",
   credentials: true,
 };
@@ -22,22 +28,30 @@ router.post("/", cors(corsOptions), async (req, res) => {
       .update(password)
       .digest("hex");
 
-    if (database.validateCredentials(email, hashed_password)) {
-      const session = database.generateSession(email);
-      const session_cookie = Buffer.from(email + ":" + session).toString('base64');
+    if (await validateCredentials(email, hashed_password)) {
+      const session = await generateSession(email);
+      const session_cookie = Buffer.from(email + ":" + session).toString(
+        "base64"
+      );
 
-
-      let user = database.getUser(email);
+      const user = await getUser(email);
       res.cookie("digithrone-session-cookie", session_cookie, {
         expires: 0, // Make it a session cookie
       });
-      
+
+      const blacklist = await getBlacklist();
+      const blacklist_urls = Object.keys(blacklist.urls);
+      const obfuscated_urls = [];
+      const websites = await getObfuscated();
+      websites.forEach((website) => {
+        obfuscated_urls.push(website.url);
+      });
       res.send({
         message: "Success!",
         name: user.name,
         prefferences: user.prefferences,
-        blacklist: { urls: Object.keys(database.getBlacklist().urls) },
-        obfuscated: Object.keys(database.getObfuscated()),
+        blacklist: { urls: blacklist_urls },
+        obfuscated: obfuscated_urls,
       });
     } else {
       res.send({ message: "Incorrect credentials!" });

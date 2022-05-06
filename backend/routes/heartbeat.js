@@ -9,9 +9,6 @@ router.post("/", (req, res) => {
   //console.log("Heartbeat!");
 
   res.send({
-    blacklist: {
-      urls: Object.keys(db.getBlacklist().urls)
-    },
     obfuscated: Object.keys(db.getObfuscated()),
   });
 });
