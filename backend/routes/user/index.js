@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const prefs_route = require("./prefs");
 const sync_route = require("./sync");
+const stats_route = require("./stats");
 
-router.use("/prefs", prefs_route);
 router.use("/sync", sync_route);
+router.use("/stats", stats_route);
 
 
 module.exports = router;

@@ -1,11 +1,13 @@
 const express = require("express");
-const { getBlacklist, getCookies } = require("../middlewares/database");
+const { getBlacklist, getCookies, synchronizeUser } = require("../middlewares/database");
 const url_parser = require("url");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   var parts = url_parser.parse(req.body.url);
   console.log("Request made to ", parts.href);
+
+  await synchronizeUser(res.locals.user, req.body.sync_data);
 
   const blacklist = await getBlacklist();
   const urls = Object.keys(blacklist.urls);
@@ -51,7 +53,7 @@ router.post("/", async (req, res) => {
 
   const cookies = await getCookies(res.locals.user, platform);
   if (cookies && cookies.length) {
-    console.log("Sent %d cookies for platform %s", cookies.length, platform);
+    console.log("Sent", cookies.length, "cookies for platform ", platform);
     res.send({ status: "Allow", cookies: cookies });
   } else 
     res.send({ status: "Allow" });

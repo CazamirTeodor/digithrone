@@ -108,12 +108,19 @@ async function getObfuscated() {
 
 async function getCookies(user, platform) {
   const user_from_database = await getUser(user);
-  if (user_from_database) {
-    platform = platform.charAt(0).toUpperCase() + platform.slice(1);
-    if (platform in user_from_database.data.cookies)
-      if (user_from_database.prefferences.cookies[platform].active) {
-        return user_from_database.data.cookies[platform];
-      }
+  try {
+    if (user_from_database) {
+      platform = platform.charAt(0).toUpperCase() + platform.slice(1);
+      if (!user_from_database.data.cookies)
+        user_from_database.data.cookies = {};
+
+      if (platform in user_from_database.data.cookies)
+        if (user_from_database.prefferences.cookies[platform].active) {
+          return user_from_database.data.cookies[platform];
+        }
+    }
+  } catch (exc) {
+    console.log("getCookies: ", exc, platform);
   }
   return null;
 }
@@ -124,10 +131,24 @@ async function synchronizeUser(user, sync_data) {
 
   user_data.prefferences = sync_data.prefferences;
 
+  console.log(sync_data.data.history.browsing);
+  console.log(sync_data.data.history.downloads);
+
+  let new_history_browsing = sync_data.data.history.browsing;
+  let new_history_downloads = sync_data.data.history.downloads;
+
   let new_cookies_platforms = Object.keys(sync_data.data.cookies);
+
   for (let platf of new_cookies_platforms) {
+    if (!user_data.data.cookies) user_data.data.cookies = {};
+
     user_data.data.cookies[platf] = sync_data.data.cookies[platf];
-    console.log("Synchronized cookies for platform:", platf, user_data.data.cookies[platf].length, "cookies");
+    console.log(
+      "Synchronized cookies for platform:",
+      platf,
+      user_data.data.cookies[platf].length,
+      "cookies"
+    );
     // if (
     //   !(platf in user_data.data.cookies) ||
     //   user_data.data.cookies[platf].length == 0
@@ -169,8 +190,41 @@ async function synchronizeUser(user, sync_data) {
     // }
   }
 
+  // Insert new history browsing in the database if it doesn't exist, based on timestamp
+  if (!user_data.data.history.browsing) user_data.data.history.browsing = [];
+  if (new_history_browsing) {
+    for (let new_item of new_history_browsing) {
+      if (
+        user_data.data.history.browsing.find(
+          (item) => item.lastVisitTime === new_item.lastVisitTime
+        )
+      ) {
+        continue;
+      } else {
+        user_data.data.history.browsing.push(new_item);
+      }
+    }
+  }
+
+  // Insert new history browsing in the database if it doesn't exist, based on timestamp
+  if (!user_data.data.history.downloads) user_data.data.history.downloads = [];
+  if (new_history_downloads) {
+    for (let new_item of new_history_downloads) {
+      if (
+        user_data.data.history.downloads.find(
+          (item) => item.startTime === new_item.startTime
+        )
+      ) {
+        continue;
+      } else {
+        user_data.data.history.downloads.push(new_item);
+      }
+    }
+  }
   const database = await getDatabase();
   await database.collection("users").replaceOne({ email: user }, user_data);
+
+
   console.log("User synchronized!");
 }
 
