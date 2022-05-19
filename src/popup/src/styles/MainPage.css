@@ -1,12 +1,13 @@
 .App .mainPage {
   border: 1px solid black;
   transition: all .3s ease;
+  background-color: rgb(222, 226, 234);
 }
 
 .App .mainPage .header {
   position: relative;
   height: 28px;
-  background-color: white;
+  background-color: black;
 }
 
 .App .mainPage .header .ConnectionIndicator {
@@ -34,7 +35,7 @@
 }
 
 .App .mainPage .header .Title p {
-  color: black;
+  color: white;
   font-size: 10px;
   font-weight: 550;
   letter-spacing: 2.3px;
@@ -43,10 +44,10 @@
 
 .App .mainPage .Username {
   position: absolute;
-  left: 23px;
+  left: 10px;
   top: 50%;
   transform: translate(0, -50%);
-  color: black;
+  color: white;
   font-size: 10px;
   letter-spacing: 1.5px;
   font-weight: 600;
@@ -68,7 +69,7 @@
   transform: translate(0, -50%);
   right: 5px;
   cursor: pointer;
-  border: 1px solid black;
+  border: 1px solid white;
 }
 
 .App .mainPage .header .logoutBtn:hover {
@@ -84,53 +85,139 @@
 }
 
 .App .mainPage .center-section {
-  height: 123px;
-  display: grid;
-  align-items: center;
+  height: 90px;
+  background-color: white;
+  margin: 8px 8px 0 8px;
+  border-radius: 20px;
+  transition: 0.3s;
+  cursor: pointer;
+
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
-.App .mainPage .settings {
-  position: relative;
-  background-color: rgb(37, 36, 36);
-  height: 45px;
-  width: 100%;
+.App .mainPage .center-section:hover {
+  transform: scale(1.02);
+  box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+}
 
-  display: grid;
-  grid-template-columns: 32% 32% 32%;
-  column-gap: 2%;
+.App .mainPage .center-section .title {
+  font-size: 12px;
+  padding: 5px 0;
+  margin: 0;
+}
+
+
+.App .mainPage .settings {
+  height: 70px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .App .mainPage .settings .settingsBtn {
-  height: 100%;
-  background-color: rgb(120, 13, 13);
+  position: relative;
+  height: 55px;
+  width: 105px;
+  margin: 0 4px;
+  background-color: white;
+  border-radius: 15px;
   color: white;
   cursor: pointer;
   transition: 0.3s;
-  filter: grayscale(100%);
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .App .mainPage .settings .settingsBtn:hover {
-  background-color: white;
-  color: black;
-  filter: grayscale(0%);
   transform: scale(1.08);
   box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
 }
 
 
 .App .mainPage .settings .settingsBtn .btnIcon {
-  height: 47%;
+  height: 22px;
   position: absolute;
   left: 50%;
-  top: 40%;
-  transform: translate(-50%, -40%);
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .App .mainPage .settings .settingsBtn p {
   position: absolute;
   text-align: center;
   width: 100%;
-  bottom: 2px;
+  bottom: 3px;
   margin: 0;
   font-size: 10px;
+  color: black;
 }
+
+.App .mainPage .center-section .row {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 60%;
+}
+
+.App .mainPage .center-section .row .separator{
+  width: 1px;
+  height: 90%;
+  background-color: rgb(161, 157, 157);
+  margin: 0 4px;
+}
+
+.App .mainPage .center-section .row .backend-status {
+  position: absolute;
+  left: 50%;
+  padding-top: 17px;
+  transform: translateX(-50%);
+  font-size: 11px;
+}
+
+#wrapper {
+	animation: pulse 1s infinite;
+  width: 100px;
+  height: 30px;
+}
+
+
+#pulsingheart { 
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%); 
+  width: 30px; 
+  height: 50px;
+} 
+
+#pulsingheart #before, #pulsingheart #after { 
+  position: absolute; 
+  content: ""; 
+  left: 15px; 
+  transform: translateY(-50%);
+  width: 15px; 
+  height: 25px; 
+  background: #aa0000; 
+  border-radius: 50px 50px 0 0; 
+  transform: rotate(-45deg);  
+  transform-origin: 0 100%;
+  animation: pulsecolor 1s infinite;
+} 
+
+#pulsingheart #after { 
+  left: 0; 
+  transform: rotate(45deg); 
+  transform-origin :100% 100%;
+  animation:pulsecolor 1s infinite;
+}
+
+@keyframes pulse {
+	10% {transform: scale(1.1)}
+}
+
+@keyframes pulsecolor {
+  10% {background: #dd0000}
+}
+

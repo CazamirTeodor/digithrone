@@ -1,9 +1,8 @@
 import React from "react";
-import Logo from "../../assets/logo_b.png";
+import Logo from "../../assets/logo_w.png";
 import CookiesIcon from "../../assets/cookies-colored.png";
-import HistoryIcon from "../../assets/history-colored.png";
-import PasswordsIcon from "../../assets/lock.png";
-import SwitchComponent from "../SwitchComponent";
+import GlobeIcon from "../../assets/globe.png";
+import DownloadsIcon from "../../assets/downloads.png";
 import { Link, withRouter } from "react-router-dom";
 import "../../styles/MainPage.css";
 
@@ -123,21 +122,8 @@ class MainPage extends React.Component {
     } else notification = null;
 
     return (
-      <div
-        className="page mainPage"
-        style={
-          this.state.active ? styles.toggle.active : styles.toggle.inactive
-        }
-      >
+      <div className="page mainPage">
         <section className="header">
-          <div
-            className="ConnectionIndicator"
-            style={
-              this.state.backendUp
-                ? styles.connectionIndicator.online
-                : styles.connectionIndicator.offline
-            }
-          ></div>
           <div className="Title">
             <img className="Logo" src={Logo} alt="Logo" />
             <p>DIGITHRONE</p>
@@ -148,17 +134,45 @@ class MainPage extends React.Component {
           </div>
         </section>
         <section className="center-section">
-          <SwitchComponent
-            id="status"
-            active={this.state.active}
-            toggleFunction={this.switchToggle}
-          />
+          <p className="title">Statistics</p>
+          <div className="row">
+            <div className="separator" />
+            <div>
+              <p className="backend-status">
+                Backend is {this.state.backendUp ? "UP" : "DOWN"}
+              </p>
+              <div
+                id="wrapper"
+                style={{ animation: this.state.backendUp ? null : "none" }}
+              >
+                <div id="pulsingheart">
+                  <div
+                    id="before"
+                    style={
+                      this.state.backendUp
+                        ? { animation: null }
+                        : { animation: "none", filter: "grayscale(100%)" }
+                    }
+                  ></div>
+                  <div
+                    id="after"
+                    style={
+                      this.state.backendUp
+                        ? { animation: null }
+                        : { animation: "none", filter: "grayscale(100%)" }
+                    }
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <div className="separator" />
+          </div>
         </section>
         <section className="settings">
           <Link to="/history">
             <div className="settingsBtn">
-              <img className="btnIcon" src={HistoryIcon} alt="historyIcon" />
-              <p>History</p>
+              <img className="btnIcon" src={GlobeIcon} alt="historyIcon" />
+              <p>Browsing</p>
             </div>
           </Link>
           <Link to="/cookies">
@@ -167,14 +181,10 @@ class MainPage extends React.Component {
               <p>Cookies</p>
             </div>
           </Link>
-          <Link to="/passwords">
+          <Link to="/history">
             <div className="settingsBtn">
-              <img
-                className="btnIcon"
-                src={PasswordsIcon}
-                alt="passwordsIcon"
-              />
-              <p>Passwords</p>
+              <img className="btnIcon" src={DownloadsIcon} alt="historyIcon" />
+              <p>Downloads</p>
             </div>
           </Link>
         </section>
