@@ -13,8 +13,75 @@
 }
 
 .page {
-  position: absolute;
-  overflow: hidden;
-  height: 196px;
-  width: 350px;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
+
+.App .info-btn {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.App .info-btn:hover {
+  filter: invert(1);
+}
+
+.App .info-btn > img {
+  height: 15px;
+}
+
+.App .info-msg {
+  padding: 10px 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 10px;
+  position: absolute;
+  width: 60%;
+  max-height: 50%;
+  z-index: 30;
+  top: 50%;
+  left: 50%;
+  overflow: scroll;
+  transform: translate(-50%, -50%);
+  background-color: black;
+  animation: fade-in 0.5s;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.App .info-msg > .close-btn {
+
+  position: absolute;
+  right: 7px;
+  top: 3px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.App .info-msg > .close-btn > img {
+  height: 10px;
+  filter: invert(1);
+}
+
+.App .info-msg > p {
+  font-size: 11px;
+  color: white;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+

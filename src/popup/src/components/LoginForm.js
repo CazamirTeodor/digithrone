@@ -150,7 +150,6 @@ class LoginForm extends React.Component {
         {this.state.loading ? (
           <div>
             <Loader />
-            <p className="loaderStatus">Contacting...</p>
           </div>
         ) : null}
       </form>

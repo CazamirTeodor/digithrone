@@ -1,6 +1,8 @@
 import React from "react";
 import Lock from "../assets/lock.png";
-import NoLogo from "../assets/no-logo.png";
+import NoLogoWhite from "../assets/no-icon-w.png";
+import NoLogoBlack from "../assets/no-icon-b.png";
+import BinIcon from "../assets/bin.png";
 import "../styles/WebsiteCard.css";
 
 import { getData, setData } from "./Utils";
@@ -9,9 +11,12 @@ class WebsiteCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      active: this.props.active,
+      // active: this.props.active,
+      active: false,
+      hovering: false,
       disabled: this.props.disabled,
       logo_data: undefined,
+      hoverFunctionId: undefined,
     };
   }
 
@@ -36,7 +41,6 @@ class WebsiteCard extends React.Component {
     if (response_status === 200) this.setState({ logo_data: data });
   }
 
-  /*
   componentDidUpdate(prev_props) {
     console.log("Component updated!");
     if (this.props !== prev_props) {
@@ -46,7 +50,6 @@ class WebsiteCard extends React.Component {
       });
     }
   }
-  */
 
   toggle = (e) => {
     getData("prefferences", (data) => {
@@ -56,47 +59,98 @@ class WebsiteCard extends React.Component {
         console.log("Updated!", !this.state.active);
         this.setState({
           active: !this.state.active,
+          hovering: false,
         });
       });
     });
   };
 
-  render() {
-    const style = {
-      on: {
-        backgroundColor: "#53A551",
-        filter: "grayscale(0%)",
-      },
-      off: {
-        filter: "grayscale(100%)",
-      },
-    };
+  startHovering = () => {
+    if (!this.state.hovering && !this.state.hoverFunctionId) {
+      this.setState({
+        hoverFunctionId: setTimeout(() => {
+          this.setState({ hovering: true });
+        }, 1000),
+      });
+    }
+  };
 
+  cancelHovering = () => {
+    clearTimeout(this.state.hoverFunctionId);
+    if (this.state.hovering) {
+      this.setState({ hovering: false, hoverFunctionId: undefined });
+    } else {
+      this.setState({ hoverFunctionId: undefined });
+    }
+  };
+
+  render() {
     return (
       <div
-        className="websiteCard"
-        onClick={this.state.disabled ? null : this.toggle}
-        style={
-          this.state.disabled
-            ? style.off
-            : this.state.active
-            ? style.on
-            : style.off
-        }
+        className="website-card"
+        onMouseOver={this.startHovering}
+        onMouseLeave={this.cancelHovering}
       >
-        <div className="websiteCardWrapper">
+        <div
+          className="website-card-content"
+          onClick={() => {
+            this.cancelHovering();
+            this.setState({ active: !this.state.active, hovering: false });
+          }}
+          style={{
+            backgroundColor: this.state.active ? "white" : "rgb(128, 128, 128)",
+            color: this.state.active ? "black" : "white",
+          }}
+        >
           <img
-            className="websiteLogo"
+            className="website-logo"
             src={
               this.state.disabled
                 ? Lock
                 : this.state.logo_data === undefined
-                ? NoLogo
+                ? this.state.active? NoLogoBlack : NoLogoWhite
                 : this.state.logo_data
             }
+            style={{
+              filter: this.state.active ? null : "grayscale(1)",
+            }}
             alt="logo"
           />
           <p>{this.props.platform}</p>
+        </div>
+        <div
+          className="card-image"
+          style={
+            this.state.hovering
+              ? {
+                  width: "100px",
+                  height: "100px",
+                }
+              : {
+                  width: "0%",
+                  height: "0%",
+                }
+          }
+          onClick={() => {
+            this.cancelHovering();
+            console.log("Deleted!");
+          }}
+        >
+          <img
+            src={BinIcon}
+            alt="bin"
+            style={
+              this.state.hovering
+                ? {
+                    width: "20px",
+                    height: "20px",
+                  }
+                : {
+                    width: "0%",
+                    height: "0%",
+                  }
+            }
+          />
         </div>
       </div>
     );

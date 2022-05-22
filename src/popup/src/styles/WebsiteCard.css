@@ -1,54 +1,44 @@
-.websiteCard {
+.website-card {
     position: relative;
-    height: 55px;
-    width: 50px;
-    border-radius: 5px;
+    height: 65px;
+    width: 55px;
+    border-radius: 10px;
 
     transition: 0.3s;
-    display: grid;
-    background-color: white;
     transition: 0.3s;
     cursor: pointer;
-    margin: 5px;
     padding: 0px;
+    overflow: hidden;
 }
 
-.websiteCard:hover{
-    height: 65px;
-    width: 60px;
-    margin: 0px;
+.website-card:hover{
+    transform: scale(1.1);
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-
-
-.websiteCardWrapper {
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    vertical-align: middle;
-    background-color: white;
-    border-radius: 5px;
-    width: 100%;
-    height: 100%;
-    margin-top: 3px;
-}
-
-.websiteCardWrapper img {
+.website-card .website-card-content > img {
     position: absolute;
     left: 50%;
-    top: 45%;
+    top: 50%;
     transform: translate(-50%, -50%);
-    width: 60%;
-
+    width: 50%;
     height: auto;
 }
 
 
-.websiteCardWrapper p {
+.website-card .website-card-content {
+    width: 100%;
+    height: 100%;
+    transition: 0.3s;
+}
+
+.website-card .website-card-content > p {
     position: absolute;
-    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75%;
+    text-align: center;
+    bottom: 3px;
     font-size: 8px;
     font-weight: 400;
     letter-spacing: 0.5px;
@@ -57,5 +47,47 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    width: 45px;
 }
+
+  .website-card .card-image {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(196, 0 , 22);
+    overflow: hidden;
+    transition: 0.5s;
+  }
+
+  .website-card .card-image > img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 20px;
+    transition: 0.4s;
+  }
+
+
+  @keyframes fade-in {
+    0%{
+        opacity: 0;
+        
+    }
+    100%{
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.588);
+    }
+  }
+
+  @keyframes fade-out {
+    0%{
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.588);
+    }
+    100%{
+        opacity: 0;
+        background-color: transparent;
+    }
+  }

@@ -1,5 +1,4 @@
 .App .mainPage {
-  border: 1px solid black;
   transition: all .3s ease;
   background-color: rgb(222, 226, 234);
 }
@@ -116,51 +115,47 @@
   justify-content: center;
 }
 
-.App .mainPage .settings .settingsBtn {
-  position: relative;
-  height: 55px;
-  width: 105px;
-  margin: 0 4px;
-  background-color: white;
-  border-radius: 15px;
-  color: white;
-  cursor: pointer;
-  transition: 0.3s;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-}
-
-.App .mainPage .settings .settingsBtn:hover {
-  transform: scale(1.08);
-  box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
-}
 
 
-.App .mainPage .settings .settingsBtn .btnIcon {
-  height: 22px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.App .mainPage .settings .settingsBtn p {
-  position: absolute;
-  text-align: center;
-  width: 100%;
-  bottom: 3px;
-  margin: 0;
-  font-size: 10px;
-  color: black;
+.App .mainPage .center-section {
+  padding: 0 5px;
 }
 
 .App .mainPage .center-section .row {
   position: relative;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: 60%;
 }
+
+
+
+
+.App .mainPage .center-section .row .section{
+  position: relative;
+  width: 33%;
+  height: 100%;
+}
+.App .mainPage .center-section .row .section > img{
+  height: 30px;
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+}
+
+.App .mainPage .center-section .row .section > p{
+  position: absolute;
+  width: 100%;
+  left: 50%;
+  top: 70%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+}
+
+
 
 .App .mainPage .center-section .row .separator{
   width: 1px;
@@ -169,17 +164,9 @@
   margin: 0 4px;
 }
 
-.App .mainPage .center-section .row .backend-status {
-  position: absolute;
-  left: 50%;
-  padding-top: 17px;
-  transform: translateX(-50%);
-  font-size: 11px;
-}
 
 #wrapper {
 	animation: pulse 1s infinite;
-  width: 100px;
   height: 30px;
 }
 
@@ -187,9 +174,10 @@
 #pulsingheart { 
   position: absolute;
   left: 50%;
+  top: 12px;
   transform: translate(-50%); 
   width: 30px; 
-  height: 50px;
+  height: 30px;
 } 
 
 #pulsingheart #before, #pulsingheart #after { 
@@ -210,7 +198,7 @@
   left: 0; 
   transform: rotate(45deg); 
   transform-origin :100% 100%;
-  animation:pulsecolor 1s infinite;
+  animation: pulsecolor 1s infinite;
 }
 
 @keyframes pulse {

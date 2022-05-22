@@ -3,11 +3,14 @@ import Logo from "../../assets/logo_w.png";
 import CookiesIcon from "../../assets/cookies-colored.png";
 import GlobeIcon from "../../assets/globe.png";
 import DownloadsIcon from "../../assets/downloads.png";
+import GreenLockIcon from "../../assets/green-lock.png";
+import RedShieldIcon from "../../assets/red-shield.png";
 import { Link, withRouter } from "react-router-dom";
 import "../../styles/MainPage.css";
 
 import { getData, setData, sendMessage } from "../Utils";
 import Notification from "../Notification";
+import AnimatedButton from "../AnimatedButton";
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -37,7 +40,6 @@ class MainPage extends React.Component {
       state.notificationMsg = undefined;
       this.props.history.replace(this.props.location.pathname, state);
     }
-    console.log("this.state :>> ", this.state);
 
     if (!this.state.heartbeatFunction)
       this.setState({ heartbeatFunction: setInterval(this.heartbeat, 2500) });
@@ -79,16 +81,6 @@ class MainPage extends React.Component {
   };
 
   render() {
-    const styles = {
-      toggle: {
-        active: { backgroundColor: "#AFF8CE" },
-        inactive: { backgroundColor: "#F8AFAF" },
-      },
-      connectionIndicator: {
-        online: { backgroundColor: "#15BF3A" },
-        offline: { backgroundColor: "#D21D1D" },
-      },
-    };
     var notification;
     if (this.state.notificationMsg) {
       switch (this.state.notificationMsg) {
@@ -104,12 +96,18 @@ class MainPage extends React.Component {
           break;
         case "backend-up":
           notification = (
-            <Notification msg="Backend went online!" type="green" />
+            <Notification
+              msg="Backend went online! You can make requests now!"
+              type="green"
+            />
           );
           break;
         case "backend-down":
           notification = (
-            <Notification msg="Backend went offline!" type="red" />
+            <Notification
+              msg="Backend went offline! Requests will be blocked!"
+              type="red"
+            />
           );
           break;
         default:
@@ -136,8 +134,18 @@ class MainPage extends React.Component {
         <section className="center-section">
           <p className="title">Statistics</p>
           <div className="row">
+            <div className="section">
+              <img
+                src={GreenLockIcon}
+                alt="green-lock"
+                style={{
+                  filter: this.state.backendUp ? null : "grayscale(100%)",
+                }}
+              />
+              <p>Auto-HTTPS {this.state.backendUp ? "ON" : "OFF"}</p>
+            </div>
             <div className="separator" />
-            <div>
+            <div className="section">
               <p className="backend-status">
                 Backend is {this.state.backendUp ? "UP" : "DOWN"}
               </p>
@@ -166,27 +174,22 @@ class MainPage extends React.Component {
               </div>
             </div>
             <div className="separator" />
+            <div className="section">
+              <img
+                src={RedShieldIcon}
+                alt="red-shield"
+                style={{
+                  filter: this.state.backendUp ? null : "grayscale(100%)",
+                }}
+              />
+              <p>Blacklist {this.state.backendUp ? "ON" : "OFF"}</p>
+            </div>
           </div>
         </section>
         <section className="settings">
-          <Link to="/history">
-            <div className="settingsBtn">
-              <img className="btnIcon" src={GlobeIcon} alt="historyIcon" />
-              <p>Browsing</p>
-            </div>
-          </Link>
-          <Link to="/cookies">
-            <div className="settingsBtn">
-              <img className="btnIcon" src={CookiesIcon} alt="cookiesIcon" />
-              <p>Cookies</p>
-            </div>
-          </Link>
-          <Link to="/history">
-            <div className="settingsBtn">
-              <img className="btnIcon" src={DownloadsIcon} alt="historyIcon" />
-              <p>Downloads</p>
-            </div>
-          </Link>
+          <AnimatedButton name="Browsing" icon={GlobeIcon} />
+          <AnimatedButton name="Cookies" icon={CookiesIcon} route="/cookies" />
+          <AnimatedButton name="Downloads" icon={DownloadsIcon} />
         </section>
         {notification}
       </div>
