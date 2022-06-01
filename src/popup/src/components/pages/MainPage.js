@@ -9,9 +9,16 @@ import RedShieldIcon from "../../assets/red-shield.png";
 import { withRouter } from "react-router-dom";
 import "../../styles/MainPage.css";
 
-import { getData, setData, sendMessage, getCookies } from "../Utils";
+import {
+  getData,
+  setData,
+  sendMessage,
+  getBrowserData,
+  sendRequest,
+} from "../Utils";
 import Notification from "../Notification";
 import AnimatedButton from "../AnimatedButton";
+import Loader from "../Loader";
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -20,9 +27,11 @@ class MainPage extends React.Component {
     if (this.props.location.state) {
       this.state = { ...this.props.location.state };
       this.state.heartbeatFunction = undefined;
+      this.state.loading = false;
     } else {
       this.state = { ...this.props.data };
       this.state.notificationMsg = undefined;
+      this.state.loading = false;
     }
   }
 
@@ -30,6 +39,7 @@ class MainPage extends React.Component {
     if (this.props.location.state) {
       var state = this.props.location.state;
       state.notificationMsg = undefined;
+      state.loading = false;
       this.props.history.replace(this.props.location.pathname, state);
     }
 
@@ -48,13 +58,79 @@ class MainPage extends React.Component {
   };
 
   logout = () => {
-    sendMessage({ action: "LoggedOut" }, () => {
-      setData({ logged_in: false }, () => {
-        clearInterval(this.state.heartbeatFunction);
-        this.props.history.push("/login");
+    this.setState({ loading: true }, () => {
+      getBrowserData((data) => {
+        console.log("Logging user out...");
+        chrome.storage.local.get(["server", "prefferences"], (res) => {
+          const server = res.server;
+
+          var sync_data = {
+            prefferences: res.prefferences,
+            data: {
+              cookies: {},
+              history: {
+                browsing: [],
+                downloads: [],
+              },
+            },
+          };
+
+          // Append forced cookies
+          Object.keys(res.prefferences.cookies.platforms).forEach(
+            (platform) => {
+              if (res.prefferences.cookies.platforms[platform].forced) {
+                sync_data.data.cookies[platform] =
+                  data.cookies.platforms[platform];
+              }
+            }
+          );
+
+          // Append active platforms cookies
+          if (res.prefferences.cookies.active) {
+            Object.keys(res.prefferences.cookies.platforms).forEach(
+              (platform) => {
+                if (
+                  res.prefferences.cookies.platforms[platform].active &&
+                  !res.prefferences.cookies.platforms[platform].forced
+                ) {
+                  sync_data.data.cookies[platform] =
+                    data.cookies.platforms[platform];
+                }
+              }
+            );
+          }
+
+          // Apend browsing history
+          if (res.prefferences.history.browsing) {
+            sync_data.data.history.browsing = data.history.browsing;
+          }
+
+          // Append downloads history
+          if (res.prefferences.history.downloads) {
+            sync_data.data.history.downloads = data.history.downloads;
+          }
+
+          sendRequest(
+            { server: server, route: "/user/sync", body: sync_data },
+            (res) => {
+              if (res) {
+                console.log("Sent synchronization data:", sync_data);
+                setData({ logged_in: false }, () => {
+                  sendMessage({ action: "LoggedOut" }, () => {
+                    clearInterval(this.state.heartbeatFunction);
+                    this.props.history.push("/login");
+                  });
+                });
+              } else {
+                this.setState({loading: false, notificationMsg: "logout-error"});
+                console.log("Logging out failed!");
+              }
+            }
+          );
+        });
       });
     });
-  };
+  }
 
   toggleSetting = (setting) => {
     getData(["prefferences"], (res) => {
@@ -71,7 +147,8 @@ class MainPage extends React.Component {
               },
             },
             () => {
-              res.prefferences.history.browsing = !res.prefferences.history.browsing;
+              res.prefferences.history.browsing =
+                !res.prefferences.history.browsing;
               setData(res, () => {
                 console.log(res.prefferences);
                 this.props.history.replace(
@@ -94,7 +171,8 @@ class MainPage extends React.Component {
               },
             },
             () => {
-              res.prefferences.cookies.active = !res.prefferences.cookies.active;
+              res.prefferences.cookies.active =
+                !res.prefferences.cookies.active;
               setData(res, () => {
                 console.log(res.prefferences);
                 this.props.history.replace(
@@ -117,7 +195,8 @@ class MainPage extends React.Component {
               },
             },
             () => {
-              res.prefferences.history.downloads = !res.prefferences.history.downloads;
+              res.prefferences.history.downloads =
+                !res.prefferences.history.downloads;
               setData(res, () => {
                 console.log(res.prefferences);
                 this.props.history.replace(
@@ -146,6 +225,17 @@ class MainPage extends React.Component {
     var notification;
     if (this.state.notificationMsg) {
       switch (this.state.notificationMsg) {
+        case "logout-error":
+          notification = (
+            <Notification
+              msg={
+                "An error has occured during logout! Please try again later."
+              }
+              type="red"
+            />
+          );
+          break;
+
         case "logged-in":
           notification = (
             <Notification
@@ -183,6 +273,7 @@ class MainPage extends React.Component {
 
     return (
       <div className="page mainPage">
+        {this.state.loading ? <Loader /> : null}
         <section className="header">
           <div className="Title">
             <img className="Logo" src={Logo} alt="Logo" />

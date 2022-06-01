@@ -41,12 +41,6 @@ function _ObfuscatedListenerRedirect(details) {
 function _StorageListener(data, areaName) {
   console.log("_StorageListener Triggered");
 
-  // When user logs out
-  if (data?.logged_in?.newValue === false && data?.logged_in?.oldValue === true) {
-    console.log("User logged out!");
-    //synchronizeUser();
-  }
-
   // When user enables/disables an option
   if (data.prefferences) {
     console.log(data);
@@ -953,7 +947,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
     }
     case "LoggedOut": {
-      handleLogout();
+      setListeners(false);
+      setRequestBlocker(true);
+      clearData("all", () =>
+        removeSessionCookie(() => console.log("User logged out!"))
+      );
       break;
     }
   }
