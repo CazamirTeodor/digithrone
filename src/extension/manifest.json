@@ -18,7 +18,8 @@
     "webNavigation",
     "webRequestBlocking",
     "tabs",
-    "contextMenus"
+    "contextMenus",
+    "browsingData"
   ],
   "web_accessible_resources": ["/pages/*"],
 

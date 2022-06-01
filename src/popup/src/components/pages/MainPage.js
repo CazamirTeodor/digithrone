@@ -1,3 +1,4 @@
+/*global chrome*/
 import React from "react";
 import Logo from "../../assets/logo_w.png";
 import CookiesIcon from "../../assets/cookies-colored.png";
@@ -5,10 +6,10 @@ import GlobeIcon from "../../assets/globe.png";
 import DownloadsIcon from "../../assets/downloads.png";
 import GreenLockIcon from "../../assets/green-lock.png";
 import RedShieldIcon from "../../assets/red-shield.png";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import "../../styles/MainPage.css";
 
-import { getData, setData, sendMessage } from "../Utils";
+import { getData, setData, sendMessage, getCookies } from "../Utils";
 import Notification from "../Notification";
 import AnimatedButton from "../AnimatedButton";
 
@@ -17,20 +18,11 @@ class MainPage extends React.Component {
     super(props);
 
     if (this.props.location.state) {
-      this.state = {
-        active: this.props.location.state.active,
-        name: this.props.location.state.name,
-        backendUp: this.props.location.state.backendUp,
-        notificationMsg: this.props.location.state.notificationMsg,
-        heartbeatFunction: undefined,
-      };
+      this.state = { ...this.props.location.state };
+      this.state.heartbeatFunction = undefined;
     } else {
-      this.state = {
-        active: this.props.data.active,
-        name: this.props.data.name,
-        notificationMsg: undefined,
-        backendUp: this.props.data.backendUp,
-      };
+      this.state = { ...this.props.data };
+      this.state.notificationMsg = undefined;
     }
   }
 
@@ -64,20 +56,90 @@ class MainPage extends React.Component {
     });
   };
 
-  switchToggle = () => {
-    setData({ active: !this.state.active }, () => {
-      if (!this.state.active) {
-        sendMessage({ action: "Activate" }, null);
-      } else {
-        sendMessage({ action: "Deactivate" }, null);
+  toggleSetting = (setting) => {
+    getData(["prefferences"], (res) => {
+      switch (setting) {
+        case "browsing":
+          this.setState(
+            {
+              prefferences: {
+                ...res.prefferences,
+                history: {
+                  ...res.prefferences.history,
+                  browsing: !res.prefferences.history.browsing,
+                },
+              },
+            },
+            () => {
+              res.prefferences.history.browsing = !res.prefferences.history.browsing;
+              setData(res, () => {
+                console.log(res.prefferences);
+                this.props.history.replace(
+                  this.props.location.pathname,
+                  this.state
+                );
+              });
+            }
+          );
+          break;
+        case "cookies":
+          this.setState(
+            {
+              prefferences: {
+                ...res.prefferences,
+                cookies: {
+                  ...res.prefferences.cookies,
+                  active: !res.prefferences.cookies.active,
+                },
+              },
+            },
+            () => {
+              res.prefferences.cookies.active = !res.prefferences.cookies.active;
+              setData(res, () => {
+                console.log(res.prefferences);
+                this.props.history.replace(
+                  this.props.location.pathname,
+                  this.state
+                );
+              });
+            }
+          );
+          break;
+        case "downloads":
+          this.setState(
+            {
+              prefferences: {
+                ...res.prefferences,
+                history: {
+                  ...res.prefferences.history,
+                  downloads: !res.prefferences.history.downloads,
+                },
+              },
+            },
+            () => {
+              res.prefferences.history.downloads = !res.prefferences.history.downloads;
+              setData(res, () => {
+                console.log(res.prefferences);
+                this.props.history.replace(
+                  this.props.location.pathname,
+                  this.state
+                );
+              });
+            }
+          );
+          break;
+        default:
+          return;
       }
-      if (this.props.location.state) {
-        var state = this.props.location.state;
-        state.active = !this.props.location.state.active;
-        this.props.history.replace(this.props.location.pathname, state);
-      }
-      this.setState({ active: !this.state.active });
     });
+  };
+
+  redirectToStats = () => {
+    if (chrome?.tabs) {
+      chrome.tabs.create({
+        url: chrome.runtime.getURL("/pages/stats/build/index.html"),
+      });
+    }
   };
 
   render() {
@@ -131,7 +193,7 @@ class MainPage extends React.Component {
             <p>LOG OUT</p>
           </div>
         </section>
-        <section className="center-section">
+        <section className="center-section" onClick={this.redirectToStats}>
           <p className="title">Statistics</p>
           <div className="row">
             <div className="section">
@@ -187,9 +249,25 @@ class MainPage extends React.Component {
           </div>
         </section>
         <section className="settings">
-          <AnimatedButton name="Browsing" icon={GlobeIcon} />
-          <AnimatedButton name="Cookies" icon={CookiesIcon} route="/cookies" />
-          <AnimatedButton name="Downloads" icon={DownloadsIcon} />
+          <AnimatedButton
+            toggleFunction={() => this.toggleSetting("browsing")}
+            active={this.state.prefferences.history.browsing}
+            name="Browsing"
+            icon={GlobeIcon}
+          />
+          <AnimatedButton
+            toggleFunction={() => this.toggleSetting("cookies")}
+            active={this.state.prefferences.cookies.active}
+            name="Cookies"
+            icon={CookiesIcon}
+            route="/cookies"
+          />
+          <AnimatedButton
+            toggleFunction={() => this.toggleSetting("downloads")}
+            active={this.state.prefferences.history.downloads}
+            name="Downloads"
+            icon={DownloadsIcon}
+          />
         </section>
         {notification}
       </div>

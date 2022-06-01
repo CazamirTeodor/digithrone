@@ -7,8 +7,7 @@ import DropdownList from "../DropdownList";
 import BinIcon from "../../assets/bin.png";
 import InfoIcon from "../../assets/info-icon-b.png";
 import CloseIcon from "../../assets/close.png";
-import SettingsIcon from "../../assets/settings.png";
-import { getData, setData, parseCookie, getCookies } from "../Utils";
+import { getData, setData } from "../Utils";
 
 class CookiesPage extends React.Component {
   constructor(props) {
@@ -17,34 +16,48 @@ class CookiesPage extends React.Component {
       cookies: undefined,
       searchTerm: "",
       showInfo: false,
+
+      // Settings
+      delete_policy: undefined,
+      new_platforms_policy: undefined,
     };
   }
 
   componentDidMount() {
-    getData(["prefferences"], (data) => {
-      getCookies((result) => {
-        console.log("result :>> ", result);
-        result.forEach((cookie) => {
-          var cookie_data = parseCookie(cookie);
-
-          const host = cookie_data.host
-            ? cookie_data.host.charAt(0).toUpperCase() +
-              cookie_data.host.substring(1).toLowerCase()
-            : null;
-          if (host) {
-            if (host in data.prefferences.cookies) return;
-
-            data.prefferences.cookies[host] = {
-              domain: cookie_data.domain,
-              active: true,
-            };
-          }
-        });
-        setData(data, () => {
-          this.setState({ cookies: data.prefferences.cookies });
-          console.log("state set ", data.prefferences.cookies);
-        });
+    getData(["prefferences"], (res) => {
+      this.setState({
+        cookies: res.prefferences.cookies.platforms,
+        delete_policy:
+          res.prefferences.cookies.delete_policy,
+        new_platforms_policy: res.prefferences.cookies.new_platforms_policy,
       });
+
+      // var platforms = res.prefferences.cookies.platforms;
+      // const new_platforms_setting = res.prefferences.cookies.new_platforms;
+      // getCookies((result) => {
+      //   console.log("result :>> ", result);
+      //   result.forEach((cookie) => {
+      //     var cookie_data = parseCookie(cookie);
+
+      //     const host = cookie_data.host
+      //       ? cookie_data.host.charAt(0).toUpperCase() +
+      //         cookie_data.host.substring(1).toLowerCase()
+      //       : null;
+      //     if (host) {
+      //       if (host in platforms) return;
+
+      //       platforms[host] = {
+      //         domain: cookie_data.domain,
+      //         active: new_platforms_setting === "store" ? true : false,
+      //       };
+      //     }
+      //   });
+      //   res.prefferences.cookies.platforms = platforms;
+      //   setData(res, () => {
+      //     this.setState({ cookies: platforms });
+      //     console.log("state set ", platforms);
+      //   });
+      // });
     });
   }
 
@@ -54,16 +67,50 @@ class CookiesPage extends React.Component {
     });
   };
 
+  setDeleteFreqPolicy = (delete_policy) => {
+    getData(["prefferences"], (res) => {
+      res.prefferences.cookies.delete_policy = delete_policy;
+      console.log(res);
+      setData(res, () => {
+        console.log("Delete policy set to: ", delete_policy);
+      });
+    });
+  };
+
+  setNewPlatformsPolicy = (new_platforms_policy) => {
+    getData(["prefferences"], (res) => {
+      res.prefferences.cookies.new_platforms_policy = new_platforms_policy;
+      console.log(res);
+      setData(res, () => {
+        console.log("New platform cookies set to: ", new_platforms_policy);
+      });
+    });
+  };
+
   render() {
+    if (this.state.cookies) {
+      var matching_platforms = Object.keys(this.state.cookies).filter(
+        (platform) => {
+          return platform
+            .toLowerCase()
+            .includes(this.state.searchTerm.toLocaleLowerCase());
+        }
+      );
+      var active_platforms = matching_platforms.filter(
+        (platform) => this.state.cookies[platform].active && isNaN(this.state.cookies[platform].forced)
+      ).sort();
+      var inactive_platforms = matching_platforms.filter(
+        (platform) => !this.state.cookies[platform].active && isNaN(this.state.cookies[platform].forced)
+      ).sort();
+      var locked_platforms = matching_platforms.filter(
+        (platform) => this.state.cookies[platform]?.forced
+      ).sort();
+      var all_matching_platforms = [...active_platforms, ...inactive_platforms, ...locked_platforms];
+    }
+
     return (
       <div className="page cookiesPage">
         <BackButton {...this.props} />
-        <div
-          className="info-btn"
-          onClick={() => this.setState({ showInfo: !this.state.showInfo })}
-        >
-          <img src={InfoIcon} alt="info-icon" />
-        </div>
         {this.state.showInfo ? (
           <div className="info-msg">
             <div
@@ -81,68 +128,81 @@ class CookiesPage extends React.Component {
             </p>
           </div>
         ) : null}
-        <p className="Title">COOKIES</p>
+        <div className="title-wrapper">
+          <p className="Title">COOKIES</p>
+          <div
+            className="info-btn"
+            onClick={() => this.setState({ showInfo: !this.state.showInfo })}
+          >
+            <img src={InfoIcon} alt="info-icon" />
+          </div>
+        </div>
         <div className="settings-column">
-          <div className="settings-btn">
+          {/* <div className="settings-btn">
             <img src={SettingsIcon} alt="settings-icon" />
+          </div> */}
+          <div className="delete-all-btn">
+            <p>Delete all cookies saved in the backend</p>
+            <img src={BinIcon} alt="icon" />
           </div>
           <div className="delete-frequency setting">
             <p>Delete browser cookies on</p>
-            <DropdownList options={["logout / browser close", "tab close"]} direction="down" />
+            <DropdownList
+              default={this.state.delete_policy}
+              setOption={this.setDeleteFreqPolicy}
+              options={["logout / browser close", "tab close"]}
+              direction="down"
+            />
           </div>
           <div className="new-platforms-policy setting">
             <p>Cookies behaviour on new platforms</p>
-            <DropdownList options={["store", "ignore"]} direction="up" />
+            <DropdownList
+              default={this.state.new_platforms_policy}
+              setOption={this.setNewPlatformsPolicy}
+              options={["store", "ignore"]}
+              direction="up"
+            />
           </div>
         </div>
-        <div className="delete-all-btn">
-                  <p>Delete all cookies saved in the backend</p>
-                  <img src={BinIcon} alt="icon" />
-                </div>
+
         {!this.state.cookies ? (
           <Loader />
         ) : (
           <div>
             <div className="cookies">
-                <input
-                  className="website-search"
-                  name="searchTerm"
-                  type="text"
-                  placeholder="Search..."
-                  value={this.state.searchTerm}
-                  onChange={this.inputHandler}
-                />
-                
-              <div className="cookies-grid">
-                {Object.keys(this.state.cookies)
-                  .sort()
-                  .map((platform) => {
-                    if (
-                      platform
-                        .toLowerCase()
-                        .startsWith(this.state.searchTerm.toLowerCase())
-                    ) {
-                      const domain = this.state.cookies[platform].domain;
-                      var logo_url = domain.replace(/^www\./, "");
-                      logo_url = domain.replace(/^\./, "");
-                      return (
-                        <WebsiteCard
-                          key={platform}
-                          active={this.state.cookies[platform].active}
-                          disabled={
-                            "forced" in this.state.cookies[platform]
-                              ? true
-                              : false
-                          }
-                          logo_url={`https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&size=32&url=http://www.${logo_url}`}
-                          platform={platform}
-                        />
-                      );
-                    } else {
-                      return null;
-                    }
+              <input
+                className="website-search"
+                name="searchTerm"
+                type="text"
+                placeholder="Search..."
+                value={this.state.searchTerm}
+                onChange={this.inputHandler}
+              />
+
+              {all_matching_platforms.length > 0 ? (
+                <div className="cookies-grid">
+                  {all_matching_platforms.map((platform) => {
+                    const domain = this.state.cookies[platform].domain;
+                    var logo_url = domain.replace(/^www\./, "");
+                    logo_url = domain.replace(/^\./, "");
+                    return (
+                      <WebsiteCard
+                        key={platform}
+                        active={this.state.cookies[platform].active}
+                        disabled={
+                          "forced" in this.state.cookies[platform]
+                            ? true
+                            : false
+                        }
+                        logo_url={`https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&size=32&url=http://www.${logo_url}`}
+                        platform={platform}
+                      />
+                    );
                   })}
-              </div>
+                </div>
+              ) : (
+                <p className="no-platforms">No matching platforms!</p>
+              )}
             </div>
           </div>
         )}

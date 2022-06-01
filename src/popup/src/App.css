@@ -22,8 +22,9 @@
 
 .App .info-btn {
   position: absolute;
-  right: 5px;
-  top: 5px;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
   cursor: pointer;
   transition: 0.3s;
 }
@@ -33,7 +34,7 @@
 }
 
 .App .info-btn > img {
-  height: 15px;
+  height: 12px;
 }
 
 .App .info-msg {

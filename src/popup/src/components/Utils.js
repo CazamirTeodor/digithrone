@@ -8,62 +8,67 @@ var data = {
   server: "localhost",
   prefferences: {
     cookies: {
-      Linkedin: {
-        active: true,
-        domain: "linkedin.com",
-        force: true,
-      },
-      Google: {
-        active: true,
-        domain: "google.com",
-      },
-      dasdasd: {
-        active: true,
-        domain: "google.com",
-      },
-      asddasd: {
-        active: true,
-        domain: "google.com",
-      },
-      dddsadasd: {
-        active: true,
-        domain: "google.com",
-      },
-      dasdasdasd: {
-        active: true,
-        domain: "google.com",
-      },
-      Googldddsade: {
-        active: true,
-        domain: "google.com",
-      },
-      Googld23ddsade: {
-        active: true,
-        domain: "google.com",
-      },
-      Googlddd13sade: {
-        active: true,
-        domain: "google.com",
-      },
-      Googld2ddsade: {
-        active: true,
-        domain: "google.com",
-      },
-      Googl4dddsade: {
-        active: true,
-        domain: "google.com",
-      },
-      Goog2ldddsade: {
-        active: true,
-        domain: "google.com",
-      },
-      Googldd2dsade: {
-        active: true,
-        domain: "google.com",
-      },
-      Googld3ddsade: {
-        active: true,
-        domain: "google.com",
+      active: true,
+      delete_policy: "logout / browser close",
+      new_platforms_policy: "ignore",
+      platforms: {
+        Linkedin: {
+          active: true,
+          domain: "linkedin.com",
+          forced: true,
+        },
+        Google: {
+          active: true,
+          domain: "google.com",
+        },
+        dasdasd: {
+          active: true,
+          domain: "google.com",
+        },
+        asddasd: {
+          active: false,
+          domain: "google.com",
+        },
+        dddsadasd: {
+          active: true,
+          domain: "google.com",
+        },
+        dasdasdasd: {
+          active: true,
+          domain: "google.com",
+        },
+        Googldddsade: {
+          active: true,
+          domain: "google.com",
+        },
+        Googld23ddsade: {
+          active: true,
+          domain: "google.com",
+        },
+        Googlddd13sade: {
+          active: true,
+          domain: "google.com",
+        },
+        Googld2ddsade: {
+          active: true,
+          domain: "google.com",
+        },
+        Googl4dddsade: {
+          active: true,
+          domain: "google.com",
+        },
+        Goog2ldddsade: {
+          active: true,
+          domain: "google.com",
+        },
+        Googldd2dsade: {
+          active: true,
+          domain: "google.com",
+        },
+        Googld3ddsade: {
+          active: true,
+          domain: "google.com",
+        },
       },
     },
     history: {

@@ -11,8 +11,7 @@ class WebsiteCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // active: this.props.active,
-      active: false,
+      active: this.props.active,
       hovering: false,
       disabled: this.props.disabled,
       logo_data: undefined,
@@ -42,7 +41,6 @@ class WebsiteCard extends React.Component {
   }
 
   componentDidUpdate(prev_props) {
-    console.log("Component updated!");
     if (this.props !== prev_props) {
       this.setState({
         active: this.props.active,
@@ -53,16 +51,20 @@ class WebsiteCard extends React.Component {
 
   toggle = (e) => {
     getData("prefferences", (data) => {
-      data.prefferences.cookies[this.props.platform].active =
+      data.prefferences.cookies.platforms[this.props.platform].active =
         !this.state.active;
       setData(data, () => {
-        console.log("Updated!", !this.state.active);
+        console.log("Updated! New state:", !this.state.active);
         this.setState({
           active: !this.state.active,
           hovering: false,
         });
       });
     });
+  };
+
+  deleteCookies = (e) => {
+    console.log("Cookies deleted!");
   };
 
   startHovering = () => {
@@ -88,18 +90,30 @@ class WebsiteCard extends React.Component {
     return (
       <div
         className="website-card"
-        onMouseOver={this.startHovering}
-        onMouseLeave={this.cancelHovering}
+        onMouseOver={this.state.disabled ? null : this.startHovering}
+        onMouseLeave={this.state.disabled ? null : this.cancelHovering}
       >
         <div
           className="website-card-content"
-          onClick={() => {
-            this.cancelHovering();
-            this.setState({ active: !this.state.active, hovering: false });
-          }}
+          onClick={
+            this.state.disabled
+              ? null
+              : () => {
+                  this.cancelHovering();
+                  this.toggle();
+                }
+          }
           style={{
-            backgroundColor: this.state.active ? "white" : "rgb(128, 128, 128)",
-            color: this.state.active ? "black" : "white",
+            backgroundColor: this.state.disabled
+              ? "rgb(50, 50, 50)"
+              : this.state.active
+              ? "white"
+              : "rgb(128, 128, 128)",
+            color: this.state.disabled
+              ? "white"
+              : this.state.active
+              ? "black"
+              : "white",
           }}
         >
           <img
@@ -108,7 +122,9 @@ class WebsiteCard extends React.Component {
               this.state.disabled
                 ? Lock
                 : this.state.logo_data === undefined
-                ? this.state.active? NoLogoBlack : NoLogoWhite
+                ? this.state.active
+                  ? NoLogoBlack
+                  : NoLogoWhite
                 : this.state.logo_data
             }
             style={{
@@ -131,10 +147,15 @@ class WebsiteCard extends React.Component {
                   height: "0%",
                 }
           }
-          onClick={() => {
-            this.cancelHovering();
-            console.log("Deleted!");
-          }}
+          onClick={
+            this.state.disabled
+              ? null
+              : () => {
+                  this.cancelHovering();
+                  this.toggle();
+                  this.deleteCookies();
+                }
+          }
         >
           <img
             src={BinIcon}

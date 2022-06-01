@@ -2,9 +2,7 @@ import React from "react";
 import { MemoryRouter as Router, Route, Redirect } from "react-router-dom";
 import LoginPage from "./components/pages/LoginPage";
 import MainPage from "./components/pages/MainPage";
-import PasswordsPage from "./components/pages/PasswordsPage";
 import CookiesPage from "./components/pages/CookiesPage";
-import HistoryPage from "./components/pages/HistoryPage";
 import Loader from "./components/Loader";
 import "./App.css";
 
@@ -19,7 +17,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    getData(["logged_in", "name", "backendUp", "active"], (data) => {
+    getData(["logged_in", "name", "backendUp", "prefferences"], (data) => {
       if (data?.logged_in) {
         this.setState({ data: data });
       } else {
@@ -48,9 +46,7 @@ class App extends React.Component {
             <Route path="/dashboard">
               <MainPage data={this.state.data} />
             </Route>
-            <Route path="/history" component={HistoryPage} />
             <Route path="/cookies" component={CookiesPage} />
-            <Route path="/passwords" component={PasswordsPage} />
           </Router>
         )}
       </div>

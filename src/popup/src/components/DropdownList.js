@@ -8,12 +8,20 @@ class DropdownList extends React.Component {
 
     this.state = {
       show: false,
-      selectedOption: this.props.options[0],
+      selectedOption: this.props.default,
     };
   }
 
+  componentDidUpdate(prev_props) {
+    if (this.props !== prev_props) {
+      this.setState({
+        selectedOption: this.props.default,
+      });
+    }
+  }
+
   setOption = (option) => {
-    //this.props.setOption(this.props.options[option]);
+    this.props.setOption(option);
     this.setState({
       show: false,
       selectedOption: option,

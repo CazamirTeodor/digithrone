@@ -115,7 +115,9 @@ async function getCookies(user, platform) {
         user_from_database.data.cookies = {};
 
       if (platform in user_from_database.data.cookies)
-        if (user_from_database.prefferences.cookies[platform].active) {
+        if (
+          user_from_database.prefferences.cookies.platforms[platform].active
+        ) {
           return user_from_database.data.cookies[platform];
         }
     }
@@ -128,67 +130,67 @@ async function getCookies(user, platform) {
 async function synchronizeUser(user, sync_data) {
   console.log("Synchronizing user...");
   const user_data = await getUser(user);
+  console.log(sync_data);
 
   user_data.prefferences = sync_data.prefferences;
 
-  console.log(sync_data.data.history.browsing);
-  console.log(sync_data.data.history.downloads);
+  let new_history_browsing = sync_data?.data?.history?.browsing;
+  let new_history_downloads = sync_data?.data?.history?.downloads;
 
-  let new_history_browsing = sync_data.data.history.browsing;
-  let new_history_downloads = sync_data.data.history.downloads;
+  if (sync_data?.data?.cookies)
+    var new_cookies_platforms = Object.keys(sync_data.data.cookies);
 
-  let new_cookies_platforms = Object.keys(sync_data.data.cookies);
+  if (new_cookies_platforms)
+    for (let platf of new_cookies_platforms) {
+      if (!user_data.data.cookies) user_data.data.cookies = {};
 
-  for (let platf of new_cookies_platforms) {
-    if (!user_data.data.cookies) user_data.data.cookies = {};
-
-    user_data.data.cookies[platf] = sync_data.data.cookies[platf];
-    console.log(
-      "Synchronized cookies for platform:",
-      platf,
-      user_data.data.cookies[platf].length,
-      "cookies"
-    );
-    // if (
-    //   !(platf in user_data.data.cookies) ||
-    //   user_data.data.cookies[platf].length == 0
-    // ) {
-    //   user_data.data.cookies[platf] = sync_data.data.cookies[platf];
-    //   console.log("One platform with cookies added: ", platf);
-    // } else {
-    //   for (new_cookie of sync_data.data.cookies[platf]) {
-    //     let unique = true;
-    //     for (old_cookie of user_data.data.cookies[platf]) {
-    //       if (
-    //         old_cookie.name === new_cookie.name &&
-    //         old_cookie.domain === new_cookie.domain
-    //       ) {
-    //         if (old_cookie?.expirationDate < new_cookie?.expirationDate) {
-    //           let index = user_data.data.cookies[platf].indexOf(old_cookie);
-    //           user_data.data.cookies[platf][index] = new_cookie;
-    //           console.log(
-    //             "One cookie updated:\t",
-    //             new_cookie.name,
-    //             "\t----->\t",
-    //             new_cookie.value.slice(0, 10) + "..."
-    //           );
-    //         }
-    //         unique = false;
-    //         break;
-    //       }
-    //     }
-    //     if (unique) {
-    //       user_data.data.cookies[platf].push(new_cookie);
-    //       console.log(
-    //         "One cookie added:\t",
-    //         new_cookie.name,
-    //         "\t----->\t",
-    //         new_cookie.value
-    //       );
-    //     }
-    //   }
-    // }
-  }
+      user_data.data.cookies[platf] = sync_data.data.cookies[platf];
+      console.log(
+        "Synchronized cookies for platform:",
+        platf,
+        user_data.data.cookies[platf].length,
+        "cookies"
+      );
+      // if (
+      //   !(platf in user_data.data.cookies) ||
+      //   user_data.data.cookies[platf].length == 0
+      // ) {
+      //   user_data.data.cookies[platf] = sync_data.data.cookies[platf];
+      //   console.log("One platform with cookies added: ", platf);
+      // } else {
+      //   for (new_cookie of sync_data.data.cookies[platf]) {
+      //     let unique = true;
+      //     for (old_cookie of user_data.data.cookies[platf]) {
+      //       if (
+      //         old_cookie.name === new_cookie.name &&
+      //         old_cookie.domain === new_cookie.domain
+      //       ) {
+      //         if (old_cookie?.expirationDate < new_cookie?.expirationDate) {
+      //           let index = user_data.data.cookies[platf].indexOf(old_cookie);
+      //           user_data.data.cookies[platf][index] = new_cookie;
+      //           console.log(
+      //             "One cookie updated:\t",
+      //             new_cookie.name,
+      //             "\t----->\t",
+      //             new_cookie.value.slice(0, 10) + "..."
+      //           );
+      //         }
+      //         unique = false;
+      //         break;
+      //       }
+      //     }
+      //     if (unique) {
+      //       user_data.data.cookies[platf].push(new_cookie);
+      //       console.log(
+      //         "One cookie added:\t",
+      //         new_cookie.name,
+      //         "\t----->\t",
+      //         new_cookie.value
+      //       );
+      //     }
+      //   }
+      // }
+    }
 
   // Insert new history browsing in the database if it doesn't exist, based on timestamp
   if (!user_data.data.history.browsing) user_data.data.history.browsing = [];
@@ -223,7 +225,6 @@ async function synchronizeUser(user, sync_data) {
   }
   const database = await getDatabase();
   await database.collection("users").replaceOne({ email: user }, user_data);
-
 
   console.log("User synchronized!");
 }

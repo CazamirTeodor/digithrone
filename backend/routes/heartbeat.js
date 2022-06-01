@@ -6,10 +6,8 @@ const router = express.Router();
 const db = require("../middlewares/database");
 
 router.post("/", (req, res) => {
-  //console.log("Heartbeat!");
-
   res.send({
-    obfuscated: Object.keys(db.getObfuscated()),
+    message: "I'm fine :)",
   });
 });
 

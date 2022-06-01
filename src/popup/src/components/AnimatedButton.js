@@ -6,7 +6,6 @@ class AnimatedButton extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      active: true,
       hovering: false,
       hoverFuntionId: undefined,
     };
@@ -29,19 +28,28 @@ class AnimatedButton extends React.Component {
     }
   };
 
+  componentDidUpdate(prev_props) {
+    if (this.props !== prev_props) {
+      this.setState({
+        active: this.props.active,
+      });
+    }
+  }
+
   render() {
     return (
       <div
         className="animated-btn"
         onClick={() => {
-          this.setState({ active: !this.state.active, hovering: false });
+          this.props.toggleFunction();
+          this.setState({ active: !this.props.active, hovering: false });
         }}
       >
         <img
           className="btnIcon"
           src={this.props.icon}
           alt="icon"
-          style={{ filter: this.state.active ? null : "grayscale(1)" }}
+          style={{ filter: this.props.active ? null : "grayscale(1)" }}
         />
         <p>{this.props.name}</p>
 
@@ -49,7 +57,7 @@ class AnimatedButton extends React.Component {
           onMouseOver={this.startHovering}
           onMouseLeave={this.cancelHovering}
           style={
-            this.state.active
+            this.props.active
               ? this.state.hovering && this.props.route
                 ? {
                     backgroundColor: "rgba(0, 0, 0, 0.588)",

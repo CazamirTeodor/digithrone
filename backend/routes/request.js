@@ -1,13 +1,22 @@
 const express = require("express");
-const { getBlacklist, getCookies, synchronizeUser } = require("../middlewares/database");
+const {
+  getBlacklist,
+  getCookies,
+  synchronizeUser,
+  getUser,
+} = require("../middlewares/database");
 const url_parser = require("url");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   var parts = url_parser.parse(req.body.url);
-  console.log("Request made to ", parts.href);
-
+  console.log("Request made to ", parts.href.slice(0, 20));
   await synchronizeUser(res.locals.user, req.body.sync_data);
+
+  if (parts.href.match(/^https?:\/\/localhost/)) {
+    res.send({ status: "Allow" });
+    return;
+  }
 
   const blacklist = await getBlacklist();
   const urls = Object.keys(blacklist.urls);
@@ -15,7 +24,7 @@ router.post("/", async (req, res) => {
 
   // Website is blacklisted
   for (var url of urls) {
-    if (parts.hostname.includes(url) || parts.href.includes(url)) {
+    if (parts.hostname.indexOf(url) != -1 || parts.href.indexOf(url) != -1) {
       res.send({ status: "Deny" });
       return;
     }
@@ -51,12 +60,33 @@ router.post("/", async (req, res) => {
     platform = hostname_fields[hostname_fields.length - 2];
   }
 
-  const cookies = await getCookies(res.locals.user, platform);
-  if (cookies && cookies.length) {
-    console.log("Sent", cookies.length, "cookies for platform ", platform);
-    res.send({ status: "Allow", cookies: cookies });
-  } else 
+  // Check if user has cookies activated
+  const user = await getUser(res.locals.user);
+  if (user.prefferences.cookies.active) {
+    if (
+      platform in user.prefferences.cookies.platforms &&
+      user.prefferences.cookies.platforms[platform].active
+    ) {
+      const cookies = await getCookies(res.locals.user, platform);
+      if (cookies && cookies.length) {
+        console.log("Sent", cookies.length, "cookies for platform", platform);
+        res.send({ status: "Allow", cookies: cookies });
+      } else {
+        console.log(
+          "Cookies requested for platform",
+          platform,
+          "but none stored"
+        );
+        res.send({ status: "Allow" });
+      }
+    } else {
+      console.log("Cookies not requested for platform", platform);
+      res.send({ status: "Allow" });
+    }
+  } else {
+    console.log("No cookies requested!", platform);
     res.send({ status: "Allow" });
+  }
 });
 
 module.exports = router;

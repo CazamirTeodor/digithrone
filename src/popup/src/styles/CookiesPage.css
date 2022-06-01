@@ -1,16 +1,23 @@
 .App .cookiesPage {
   width: 100%;
   height: 100%;
+  padding: 5px;
+  box-sizing: border-box;
   background-color: rgb(222, 226, 234);
   }
+
+.App .title-wrapper {
+  position: relative;
+  display: inline-block;
+}
 
   .App .cookiesPage .Title {
     color: black;
     font-size: 10px;
     font-weight: 550;
     letter-spacing: 2.3px;
+    padding: 5px 0px 5px 0px;
     margin: 0;
-    padding: 10px 0px 2px 0px;
   }
 
   .App .cookiesPage .optionsBtns {
@@ -51,33 +58,35 @@
 
 .App .cookiesPage .settings-column .setting{
   margin: 5px 0px 15px 0px;
-  opacity: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   transition: 0.5s;
+  opacity: 0;
+  width: 100px;
 }
 
 .App .cookiesPage .settings-column .setting  > p {
   font-size: 11px;
-  margin: 0;
-  opacity: 0;
+  margin-bottom: 3px;
+  color: white;
 }
 
-.App .cookiesPage .settings-column:hover .setting  > p {
+.App .cookiesPage .settings-column:hover .setting{
   opacity: 1;
 }
 
+
 .App .cookiesPage .cookies-grid {
     display: grid;
-    width: 100%;
+    width: 98%;
     padding: 5px 2px 5px 2px;
     grid-template-columns: 55px 55px 55px 55px 55px;
     grid-template-rows: 65px;
-    grid-column-gap: 6px;
-    grid-row-gap: 6px;
+    grid-column-gap: 8px;
+    grid-row-gap: 8px;
     justify-content: center;
-    height: 134px;
+    height: 120px;
     overflow-y: scroll;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
@@ -85,38 +94,34 @@
 
 .App .cookiesPage .settings-column{
   position: absolute;
-  background-color: rgb(222, 226, 234);
+  background-color: rgb(128, 131, 137);
   z-index: 40;
-  top: 62%;
-  border-bottom-left-radius: 7px;
-  border-top-left-radius: 7px;
+  top: 50%;
+  right: 0px;
   transform: translateY(-50%);
-  right: 5px;
-  bottom: 5px;
-  width: 18px;
-  height: 70%;
-  padding-left: 5px;
+  width: 5px;
+  height: 100%;
+  padding-left: 3px;
+  border-left: 1px solid black;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   overflow: hidden;
-  border-left: 1px solid #a0a0a0;
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid transparent;
   transition: 0.5s;
 }
+
 
 .App .cookiesPage .settings-column .settings-btn{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   transition: 0.5s;
+  margin-right: 5px;
 }
 
 .App .cookiesPage .settings-column .settings-btn > img {
   position: absolute;
-  height: 20px;
+  height: 15px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -125,9 +130,8 @@
 
 .App .cookiesPage .settings-column:hover {
   width: 30%;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
+  background-color: rgb(58, 58, 58);
+  border-left: 3px solid black;
 }
 
 .App .cookiesPage .settings-column:hover .settings-btn {
@@ -138,32 +142,30 @@
   transform: translate(-50%, -50%) rotate(180deg);
 }
 
-.App .cookiesPage .settings-column:hover .setting {
-  opacity: 1;
-}
 
 
 .App .cookiesPage .website-search {
   transition: 0.5s;
   background-color: white;
-  border-radius: 7px;
+  border-radius: 10px;
   border: none;
   font-size: 10px;
-  height: 18px;
+  height: 20px;
   text-align: center;
   font-size: 10px;
-  width: 120px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  margin-bottom: 2px;
+  width: 130px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin-bottom: 5px;
 }
 
 .App .cookiesPage .website-search:focus{
   outline: none;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .App .cookiesPage .cookies {
   position: relative;
-  width: 95%;
+  width: 100%;
   margin-top: 5px;
 }
 
@@ -180,10 +182,9 @@
 
 .App .cookiesPage .delete-all-btn {
   position: absolute;
-  width: 50px;
-  height: 20px;
-  right: 37px;
-  top: 30px;
+  width: 60px;
+  height: 23px;
+  bottom: 10px;
   background-color: rgb(196, 0 , 22);
   border-radius: 7px;
   cursor: pointer;
@@ -191,13 +192,18 @@
   transition: 0.5s;
   z-index: 20;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  opacity: 0;
 }
 
-.App .cookiesPage .delete-all-btn > p{
-  top: -4px;
-  right: 55px;
+.App .cookiesPage .settings-column:hover .delete-all-btn{
+  opacity: 1;
+}
+
+.App .cookiesPage .delete-all-btn > p {
+  bottom: 25px;
+  right: -13px;
   position: absolute;
-  width: 100px;
+  width: 80px;
   background-color: black;
   padding: 3px;
   margin: 0;
@@ -227,5 +233,10 @@
   transform: translate(-50%, -50%);
   height: 12px;
   transition: 0.5s;
+}
+
+.App .cookiesPage .no-platforms{
+  font-size: 13px;
+  line-height: 80px;
 }
 

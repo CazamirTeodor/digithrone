@@ -41,21 +41,15 @@ class LoginForm extends React.Component {
           var json = await res.json();
           if (json.message === "Success!") {
             json.logged_in = true;
-            json.active = false;
             json.server = this.state.server;
-            json.blacklist.reports = {};
             json.backendUp = true;
+            delete json.message;
             setData(json, () => {
               sendMessage({ action: "LoggedIn" }, null);
               console.log("Logged in!");
               this.props.history.push({
                 pathname: "/dashboard",
-                state: {
-                  active: json.active,
-                  backendUp: json.backendUp,
-                  name: json.name,
-                  notificationMsg: "logged-in",
-                },
+                state: { ...json, notificationMsg: "logged-in" },
               });
             });
           } else {
