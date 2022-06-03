@@ -150,7 +150,7 @@ class CookiesPage extends React.Component {
             <DropdownList
               default={this.state.delete_policy}
               setOption={this.setDeleteFreqPolicy}
-              options={["logout / browser close", "tab close"]}
+              options={["session end", "tab close"]}
               direction="down"
             />
           </div>
@@ -183,8 +183,13 @@ class CookiesPage extends React.Component {
                 <div className="cookies-grid">
                   {all_matching_platforms.map((platform) => {
                     const domain = this.state.cookies[platform].domain;
-                    var logo_url = domain.replace(/^www\./, "");
-                    logo_url = domain.replace(/^\./, "");
+                    var logo_url = domain.replace(/^\.*www\./, "");
+                    logo_url = logo_url.replace(/^\./, "");
+                    var fields = logo_url.split(".");
+                    
+                    // Concat the last 2 fields
+                    logo_url = fields[fields.length - 2] + "." + fields[fields.length - 1];
+                    console.log("logo_url: ", logo_url);
                     return (
                       <WebsiteCard
                         key={platform}

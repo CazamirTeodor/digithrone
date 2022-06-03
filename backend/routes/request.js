@@ -60,6 +60,8 @@ router.post("/", async (req, res) => {
     platform = hostname_fields[hostname_fields.length - 2];
   }
 
+  platform = platform.charAt(0).toUpperCase() + platform.slice(1);
+
   // Check if user has cookies activated
   const user = await getUser(res.locals.user);
   if (user.prefferences.cookies.active) {

@@ -110,6 +110,7 @@ class MainPage extends React.Component {
             sync_data.data.history.downloads = data.history.downloads;
           }
 
+          // ! Route should be /logout to also invalidate session
           sendRequest(
             { server: server, route: "/user/sync", body: sync_data },
             (res) => {
