@@ -1,27 +1,39 @@
 var heartbeatFunctionId;
 var visited_platforms = [];
+var opened_tabs = {};
 setRequestBlocker(true);
 
-function _HTTPSListenerRequest(details) {
-  //console.log("_HTTPSListenerRequest Triggered ", details);
-  if (
-    details.initiator === "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
-  )
-    return;
-  return { redirectUrl: details.url.replace("http://", "https://") };
-}
+// function _HTTPSListenerRequest(details) {
+//   console.log("_HTTPSListenerRequest Triggered ", details);
+//   if (
+//     details.initiator === "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
+//   )
+//     return;
+//   return { redirectUrl: details.url.replace("http://", "https://") };
+// }
 
-function _HTTPSListenerRedirect(details) {
-  //console.log("_HTTPSListenerRedirect Triggered ", details);
-  if (
-    details.redirectUrl === "javascript:" ||
-    details.initiator === "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
-  )
-    return;
-
-  if (details.redirectUrl.search(/^http:\/\//) != -1) {
-    return { redirectUrl: details.url.replace("http://", "https://") };
-  }
+function _HTTPRedirectBlocker(details) {
+  // if (
+  //   details.redirectUrl === "javascript:" ||
+  //   details.initiator === "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
+  // )
+  //   return;
+  // if (details.statusCode === 301 || details.statusCode === 302) {
+  //   console.log("_HTTPRedirectBlocker Triggered ", details);
+  //   return {
+  //     cancel: true,
+  //   };
+  //   for (var header of details.responseHeaders) {
+  //     if (header.name.toLowerCase() === "location") {
+  //       if (header.value.startsWith("http://")) {
+  //         console.log("MATTCHHHHHH");
+  //         return {
+  //           cancel: true,
+  //         };
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 function _ObfuscatedListenerRedirect(details) {
@@ -81,12 +93,10 @@ function _StorageListener(data, areaName) {
                 var cookies = {};
                 console.log("Prefferences are ", res.prefferences);
 
-                opened_tabs_platforms = opened_tabs_platforms = tabs
-                  .map((tab) => getPlatformFromUrl(tab.url))
-                  .filter((platform) => platform)
-                  .filter(
-                    (platform, index, self) => self.indexOf(platform) === index
-                  );
+                // Filter by unique platforms
+                opened_tabs_platforms = Object.values(opened_tabs).filter(
+                  (value, index, self) => self.indexOf(value) === index
+                );
 
                 Object.keys(data.cookies).forEach((platform) => {
                   if (
@@ -124,18 +134,6 @@ function _StorageListener(data, areaName) {
       }
     }
 
-    // Enable/Disable tab close listener
-    if (
-      data.prefferences.oldValue.cookies.delete_policy !==
-      data.prefferences.newValue.cookies.delete_policy
-    ) {
-      if (data.prefferences.newValue.cookies.delete_policy === "tab close")
-        setTabCloseListener(true);
-      else {
-        setTabCloseListener(false);
-      }
-    }
-
     // Wipe browsing history
     if (
       data.prefferences.oldValue.history.browsing !==
@@ -163,6 +161,9 @@ function _StorageListener(data, areaName) {
 }
 
 function _OnBeforeRequestListener(details) {
+  if (details.url.startsWith("http://") && !details.url.includes("localhost"))
+    return { redirectUrl: details.url.replace("http://", "https://") };
+
   if (
     details.initiator ==
       "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp" ||
@@ -173,226 +174,261 @@ function _OnBeforeRequestListener(details) {
   )
     return {};
 
-  console.log("Request to " + details.url + " started!");
+  console.log("Request to " + details.url + " started!", details);
 
-  chrome.tabs.query({}, (tabs) => {
-    chrome.storage.local.get(["server", "prefferences"], (result) => {
-      getBrowserData((data) => {
-        var sync_data = {
-          prefferences: result.prefferences,
-          data: {
-            cookies: {},
-            history: {},
-          },
-        };
+  chrome.windows.getCurrent({ windowTypes: ["normal"] }, (currentWindow) => {
+    chrome.tabs.query({}, (tabs) => {
+      chrome.storage.local.get(["server", "prefferences"], (result) => {
+        getBrowserData((data) => {
+          var sync_data = {
+            prefferences: result.prefferences,
+            data: {
+              cookies: {},
+              history: {},
+            },
+          };
 
-        let platforms = result.prefferences.cookies.platforms; // Create a copy
+          let platforms = result.prefferences.cookies.platforms; // Create a copy
 
-        // Establish all details (START)
-        var active_platforms = [],
-          disabled_platforms = [],
-          forced_platforms = [],
-          opened_tabs_platforms = [],
-          current_tab_platform,
-          next_request_platform;
+          // Establish all details (START)
+          var active_platforms = [],
+            disabled_platforms = [],
+            forced_platforms = [],
+            opened_tabs_platforms = [],
+            current_tab_platform,
+            next_request_platform;
 
-        Object.keys(platforms).forEach((platform) => {
-          if (platforms[platform].forced) {
-            forced_platforms.push(platform);
-            //sync_data.data.cookies[platform] = data.cookies[platform]; // Append forced cookies
-            return;
-          } else if (platforms[platform].active) {
-            // if (result.prefferences.cookies.active)
-            //   if (visited_platforms.includes(platform))
-            //     sync_data.data.cookies[platform] = data.cookies[platform]; // Apend active cookies
-            active_platforms.push(platform);
-            return;
-          } else if (!platforms[platform].active) {
-            disabled_platforms.push(platform);
-            return;
-          }
-        });
-
-        opened_tabs_platforms = tabs
-          .map((tab) => getPlatformFromUrl(tab.url))
-          .filter((platform) => platform)
-          .filter((platform, index, self) => self.indexOf(platform) === index);
-
-        current_tab_platform = getPlatformFromUrl(
-          tabs.filter((tab) => tab.id === details.tabId)[0].url
-        );
-        next_request_platform = getPlatformFromUrl(details.url);
-        // Establish all details (END)
-
-        if (
-          forced_platforms.includes(current_tab_platform) ||
-          (result.prefferences.cookies.active &&
-            active_platforms.includes(current_tab_platform) &&
-            visited_platforms.includes(current_tab_platform))
-        )
-          sync_data.data.cookies[current_tab_platform] =
-            data.cookies[current_tab_platform];
-
-        // Append browsing history (START)
-        if (result.prefferences.history.browsing) {
-          sync_data.data.history.browsing = data.history.browsing;
-        }
-        // Append browsing history (END)
-
-        // Append downloads history (START)
-        if (result.prefferences.history.downloads) {
-          sync_data.data.history.downloads = data.history.downloads;
-        }
-        // Append downloads history (END)
-
-        details.sync_data = sync_data;
-        console.log("Appending synchronization data to request: ", sync_data);
-
-        // Get active tab
-        let activeTab, activeTabId;
-        for (let tab of tabs) {
-          if (tab.active) {
-            activeTab = tab;
-            activeTabId = tab.id;
-            break;
-          }
-        }
-
-        // Execute script on active tab
-        if (!activeTab.url.startsWith("chrome")) {
-          chrome.tabs.executeScript(activeTabId, {
-            // code: `
-            //   var script = document.createElement('script');
-            //   script.src = '${chrome.runtime.getURL(
-            //     "/scripts/request_blocker.js"
-            //   )}';
-            //   document.body.appendChild(script);
-            // `,
-            code: `console.log("Waiting for the page to load..."); document.body.innerHTML = '';`,
+          Object.keys(platforms).forEach((platform) => {
+            if (platforms[platform].forced) {
+              forced_platforms.push(platform);
+              //sync_data.data.cookies[platform] = data.cookies[platform]; // Append forced cookies
+              return;
+            } else if (platforms[platform].active) {
+              // if (result.prefferences.cookies.active)
+              //   if (visited_platforms.includes(platform))
+              //     sync_data.data.cookies[platform] = data.cookies[platform]; // Apend active cookies
+              active_platforms.push(platform);
+              return;
+            } else if (!platforms[platform].active) {
+              disabled_platforms.push(platform);
+              return;
+            }
           });
-        }
 
-        console.log("Forced platforms:", forced_platforms);
-        console.log("Active platforms:", active_platforms);
-        console.log("Disabled platforms:", disabled_platforms);
-        console.log("Opened tabs platforms:", opened_tabs_platforms);
-        console.log("Current tab platform:", current_tab_platform);
-        console.log("Next request platform:", next_request_platform);
-        sendRequest(
-          { server: result.server, route: "/request", body: details },
-          (res) => {
-            if (res) {
-              let cookies_to_remove = [];
+          opened_tabs_platforms = tabs
+            .map((tab) => getPlatformFromUrl(tab.url))
+            .filter((platform) => platform)
+            .filter(
+              (platform, index, self) => self.indexOf(platform) === index
+            );
 
-              if (Object.keys(sync_data.data.cookies).length > 0) {
-                const [platform, cookies] = Object.entries(
-                  sync_data.data.cookies
-                )[0];
-                if (platform !== next_request_platform) {
-                  var tabs_nb = tabs.filter(
-                    (tab) => getPlatformFromUrl(tab.url) === platform
-                  ).length;
-                  console.log(
-                    "There are %d tabs for platform %s",
-                    tabs_nb,
-                    platform
-                  );
-                  if (tabs_nb === 1) {
-                    const index = visited_platforms.indexOf(platform);
-                    if (index !== -1) visited_platforms.splice(index, 1);
-                    cookies_to_remove = cookies_to_remove.concat(cookies);
+          current_tab_platform = getPlatformFromUrl(
+            tabs.filter((tab) => tab.id === details.tabId)[0].url
+          );
+          next_request_platform = getPlatformFromUrl(details.url);
+          // Establish all details (END)
+
+          if (
+            forced_platforms.includes(current_tab_platform) ||
+            (result.prefferences.cookies.active &&
+              active_platforms.includes(current_tab_platform) &&
+              visited_platforms.includes(current_tab_platform))
+          )
+            sync_data.data.cookies[current_tab_platform] =
+              data.cookies[current_tab_platform];
+
+          // Append browsing history (START)
+          if (result.prefferences.history.browsing) {
+            sync_data.data.history.browsing = data.history.browsing;
+          }
+          // Append browsing history (END)
+
+          // Append downloads history (START)
+          if (result.prefferences.history.downloads) {
+            sync_data.data.history.downloads = data.history.downloads;
+          }
+          // Append downloads history (END)
+
+          details.sync_data = sync_data;
+          console.log("Appending synchronization data to request: ", sync_data);
+
+          // Get active tab
+          let activeTab, activeTabId;
+          console.log(tabs);
+          for (let tab of tabs) {
+            if (tab.active && tab.windowId === currentWindow.id) {
+              activeTab = tab;
+              activeTabId = tab.id;
+              break;
+            }
+          }
+
+          // Execute script on active tab
+          if (!activeTab.url.startsWith("chrome")) {
+            chrome.tabs.executeScript(activeTabId, {
+              // code: `
+              //   var script = document.createElement('script');
+              //   script.src = '${chrome.runtime.getURL(
+              //     "/scripts/request_blocker.js"
+              //   )}';
+              //   document.body.appendChild(script);
+              // `,
+              code: `console.log("Waiting for the page to load..."); document.body.innerHTML = '';`,
+            });
+          }
+
+          // console.log("Forced platforms:", forced_platforms);
+          // console.log("Active platforms:", active_platforms);
+          // console.log("Disabled platforms:", disabled_platforms);
+          // console.log("Opened tabs platforms:", opened_tabs_platforms);
+          // console.log("Current tab platform:", current_tab_platform);
+          // console.log("Next request platform:", next_request_platform);
+          sendRequest(
+            { server: result.server, route: "/request", body: details },
+            (res) => {
+              if (res) {
+                if ("message" in res) {
+                  if (
+                    res.message ===
+                      "Session cookie is not valid! Please reauthenticate!" ||
+                    res.message === "No session cookie provided!"
+                  ) {
+                    chrome.storage.local.set({ logged_in: false }, () => {
+                      setListeners(false);
+                      setRequestBlocker(true);
+                      clearData("all", () =>
+                        removeSessionCookie(() => {
+                          chrome.tabs.update(
+                            details.tabId,
+
+                            // ! Redirect to page that says you should log in again
+                            {
+                              url: chrome.runtime.getURL(
+                                "/pages/blocked/blocked.html"
+                              ),
+                            },
+
+                            () => console.log("User forcefully logged out!")
+                          );
+                        })
+                      );
+                    });
+                    return;
                   }
                 }
-              }
-              console.log("visited_platforms :>> ", visited_platforms);
+                let cookies_to_remove = [];
 
-              removeCookies(cookies_to_remove, () => {
-                if (details.sync_data.prefferences.history.browsing)
-                  clearData("browsing");
+                if (result.prefferences.cookies.delete_policy === "tab close")
+                  if (Object.keys(sync_data.data.cookies).length > 0) {
+                    const [platform, cookies] = Object.entries(
+                      sync_data.data.cookies
+                    )[0];
+                    if (platform !== next_request_platform) {
+                      var tabs_nb = tabs.filter(
+                        (tab) => getPlatformFromUrl(tab.url) === platform
+                      ).length;
+                      console.log(
+                        "There are %d tabs for platform %s",
+                        tabs_nb,
+                        platform
+                      );
+                      if (tabs_nb === 1) {
+                        const index = visited_platforms.indexOf(platform);
+                        if (index !== -1) visited_platforms.splice(index, 1);
+                        cookies_to_remove = cookies_to_remove.concat(cookies);
+                      }
+                    }
+                  }
+                console.log("visited_platforms :>> ", visited_platforms);
 
-                if (details.sync_data.prefferences.history.downloads)
-                  clearData("downloads");
+                removeCookies(cookies_to_remove, () => {
+                  if (details.sync_data.prefferences.history.browsing)
+                    clearData("browsing");
 
-                console.log("Received response from backend: ", res);
-                switch (res.status) {
-                  case "Allow":
-                    let platform = getPlatformFromUrl(details.url);
-                    if ("cookies" in res) {
-                      if (result.prefferences.cookies.active)
-                        if (
-                          active_platforms.includes(platform) ||
-                          forced_platforms.includes(platform)
-                        ) {
-                          if (!visited_platforms.includes(platform)) {
-                            visited_platforms.push(platform);
-                            setCookies(res.cookies, () => {
-                              console.log("All cookies have been set!");
+                  if (details.sync_data.prefferences.history.downloads)
+                    clearData("downloads");
+
+                  console.log("Received response from backend: ", res);
+                  switch (res.status) {
+                    case "Allow":
+                      let platform = getPlatformFromUrl(details.url);
+                      if ("cookies" in res) {
+                        if (result.prefferences.cookies.active)
+                          if (
+                            active_platforms.includes(platform) ||
+                            forced_platforms.includes(platform)
+                          ) {
+                            if (!visited_platforms.includes(platform)) {
+                              visited_platforms.push(platform);
+                              setCookies(res.cookies, () => {
+                                console.log("All cookies have been set!");
+                                chrome.tabs.update(
+                                  details.tabId,
+                                  { url: details.url },
+                                  () =>
+                                    console.log(
+                                      `Made request to ${details.url} with backend cookies!`
+                                    )
+                                );
+                              });
+                            } else {
                               chrome.tabs.update(
                                 details.tabId,
                                 { url: details.url },
                                 () =>
                                   console.log(
-                                    `Made request to ${details.url} with backend cookies!`
+                                    `Made request to ${details.url} with local cookies!`
                                   )
                               );
-                            });
-                          } else {
-                            chrome.tabs.update(
-                              details.tabId,
-                              { url: details.url },
-                              () =>
-                                console.log(
-                                  `Made request to ${details.url} with local cookies!`
-                                )
-                            );
+                            }
                           }
-                        }
-                    } else {
-                      if (!visited_platforms.includes(platform))
-                        visited_platforms.push(platform);
+                      } else {
+                        if (!visited_platforms.includes(platform))
+                          visited_platforms.push(platform);
+                        chrome.tabs.update(
+                          details.tabId,
+                          { url: details.url },
+                          () =>
+                            console.log(
+                              `Made request to ${details.url} with no backend cookies!`
+                            )
+                        );
+                      }
+                      break;
+                    case "Deny":
                       chrome.tabs.update(
                         details.tabId,
-                        { url: details.url },
-                        () =>
-                          console.log(
-                            `Made request to ${details.url} with no backend cookies!`
-                          )
+                        {
+                          url: chrome.runtime.getURL(
+                            "/pages/blocked/blocked.html"
+                          ),
+                        },
+                        () => console.log("This page has been blacklisted!")
                       );
-                    }
-                    break;
-                  case "Deny":
-                    chrome.tabs.update(
-                      details.tabId,
-                      {
-                        url: chrome.runtime.getURL(
-                          "/pages/blocked/blocked.html"
-                        ),
-                      },
-                      () => console.log("This page has been blacklisted!")
-                    );
-                    break;
-                  case "Obfuscated":
-                    var path = details.url.replace(/^[a-z]+:\/\//, "");
-                    chrome.tabs.update(
-                      details.tabId,
-                      {
-                        url: `http://${result.server}/3001/obfuscated/${path}`,
-                      },
-                      () => console.log("Redirected!")
-                    );
-                    break;
-                }
-              });
-            } else {
-              // ! Redirect to page that says that backend is offline
-              chrome.tabs.update(
-                details.tabId,
-                { url: chrome.runtime.getURL("/pages/blocked/blocked.html") },
-                () => console.log("Redirected!")
-              );
+                      break;
+                    case "Obfuscated":
+                      var path = details.url.replace(/^[a-z]+:\/\//, "");
+                      chrome.tabs.update(
+                        details.tabId,
+                        {
+                          url: `http://${result.server}/3001/obfuscated/${path}`,
+                        },
+                        () => console.log("Redirected!")
+                      );
+                      break;
+                  }
+                });
+              } else {
+                // ! Redirect to page that says that backend is offline
+                chrome.tabs.update(
+                  details.tabId,
+                  { url: chrome.runtime.getURL("/pages/blocked/blocked.html") },
+                  () => console.log("Redirected!")
+                );
+              }
             }
-          }
-        );
+          );
+        });
       });
     });
   });
@@ -408,26 +444,191 @@ function _OnCompletedRequestListener(details) {
   )
     return;
 
-  console.log("Request to " + details.url + " completed!");
+  console.log("Request to " + details.url + " completed!", details);
+
+  updateOpenedTabs();
   updateCookiePrefferences(details.url);
 }
 
 function _OnClosedTabListener(tabId, removeInfo) {
-  if (!removeInfo.isWindowClosing) {
-    console.log("You closed tab %d by clicking the x button", tabId);
+  chrome.storage.local.get(["prefferences", "server"], (result) => {
+    var sync_data = {
+      prefferences: result.prefferences,
+      data: {
+        cookies: {},
+      },
+    };
+    if (!removeInfo.isWindowClosing)
+      if (result.prefferences.cookies.active)
+        if (result.prefferences.cookies.delete_policy === "tab close") {
+          closed_tab_platform = opened_tabs[tabId];
+          if (closed_tab_platform) {
+            delete opened_tabs[tabId];
+            if (
+              visited_platforms.includes(closed_tab_platform) &&
+              result.prefferences.cookies.platforms[closed_tab_platform]
+            ) {
+              if (Object.values(opened_tabs).includes(closed_tab_platform)) {
+                console.log(
+                  "There is still a tab opened on platform",
+                  closed_tab_platform,
+                  opened_tabs
+                );
+              } else {
+                console.log("There is no more tabs opened on this platform");
+                console.log("Synchronizing...");
+                chrome.cookies.getAll({}, (cookies) => {
+                  sync_data.data.cookies[closed_tab_platform] = cookies.filter(
+                    (cookie) =>
+                      getPlatformFromUrl(cookie.domain) === closed_tab_platform
+                  );
 
-    // Verify if any tab on this platform is opened
-    // Else, synchronize
-  }
-
-  //synchronizeUser();
+                  sendRequest(
+                    {
+                      server: result.server,
+                      route: "/user/sync",
+                      body: sync_data,
+                    },
+                    (res) => {
+                      if (res) {
+                        removeCookiesForPlatform(closed_tab_platform);
+                        visited_platforms = visited_platforms.filter(
+                          (platform) => platform !== closed_tab_platform
+                        );
+                      } else {
+                        // ! Redirect to page that says that backend is offline
+                        chrome.tabs.create({
+                          url: chrome.runtime.getURL(
+                            "/pages/blocked/blocked.html"
+                          ),
+                        });
+                      }
+                    }
+                  );
+                });
+              }
+            }
+          }
+        }
+    //synchronizeUser();
+  });
 }
 
-function _OnClosedWindowListener(tabId, removeInfo) {
-  if (removeInfo.isWindowClosing) {
-    // ! Try to logout and sync
-    // ! If it fails, just delete the data
-  }
+function _OnClosedWindowListener(windowId) {
+  console.log("You closed window", windowId);
+
+  getBrowserData((data) => {
+    chrome.storage.local.get(["server", "prefferences"], (result) => {
+      chrome.tabs.query({}, (tabs) => {
+        var sync_data = {
+          prefferences: result.prefferences,
+          data: {
+            cookies: {},
+            history: {},
+          },
+        };
+
+        if (result.prefferences.cookies.active) {
+          // Get opened tabs platforms
+          var new_opened_tabs_platforms = tabs
+            .map((tab) => getPlatformFromUrl(tab.url)) // Extract platform from url
+            .filter((platform) => platform) // Filter for undefined
+            .filter((value, index, self) => self.indexOf(value) === index); // Filter for unique
+
+          // Get tabs platforms before the window close
+          var old_opened_tabs_platforms = Object.values(opened_tabs).filter(
+            (value, index, self) => self.indexOf(value) === index // Filter for unique
+          );
+
+          // Get platforms that have to be synced
+          var platforms_to_sync = old_opened_tabs_platforms.filter(
+            (platform) =>
+              !new_opened_tabs_platforms.includes(platform) &&
+              visited_platforms.includes(platform)
+          );
+          console.log("Platforms_to_sync", platforms_to_sync);
+
+          // Append them to the sync data
+          for (platform of platforms_to_sync) {
+            if (
+              result.prefferences.cookies.platforms[platform] ||
+              result.prefferences.cookies.platforms[platform].forced
+            ) {
+              sync_data.data.cookies[platform] = data.cookies[platform];
+
+              // Remove platfrom from visited platforms
+              const index = visited_platforms.indexOf(platform);
+              if (index > -1) {
+                visited_platforms.splice(index, 1);
+              }
+            }
+          }
+        }
+
+        // Update opened tabs state
+        console.log("Tabs: ", tabs);
+        console.log("Old opened tabs state: ", opened_tabs);
+        const tabIds = tabs.map((tab) => tab.id);
+        for (var tabId of Object.keys(opened_tabs)) {
+          if (!tabIds.includes(parseInt(tabId))) {
+            console.log(tabIds, "does not include", tabId);
+            delete opened_tabs[tabId];
+          }
+        }
+        console.log("New opened tabs state: ", opened_tabs);
+
+        // Append browsing history to the sync data
+        sync_data.data.history.browsing = result.prefferences.history.browsing
+          ? data.history.browsing
+          : null;
+
+        // Append downloads history to the sync data
+        sync_data.data.history.downloads = result.prefferences.history.downloads
+          ? data.history.downloads
+          : null;
+
+        sendRequest(
+          {
+            route: "/user/sync",
+            server: result.server,
+            body: sync_data,
+          },
+          (res) => {
+            ////d/as/d/a/sd/as/d
+            if (res) {
+              // It means we have closed the last window
+              if (tabs.length === 0) {
+                chrome.storage.local.set({ logged_in: false }, () => {
+                  setListeners(false);
+                  setRequestBlocker(true);
+                  clearData("all", () =>
+                    removeSessionCookie(() => console.log("User logged out!"))
+                  );
+                });
+              } else {
+                // Remove browsing history if true
+                if (result.prefferences.history.browsing) clearData("browsing");
+
+                // Remove downloads history if true
+                if (result.prefferences.history.downloads)
+                  clearData("downloads");
+
+                // Remove cookies if any sent
+                for (platform of platforms_to_sync) {
+                  removeCookiesForPlatform(platform);
+                }
+              }
+            } else {
+              // ! Redirect to page that says that backend is offline
+              chrome.tabs.create({
+                url: chrome.runtime.getURL("/pages/blocked/blocked.html"),
+              });
+            }
+          }
+        );
+      });
+    });
+  });
 }
 
 function _OnCreatedTabListener(tab) {
@@ -445,10 +646,16 @@ function _OnCreatedTabListener(tab) {
         console.log("Updated tab!");
       }
     );
+  } else {
+    console.log(tab);
+    if ("pendingUrl" in tab)
+      if (!tab.pendingUrl.startsWith("chrome://"))
+        opened_tabs[tab.id] = getPlatformFromUrl(tab.pendingUrl);
   }
 }
 
 function _RequestBlocker(details) {
+  // ! Replace with page that says to login before making any requests
   if (
     details.initiator === "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
   ) {
@@ -520,23 +727,16 @@ function sendRequest(
 
 function setHTTPS(status) {
   if (status) {
-    console.log("HTTPS Listener activated!");
+    console.log("HTTP Redirect Blocker activated!");
 
-    chrome.webRequest.onBeforeRequest.addListener(
-      _HTTPSListenerRequest,
-      { urls: ["http://*/*"] },
+    chrome.webRequest.onHeadersReceived.addListener(
+      _HTTPRedirectBlocker,
+      { urls: ["*://*/*"] },
       ["blocking"]
     );
-
-    chrome.webRequest.onBeforeRedirect.addListener(
-      _HTTPSListenerRedirect,
-      { urls: ["*://*/*"] },
-      ["responseHeaders", "extraHeaders"]
-    );
   } else {
-    console.log("HTTPS Listener deactivated!");
-    chrome.webRequest.onBeforeRequest.removeListener(_HTTPSListenerRequest);
-    chrome.webRequest.onBeforeRedirect.removeListener(_HTTPSListenerRedirect);
+    console.log("HTTP Redirect Blocker deactivated!");
+    chrome.webRequest.onHeadersReceived.removeListener(_HTTPRedirectBlocker);
   }
 }
 
@@ -584,22 +784,26 @@ function setTabsListeners(status) {
 
   if (status) {
     console.log("TabsListener activated!");
-    chrome.tabs.onRemoved.removeListener(_OnClosedWindowListener);
+    chrome.tabs.onRemoved.addListener(_OnClosedTabListener);
     chrome.tabs.onCreated.addListener(_OnCreatedTabListener);
   } else {
     console.log("TabsListener deactivated!");
-    chrome.tabs.onRemoved.removeListener(_OnClosedWindowListener);
+    chrome.tabs.onRemoved.removeListener(_OnClosedTabListener);
     chrome.tabs.onCreated.removeListener(_OnCreatedTabListener);
   }
 }
 
-function setTabCloseListener(status) {
+function setWindowListener(status) {
   if (status) {
-    console.log("TabCloseListener activated!");
-    chrome.tabs.onRemoved.addListener(_OnClosedTabListener);
+    console.log("WindowListener activated!");
+    chrome.windows.onRemoved.addListener(_OnClosedWindowListener, {
+      windowTypes: ["normal"],
+    });
   } else {
-    console.log("TabCloseListener deactivated!");
-    chrome.tabs.onRemoved.removeListener(_OnClosedTabListener);
+    console.log("WindowListener deactivated!");
+    chrome.windows.onRemoved.removeListener(_OnClosedWindowListener, {
+      windowTypes: ["normal"],
+    });
   }
 }
 
@@ -634,6 +838,7 @@ function setListeners(status) {
     setHTTPS(true);
     setRequestListener(true);
     setTabsListeners(true);
+    setWindowListener(true);
     setReportPage(true);
     setStorageListener(true);
   } else {
@@ -641,6 +846,7 @@ function setListeners(status) {
     setHTTPS(false);
     setRequestListener(false);
     setTabsListeners(false);
+    setWindowListener(false);
     setReportPage(false);
     setStorageListener(false);
   }
@@ -914,6 +1120,16 @@ function updateCookiePrefferences(url, callback = (_) => {}) {
   });
 }
 
+function updateOpenedTabs() {
+  chrome.tabs.query({}, (tabs) => {
+    for (var tab of tabs) {
+      if (tab.url.search(/^chrome/) !== -1) continue;
+      opened_tabs[tab.id] = getPlatformFromUrl(tab.url);
+    }
+    console.log("Opened tabs: ", opened_tabs);
+  });
+}
+
 chrome.downloads.onCreated.addListener((downloadItem) => {
   // Pause the download and send a request to the backend so
   // it can be checked
@@ -944,6 +1160,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       visited_platforms = [];
       setRequestBlocker(false);
       clearData("all", () => setListeners(true));
+      updateOpenedTabs();
       break;
     }
     case "LoggedOut": {
