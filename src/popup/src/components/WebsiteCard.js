@@ -4,6 +4,7 @@ import NoLogoWhite from "../assets/no-icon-w.png";
 import NoLogoBlack from "../assets/no-icon-b.png";
 import BinIcon from "../assets/bin.png";
 import "../styles/WebsiteCard.css";
+import Notification from "./Notification";
 
 import { getData, setData } from "./Utils";
 
@@ -42,29 +43,26 @@ class WebsiteCard extends React.Component {
 
   componentDidUpdate(prev_props) {
     if (this.props !== prev_props) {
-      this.setState({
-        active: this.props.active,
-        disabled: this.props.disabled,
-      });
+      if (this.props.active === false) this.toggle(false);
+      else
+        this.setState({
+          active: this.props.active,
+          disabled: this.props.disabled,
+        });
     }
   }
 
-  toggle = (e) => {
+  toggle = (status) => {
     getData("prefferences", (data) => {
-      data.prefferences.cookies.platforms[this.props.platform].active =
-        !this.state.active;
+      data.prefferences.cookies.platforms[this.props.platform].active = status;
       setData(data, () => {
-        console.log("Updated! New state:", !this.state.active);
+        console.log("Updated! New state:", status);
         this.setState({
-          active: !this.state.active,
+          active: status,
           hovering: false,
         });
       });
     });
-  };
-
-  deleteCookies = (e) => {
-    console.log("Cookies deleted!");
   };
 
   startHovering = () => {
@@ -93,6 +91,21 @@ class WebsiteCard extends React.Component {
         onMouseOver={this.state.disabled ? null : this.startHovering}
         onMouseLeave={this.state.disabled ? null : this.cancelHovering}
       >
+        {this.state.notificationMsg ? (
+          this.state.deleteSuccessful ? (
+            <Notification
+              msg={this.state.notificationMsg}
+              type="green"
+              duration={2000}
+            />
+          ) : (
+            <Notification
+              msg={this.state.notificationMsg}
+              type="red"
+              duration={2000}
+            />
+          )
+        ) : null}
         <div
           className="website-card-content"
           onClick={
@@ -100,7 +113,7 @@ class WebsiteCard extends React.Component {
               ? null
               : () => {
                   this.cancelHovering();
-                  this.toggle();
+                  this.toggle(!this.state.active);
                 }
           }
           style={{
@@ -150,10 +163,9 @@ class WebsiteCard extends React.Component {
           onClick={
             this.state.disabled
               ? null
-              : () => {
+              : async () => {
                   this.cancelHovering();
-                  this.toggle();
-                  this.deleteCookies();
+                  this.props.deleteFunction([this.props.platform]);
                 }
           }
         >

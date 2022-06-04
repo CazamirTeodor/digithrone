@@ -4,6 +4,14 @@ import "../styles/Notification.css";
 // type = green, red, neutral
 
 class Notification extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      msg: this.props.msg,
+      type: this.props.type,
+      duration: this.props.duration ? this.props.duration : 4000,
+    };
+  }
   render() {
     const styles = {
       green: {
@@ -23,13 +31,16 @@ class Notification extends React.Component {
       <div className="notification-wrapper">
         <div
           className="notification"
-          style={{ backgroundColor: styles[this.props.type].backgroundColor }}
+          style={{ backgroundColor: styles[this.state.type].backgroundColor, animation: `width-animation ${this.state.duration / 1000}s` }}
         ></div>
         <p
           className="notification-msg"
-          style={{ color: styles[this.props.type].color }}
+          style={{
+            color: styles[this.state.type].color,
+            animation: `text-animation ${this.state.duration / 1000}s`,
+          }}
         >
-          {this.props.msg}
+          {this.state.msg}
         </p>
       </div>
     );

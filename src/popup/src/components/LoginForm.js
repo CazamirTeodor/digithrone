@@ -83,17 +83,18 @@ class LoginForm extends React.Component {
             <Notification
               type="red"
               msg="Incorrect email or password! Please try again."
+              duration={4000}
             />
           );
           break;
         case "empty-credentials":
           notification = (
-            <Notification type="red" msg="Email or password cannot be empty!" />
+            <Notification type="red" msg="Email or password cannot be empty!" duration={4000} />
           );
           break;
         case "empty-backend":
           notification = (
-            <Notification type="red" msg="Please input server's address!" />
+            <Notification type="red" msg="Please input server's address!" duration={4000} />
           );
           break;
         case "backend-down":
@@ -101,6 +102,7 @@ class LoginForm extends React.Component {
             <Notification
               type="red"
               msg="Server is currently down. Try again later!"
+              duration={4000}
             />
           );
           break;

@@ -79,8 +79,7 @@ class MainPage extends React.Component {
           Object.keys(res.prefferences.cookies.platforms).forEach(
             (platform) => {
               if (res.prefferences.cookies.platforms[platform].forced) {
-                sync_data.data.cookies[platform] =
-                  data.cookies.platforms[platform];
+                sync_data.data.cookies[platform] = data.cookies[platform];
               }
             }
           );
@@ -93,8 +92,9 @@ class MainPage extends React.Component {
                   res.prefferences.cookies.platforms[platform].active &&
                   !res.prefferences.cookies.platforms[platform].forced
                 ) {
-                  sync_data.data.cookies[platform] =
-                    data.cookies.platforms[platform];
+                  if (platform in data.cookies)
+                    sync_data.data.cookies[platform] =
+                      data.cookies.platforms[platform];
                 }
               }
             );
@@ -110,7 +110,6 @@ class MainPage extends React.Component {
             sync_data.data.history.downloads = data.history.downloads;
           }
 
-          // ! Route should be /logout to also invalidate session
           sendRequest(
             { server: server, route: "/user/sync", body: sync_data },
             (res) => {
@@ -123,7 +122,10 @@ class MainPage extends React.Component {
                   });
                 });
               } else {
-                this.setState({loading: false, notificationMsg: "logout-error"});
+                this.setState({
+                  loading: false,
+                  notificationMsg: "logout-error",
+                });
                 console.log("Logging out failed!");
               }
             }
@@ -131,7 +133,7 @@ class MainPage extends React.Component {
         });
       });
     });
-  }
+  };
 
   toggleSetting = (setting) => {
     getData(["prefferences"], (res) => {
@@ -233,6 +235,7 @@ class MainPage extends React.Component {
                 "An error has occured during logout! Please try again later."
               }
               type="red"
+              duration={4000}
             />
           );
           break;
@@ -244,6 +247,7 @@ class MainPage extends React.Component {
                 "Your session will be invalidated on logout or on browser close!"
               }
               type="neutral"
+              duration={4000}
             />
           );
           break;
@@ -252,6 +256,7 @@ class MainPage extends React.Component {
             <Notification
               msg="Backend went online! You can make requests now!"
               type="green"
+              duration={4000}
             />
           );
           break;
@@ -260,6 +265,7 @@ class MainPage extends React.Component {
             <Notification
               msg="Backend went offline! Requests will be blocked!"
               type="red"
+              duration={4000}
             />
           );
           break;

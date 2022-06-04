@@ -7,7 +7,8 @@ import DropdownList from "../DropdownList";
 import BinIcon from "../../assets/bin.png";
 import InfoIcon from "../../assets/info-icon-b.png";
 import CloseIcon from "../../assets/close.png";
-import { getData, setData } from "../Utils";
+import Notification from "../Notification";
+import { getData, setData, sendRequest } from "../Utils";
 
 class CookiesPage extends React.Component {
   constructor(props) {
@@ -16,6 +17,8 @@ class CookiesPage extends React.Component {
       cookies: undefined,
       searchTerm: "",
       showInfo: false,
+      notificationMsg: undefined,
+      notificationType: undefined,
 
       // Settings
       delete_policy: undefined,
@@ -27,37 +30,9 @@ class CookiesPage extends React.Component {
     getData(["prefferences"], (res) => {
       this.setState({
         cookies: res.prefferences.cookies.platforms,
-        delete_policy:
-          res.prefferences.cookies.delete_policy,
+        delete_policy: res.prefferences.cookies.delete_policy,
         new_platforms_policy: res.prefferences.cookies.new_platforms_policy,
       });
-
-      // var platforms = res.prefferences.cookies.platforms;
-      // const new_platforms_setting = res.prefferences.cookies.new_platforms;
-      // getCookies((result) => {
-      //   console.log("result :>> ", result);
-      //   result.forEach((cookie) => {
-      //     var cookie_data = parseCookie(cookie);
-
-      //     const host = cookie_data.host
-      //       ? cookie_data.host.charAt(0).toUpperCase() +
-      //         cookie_data.host.substring(1).toLowerCase()
-      //       : null;
-      //     if (host) {
-      //       if (host in platforms) return;
-
-      //       platforms[host] = {
-      //         domain: cookie_data.domain,
-      //         active: new_platforms_setting === "store" ? true : false,
-      //       };
-      //     }
-      //   });
-      //   res.prefferences.cookies.platforms = platforms;
-      //   setData(res, () => {
-      //     this.setState({ cookies: platforms });
-      //     console.log("state set ", platforms);
-      //   });
-      // });
     });
   }
 
@@ -87,6 +62,86 @@ class CookiesPage extends React.Component {
     });
   };
 
+  deleteCookies = async (platforms) => {
+    getData(["prefferences", "server"], (result) => {
+      sendRequest(
+        {
+          server: result.server,
+          route: "/user/delete",
+          body: { platforms: platforms },
+        },
+        async (res) => {
+          if (res) {
+            res = await res.json();
+            console.log(res);
+            if (res.message === "Deleted!") {
+              var new_cookies = this.state.cookies;
+              if (platforms.length === 1)
+                new_cookies[platforms[0]].active = false;
+              else {
+                for (var i = 0; i < platforms.length; i++)
+                  new_cookies[platforms[i]].active = false;
+              }
+              this.setState(
+                {
+                  notificationMsg: `${
+                    platforms.length > 1 ? "All" : platforms[0]
+                  } backend cookies deleted successfully!`,
+                  notificationType: "green",
+                  cookies: new_cookies,
+                },
+                () =>
+                  setTimeout(
+                    () =>
+                      this.setState({
+                        notificationMsg: undefined,
+                        deleteSuccessful: undefined,
+                      }),
+                    2000
+                  )
+              );
+            } else {
+              this.setState(
+                {
+                  notificationMsg: `${
+                    platforms.length > 1 ? "All" : platforms[0]
+                  } backend cookies could not be deleted!`,
+                  notificationType: "red",
+                },
+                () =>
+                  setTimeout(
+                    () =>
+                      this.setState({
+                        notificationMsg: undefined,
+                        deleteSuccessful: undefined,
+                      }),
+                    2000
+                  )
+              );
+              console.log("Cookies could not be deleted!");
+            }
+          } else {
+            this.setState(
+              {
+                notificationMsg: `Backend is currently down. Please try again later!`,
+                notificationType: "red",
+              },
+              () =>
+                setTimeout(
+                  () =>
+                    this.setState({
+                      notificationMsg: undefined,
+                      deleteSuccessful: undefined,
+                    }),
+                  2000
+                )
+            );
+          }
+        }
+      );
+    });
+  };
+
   render() {
     if (this.state.cookies) {
       var matching_platforms = Object.keys(this.state.cookies).filter(
@@ -96,16 +151,28 @@ class CookiesPage extends React.Component {
             .includes(this.state.searchTerm.toLocaleLowerCase());
         }
       );
-      var active_platforms = matching_platforms.filter(
-        (platform) => this.state.cookies[platform].active && isNaN(this.state.cookies[platform].forced)
-      ).sort();
-      var inactive_platforms = matching_platforms.filter(
-        (platform) => !this.state.cookies[platform].active && isNaN(this.state.cookies[platform].forced)
-      ).sort();
-      var locked_platforms = matching_platforms.filter(
-        (platform) => this.state.cookies[platform]?.forced
-      ).sort();
-      var all_matching_platforms = [...active_platforms, ...inactive_platforms, ...locked_platforms];
+      var active_platforms = matching_platforms
+        .filter(
+          (platform) =>
+            this.state.cookies[platform].active &&
+            isNaN(this.state.cookies[platform].forced)
+        )
+        .sort();
+      var inactive_platforms = matching_platforms
+        .filter(
+          (platform) =>
+            !this.state.cookies[platform].active &&
+            isNaN(this.state.cookies[platform].forced)
+        )
+        .sort();
+      var locked_platforms = matching_platforms
+        .filter((platform) => this.state.cookies[platform]?.forced)
+        .sort();
+      var all_matching_platforms = [
+        ...active_platforms,
+        ...inactive_platforms,
+        ...locked_platforms,
+      ];
     }
 
     return (
@@ -141,7 +208,10 @@ class CookiesPage extends React.Component {
           {/* <div className="settings-btn">
             <img src={SettingsIcon} alt="settings-icon" />
           </div> */}
-          <div className="delete-all-btn">
+          <div
+            className="delete-all-btn"
+            onClick={() => this.deleteCookies(Object.keys(this.state.cookies))}
+          >
             <p>Delete all cookies saved in the backend</p>
             <img src={BinIcon} alt="icon" />
           </div>
@@ -186,10 +256,12 @@ class CookiesPage extends React.Component {
                     var logo_url = domain.replace(/^\.*www\./, "");
                     logo_url = logo_url.replace(/^\./, "");
                     var fields = logo_url.split(".");
-                    
+
                     // Concat the last 2 fields
-                    logo_url = fields[fields.length - 2] + "." + fields[fields.length - 1];
-                    console.log("logo_url: ", logo_url);
+                    logo_url =
+                      fields[fields.length - 2] +
+                      "." +
+                      fields[fields.length - 1];
                     return (
                       <WebsiteCard
                         key={platform}
@@ -201,6 +273,7 @@ class CookiesPage extends React.Component {
                         }
                         logo_url={`https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&size=32&url=http://www.${logo_url}`}
                         platform={platform}
+                        deleteFunction={this.deleteCookies}
                       />
                     );
                   })}
@@ -211,6 +284,13 @@ class CookiesPage extends React.Component {
             </div>
           </div>
         )}
+        {this.state.notificationMsg ? (
+          <Notification
+            msg={this.state.notificationMsg}
+            type={this.state.notificationType}
+            duration={2000}
+          />
+        ) : null}
       </div>
     );
   }

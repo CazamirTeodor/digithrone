@@ -550,7 +550,9 @@ function sendRequest(
         tries += 1;
       }
     }
-    callback(null);
+    setData({ backendUp: false }, () => {
+      callback(null);
+    });
   });
 }
 
