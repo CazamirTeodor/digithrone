@@ -6,7 +6,10 @@ const {
   getUser,
 } = require("../middlewares/database");
 const url_parser = require("url");
+const sslCertificate = require("get-ssl-certificate");
+const { validateSSL } = require("ssl-validator");
 const router = express.Router();
+const { checkCertificateValidity } = require("../middlewares/cert-validator");
 
 router.post("/", async (req, res) => {
   var parts = url_parser.parse(req.body.url);
@@ -19,28 +22,35 @@ router.post("/", async (req, res) => {
   }
 
   const blacklist = await getBlacklist();
-  const urls = Object.keys(blacklist.urls);
   const reports = blacklist.reports;
 
-  // Website is blacklisted
-  for (var url of urls) {
-    if (parts.hostname.indexOf(url) != -1 || parts.href.indexOf(url) != -1) {
-      res.send({ status: "Deny" });
+  // Domain is blacklisted
+  for (var domain of blacklist.domains) {
+    if (parts.host.indexOf(domain) !== -1) {
+      res.send({ status: "Blacklisted" });
       return;
     }
   }
 
-  // User has reported the website
-  for (var url of Object.keys(reports)) {
-    if (parts.hostname.includes(url) || parts.href.includes(url)) {
-      for (const report of reports[url]) {
-        if (report.reporter == res.locals.user) {
-          res.send({ status: "Deny" });
-          return;
-        }
-      }
-    }
+  // Verify that certificate is valid
+
+  if (!(await checkCertificateValidity(parts.hostname))) {
+    console.log("Certificate is not valid!");
+    res.send({ status: "Invalid-certificate" });
+    return;
   }
+
+  // User has reported the website
+  // for (var url of Object.keys(reports)) {
+  //   if (parts.hostname.includes(url) || parts.href.includes(url)) {
+  //     for (const report of reports[url]) {
+  //       if (report.reporter == res.locals.user) {
+  //         res.send({ status: "Reported" });
+  //         return;
+  //       }
+  //     }
+  //   }
+  // }
 
   //   // Url is from a obfuscated website
   //   const obfuscated = db.getObfuscated();

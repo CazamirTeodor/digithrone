@@ -18,22 +18,20 @@ function _HTTPRedirectBlocker(details) {
   //   details.initiator === "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
   // )
   //   return;
-  // if (details.statusCode === 301 || details.statusCode === 302) {
-  //   console.log("_HTTPRedirectBlocker Triggered ", details);
-  //   return {
-  //     cancel: true,
-  //   };
-  //   for (var header of details.responseHeaders) {
-  //     if (header.name.toLowerCase() === "location") {
-  //       if (header.value.startsWith("http://")) {
-  //         console.log("MATTCHHHHHH");
-  //         return {
-  //           cancel: true,
-  //         };
-  //       }
-  //     }
-  //   }
-  // }
+
+  if (details.statusCode === 301 || details.statusCode === 302) {
+    for (var header of details.responseHeaders) {
+      if (header.name.toLowerCase() === "location") {
+        if (header.value.startsWith("http://")) {
+          console.log("_HTTPRedirectBlocker Triggered ", details);
+          displayPopup({ type: "no-https" });
+          return {
+            redirectUrl: "javascript:",
+          };
+        }
+      }
+    }
+  }
 }
 
 function _ObfuscatedListenerRedirect(details) {
@@ -175,8 +173,10 @@ function _StorageListener(data, areaName) {
 }
 
 function _OnBeforeRequestListener(details) {
-  if (details.url.startsWith("http://") && !details.url.includes("localhost"))
+  if (details.url.startsWith("http://") && !details.url.includes("localhost")) {
+    console.log(details, "redirected to https beforeRequest");
     return { redirectUrl: details.url.replace("http://", "https://") };
+  }
 
   if (
     details.initiator ==
@@ -188,7 +188,7 @@ function _OnBeforeRequestListener(details) {
   )
     return {};
 
-  console.log("Request to " + details.url + " started!", details);
+  console.log("Request to " + details.url + "... started!");
 
   chrome.windows.getCurrent({ windowTypes: ["normal"] }, (currentWindow) => {
     chrome.tabs.query({}, (tabs) => {
@@ -389,8 +389,14 @@ function _OnBeforeRequestListener(details) {
                           );
                         }
                         break;
-                      case "Deny":
+                      case "Blacklisted":
                         displayPopup({ type: "page-blacklisted" });
+                        break;
+                      case "Invalid-certificate":
+                        displayPopup({ type: "invalid-certificate" });
+                        break;
+                      case "Reported":
+                        displayPopup({ type: "page-reported" });
                         break;
                       case "Obfuscated":
                         var path = details.url.replace(/^[a-z]+:\/\//, "");
@@ -430,7 +436,7 @@ function _OnCompletedRequestListener(details) {
   )
     return;
 
-  console.log("Request to " + details.url + " completed!", details);
+  console.log("Request to " + details.url + " completed!");
 
   updateOpenedTabs();
   updateCookiePrefferences(details.url);
@@ -718,7 +724,7 @@ function setHTTPS(status) {
     chrome.webRequest.onHeadersReceived.addListener(
       _HTTPRedirectBlocker,
       { urls: ["*://*/*"] },
-      ["blocking"]
+      ["blocking", "responseHeaders"]
     );
   } else {
     console.log("HTTP Redirect Blocker deactivated!");
@@ -1122,7 +1128,7 @@ function displayPopup(info) {
               code: `console.log("Waiting for the page to load..."); document.body.innerHTML = '';`,
             });
           } else {
-            chrome.tabs.create({url : chrome.runtime})
+            chrome.tabs.create({ url: chrome.runtime });
           }
           break;
         case "backend-offline":
@@ -1143,8 +1149,14 @@ function displayPopup(info) {
         case "page-blacklisted":
           console.log("Displaying page that is blacklisted...");
           break;
-        case "page-already-reported":
+        case "page-reported":
           console.log("Displaying page that is already reported...");
+          break;
+        case "invalid-certificate":
+          console.log("Displaying page that has invalid certificate...");
+          break;
+        case "no-https":
+          console.log("Displaying page that has no https variant...");
           break;
       }
     });

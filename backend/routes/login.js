@@ -39,8 +39,8 @@ router.post("/", cors(corsOptions), async (req, res) => {
         expires: 0, // Make it a session cookie
       });
 
-      const blacklist = await getBlacklist();
-      const blacklist_urls = Object.keys(blacklist.urls);
+      // const blacklist = await getBlacklist();
+      // const blacklist_urls = Object.keys(blacklist.urls);
       const obfuscated_urls = [];
       const websites = await getObfuscated();
       websites.forEach((website) => {
@@ -50,7 +50,6 @@ router.post("/", cors(corsOptions), async (req, res) => {
         message: "Success!",
         name: user.name,
         prefferences: user.prefferences,
-        blacklist: { urls: blacklist_urls },
         obfuscated: obfuscated_urls,
       });
     } else {

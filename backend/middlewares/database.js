@@ -130,7 +130,7 @@ async function getCookies(user, platform) {
 async function synchronizeUser(user, sync_data) {
   console.log("Synchronizing user...");
   const user_data = await getUser(user);
-  console.log(sync_data);
+  // console.log(sync_data);
 
   user_data.prefferences = sync_data.prefferences;
 

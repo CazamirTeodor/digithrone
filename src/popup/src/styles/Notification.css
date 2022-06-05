@@ -31,6 +31,7 @@
     margin: 0;
     font-size: 12px;
     opacity: 0%;
+    /* animation: text-animation 4s; */
 }
 
 @keyframes text-animation {
