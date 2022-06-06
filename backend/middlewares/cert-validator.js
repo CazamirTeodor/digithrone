@@ -8,7 +8,7 @@ const getSSLCertificateInfo = (host) => {
     return Promise.reject(new Error("Invalid host."));
   }
   const options = {
-    method: "GET",
+    method: "HEAD",
     port: 443,
     rejectUnauthorized: true,
     hostname: host,

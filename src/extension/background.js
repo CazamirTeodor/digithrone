@@ -3,22 +3,7 @@ var visited_platforms = [];
 var opened_tabs = {};
 setRequestBlocker(true);
 
-// function _HTTPSListenerRequest(details) {
-//   console.log("_HTTPSListenerRequest Triggered ", details);
-//   if (
-//     details.initiator === "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
-//   )
-//     return;
-//   return { redirectUrl: details.url.replace("http://", "https://") };
-// }
-
 function _HTTPRedirectBlocker(details) {
-  // if (
-  //   details.redirectUrl === "javascript:" ||
-  //   details.initiator === "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
-  // )
-  //   return;
-
   if (details.statusCode === 301 || details.statusCode === 302) {
     for (var header of details.responseHeaders) {
       if (header.name.toLowerCase() === "location") {
@@ -1152,6 +1137,9 @@ function displayPopup(info) {
         case "page-reported":
           console.log("Displaying page that is already reported...");
           break;
+        case "malicious-download":
+          console.log("Displaying malicious download popup...");
+          break;
         case "invalid-certificate":
           console.log("Displaying page that has invalid certificate...");
           break;
@@ -1168,14 +1156,6 @@ chrome.downloads.onCreated.addListener((downloadItem) => {
   // it can be checked
   // Remove item from history after it is complete
 });
-
-// chrome.history.onVisited.addListener((historyItem) => {
-//   // console.log("History listener", historyItem);
-// });
-
-// chrome.tabs.onActivated.addListener((activeInfo) => {
-//   // console.log("You are on tab ", activeInfo.tabId);
-// });
 
 chrome.runtime.onInstalled.addListener((reason) => {
   //Tutorial;

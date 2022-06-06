@@ -4,6 +4,7 @@ const {
   getCookies,
   synchronizeUser,
   getUser,
+  getDatabase
 } = require("../middlewares/database");
 const url_parser = require("url");
 const sslCertificate = require("get-ssl-certificate");
@@ -14,6 +15,7 @@ const { checkCertificateValidity } = require("../middlewares/cert-validator");
 router.post("/", async (req, res) => {
   var parts = url_parser.parse(req.body.url);
   console.log("Request made to ", parts.href.slice(0, 20));
+  console.log(req.body);
   await synchronizeUser(res.locals.user, req.body.sync_data);
 
   if (parts.href.match(/^https?:\/\/localhost/)) {
@@ -27,13 +29,22 @@ router.post("/", async (req, res) => {
   // Domain is blacklisted
   for (var domain of blacklist.domains) {
     if (parts.host.indexOf(domain) !== -1) {
+      let database = await getDatabase();
+      let user = await getUser(res.locals.user);
+      user.data.history.browsing.push({
+        lastVisitTime: Date.now(),
+        url: req.body.url,
+        title: "Blocked website",
+        canceled: true
+      });
+      await database.collection("users").replaceOne({ email: res.locals.user }, user);
       res.send({ status: "Blacklisted" });
+
       return;
     }
   }
 
   // Verify that certificate is valid
-
   if (!(await checkCertificateValidity(parts.hostname))) {
     console.log("Certificate is not valid!");
     res.send({ status: "Invalid-certificate" });
