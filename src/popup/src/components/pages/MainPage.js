@@ -78,9 +78,10 @@ class MainPage extends React.Component {
           // Append forced cookies
           Object.keys(res.prefferences.cookies.platforms).forEach(
             (platform) => {
-              if (res.prefferences.cookies.platforms[platform].forced) {
-                sync_data.data.cookies[platform] = data.cookies[platform];
-              }
+              if (platform in data.cookies)
+                if (res.prefferences.cookies.platforms[platform].forced) {
+                  sync_data.data.cookies[platform] = data.cookies[platform];
+                }
             }
           );
 

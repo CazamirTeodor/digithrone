@@ -21,13 +21,13 @@
     "contextMenus",
     "browsingData"
   ],
-  "web_accessible_resources": ["/pages/popup/build/static/css/content.css"],
+  "web_accessible_resources": ["/pages/content/build/static/**"],
 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "css": ["/pages/popup/build/static/css/app.css"],
-      "js": ["/pages/popup/build/static/js/content.js"]
+      "js": ["/pages/content/build/static/js/main.719bb4da.js"],
+      "css": ["/pages/content/build/static/css/main.7560a1b5.css"]
     }
   ],
   "browser_action": {

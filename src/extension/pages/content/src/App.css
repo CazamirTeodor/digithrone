@@ -1,0 +1,236 @@
+
+
+
+.App {
+  position: fixed;
+  z-index: 1000;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.App .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  padding: 20px;
+  cursor: pointer;
+  
+}
+
+.App .close-btn > img {
+  height: 20px;
+  transition: 0.3s;
+}
+
+.App .close-btn:hover > img {
+  transform: scale(1.2);
+}
+
+.App .popup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  transition: 0.3s;
+}
+
+.App .popup-content {
+  margin-top: 4vw;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+}
+
+.App .popup-content > p {
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: 2px;
+  font-size: 1.6vw;
+  margin: 10px;
+  transition: 0.2s;
+}
+
+.App .popup-content > img {
+  height: 14vw;
+  margin-top: 1vw;
+}
+
+.App .report-page{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.App .report-page-form {
+  background-color: transparent;
+  border: 2px solid white;
+  border-radius: 1vw;
+  width: 30vw;
+  color: white;
+  padding: 0;
+  margin: 0;
+  transition: 0.3s;
+
+}
+
+
+.App .report-page-form .report-page-url > p{
+  font-size: 1.3vw;
+  letter-spacing: 1px;
+  padding: 1vw 0 1vw 0;
+  margin: 0;
+  font-weight: 600;
+}
+
+.App .report-page-form .separator {
+  width: 85%;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 1px;
+  background-color: white;
+}
+
+.App .report-page-form .report-reason{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.App .report-page-form .report-reason > p {
+  font-size: 1.1vw;
+  margin: 0;
+  margin-right: 1vw;
+  padding: 1vw 0 1.1vw 0;
+  letter-spacing: 1px;
+}
+
+.App .report-page-form .report-description {
+  overflow: hidden;
+  transition: 0.4s;
+}
+
+.App .report-page-form .report-description textarea {
+  background-color: transparent;
+  color: white;
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+  font-size: 1.1vw;
+  padding: 1vw 2.5vw 1vw 2.5vw;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.App .report-page-form .report-description textarea{
+  font-size: 0.8vw;
+}
+
+.App .report-page-form .report-description textarea::placeholder{
+  text-align: center;
+}
+
+.App .report-page .report-btn {
+  position: relative;
+  margin-top: 1vw;
+  width: 8vw;
+  height: 1.8vw;
+  background-color: red;
+  color: white;
+  display: inline-block;
+  border-radius: 0.7vw;
+  border: 3px solid transparent;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.App .report-page .report-btn > p{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  letter-spacing: 1px;
+  font-size: 0.8vw;
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+  line-height: 2vw;
+}
+
+.App .report-page .report-btn:hover {
+  border: 3px solid white
+}
+
+.App .report-page .status {
+  color: white;
+  letter-spacing: 1px;
+  font-size: 1vw;
+}
+
+.App #pointing-arrow{
+  position: absolute;
+  right: 160px;
+  top: 20px;
+  height: 1.5vw;
+  transform: rotate(325deg);
+  animation: pointing 0.8s infinite alternate;
+}
+
+
+
+@keyframes pointing {
+  0% {
+    transform: rotate(325deg);
+  }
+  100% {
+    transform: translate(-10px, 10px) rotate(325deg);
+  }
+}
+
+.App .pulsing-btn{
+  animation: pulsing 1s infinite alternate;
+}
+
+@keyframes pulsing {
+  0% {
+    border: 3px solid transparent;
+    background-color: rgb(202, 135, 10);
+  }
+  60%, 100% {
+    border: 3px solid white;
+    background-color: rgb(137, 92, 7);
+  }
+}
+
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+

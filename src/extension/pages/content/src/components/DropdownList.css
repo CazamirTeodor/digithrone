@@ -1,0 +1,48 @@
+.dropdown {
+    position: relative;
+    height: 2vw;
+    width: 8vw;
+    border-radius: 0.8vw;
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid white;
+}
+
+.dropdown .all-options {
+    background-color: white;
+    position: absolute;
+    z-index: 1001;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow-y: scroll;
+    transition: 0.3s;
+    border-radius: 1vw;
+    overflow: hidden;
+}
+
+
+.dropdown .all-options p {
+    line-height: 1.3vw;
+    margin: 0px;
+    font-size: 0.8vw;
+    color: black;
+    transition: 0.3s;
+}
+
+.dropdown .all-options p:hover{
+    background-color: black;
+    color: white;
+}
+
+.dropdown .chosen-option p {
+    font-weight: 500;
+    font-size: 1vw;
+    letter-spacing: 1px;
+    margin: 0;
+    width: 100%;
+    line-height: 2vw;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

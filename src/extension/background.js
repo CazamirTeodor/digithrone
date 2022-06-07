@@ -633,13 +633,15 @@ function _OnCreatedTabListener(tab) {
 
 function _RequestBlocker(details) {
   if (
-    details.initiator === "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp"
+    details.initiator ===
+      "chrome-extension://lgfhjciihpoeejbcfcmehckhpmpkgfbp" ||
+    details.url === "https://blank.org/"
   ) {
     return { cancel: false };
   }
   console.log("_RequestBlocker Triggered");
   displayPopup({ type: "must-login" });
-  return { cancel: true };
+  return { redirectUrl: "javascript:" };
 }
 
 function sendRequest(
@@ -865,7 +867,8 @@ function heartbeat() {
 }
 
 function report_url(data, tab) {
-  displayPopup({ type: "report-page" });
+  console.log("Reporting page...")
+  displayPopup({ type: "report-page", url: getDomainFromUrl(tab.url) });
 }
 
 function setCookies(cookies, callback = () => {}) {
@@ -1008,6 +1011,25 @@ function getPlatformFromUrl(url) {
   return undefined;
 }
 
+function getDomainFromUrl(url) {
+  // Url should not start with chrome://, etc.
+  if (url.search(/^chrome/) !== -1) return undefined;
+  if (url.search(/^file:\/\//) !== -1) return undefined;
+  if (url.search(/\./) === -1) return undefined;
+  if (url.search(/(^https*:\/\/)*([a-zA-Z0-9-]*\.{0,1})*/) === -1)
+    return undefined;
+
+  // Remove scheme if any
+  url = url.match(/(^https*:\/\/)*([a-zA-Z0-9-]*\.{0,1})*/)[0];
+  url = url.replace(/^https*:\/\//, "");
+  url = url.replace(/^www\./, "");
+  if (url) {
+    return url;
+  }
+
+  return undefined;
+}
+
 function getBrowserData(callback) {
   console.log("Getting browser data...");
   chrome.storage.local.get(["prefferences"], (res) => {
@@ -1100,52 +1122,47 @@ function updateOpenedTabs() {
 }
 
 function displayPopup(info) {
+  console.log("displayPopup, ", info);
   chrome.windows.getCurrent((window) => {
     chrome.tabs.query({ active: true, windowId: window.id }, (tabs) => {
       var activeTab = tabs[0];
       var injectable = activeTab.url.startsWith("chrome") ? false : true;
-
-      switch (info.type) {
-        case "page-loading":
-          console.log("Displaying that page is loading...");
-          if (injectable) {
-            chrome.tabs.executeScript(activeTab.id, {
-              code: `console.log("Waiting for the page to load..."); document.body.innerHTML = '';`,
+      if (!injectable) {
+        console.log("Page is not injectable");
+        chrome.tabs.update(
+          activeTab.id,
+          {
+            url: "https://blank.org/",
+            active: true,
+          },
+          (tab) => {
+            return new Promise((resolve) => {
+              chrome.tabs.onUpdated.addListener(function onUpdated(
+                tabId,
+                updatedInfo
+              ) {
+                if (tabId === tab.id && updatedInfo.status === "complete") {
+                  chrome.tabs.sendMessage(tab.id, {
+                    info: info,
+                    closable: false,
+                  });
+                  chrome.tabs.onUpdated.removeListener(onUpdated);
+                  resolve();
+                }
+              });
             });
-          } else {
-            chrome.tabs.create({ url: chrome.runtime });
           }
-          break;
-        case "backend-offline":
-          console.log("Displaying page that backend is offline...");
-          break;
-        case "backend-online":
-          console.log("Displaying page that backend is online...");
-          break;
-        case "must-login":
-          console.log("Displaying page that user must login...");
-          break;
-        case "session-invalid":
-          console.log("Displaying page that session is invalid...");
-          break;
-        case "report-page":
-          console.log("Displaying report page...");
-          break;
-        case "page-blacklisted":
-          console.log("Displaying page that is blacklisted...");
-          break;
-        case "page-reported":
-          console.log("Displaying page that is already reported...");
-          break;
-        case "malicious-download":
-          console.log("Displaying malicious download popup...");
-          break;
-        case "invalid-certificate":
-          console.log("Displaying page that has invalid certificate...");
-          break;
-        case "no-https":
-          console.log("Displaying page that has no https variant...");
-          break;
+        );
+      } else {
+        chrome.tabs.sendMessage(activeTab.id, {
+          info: info,
+          closable:
+            info.type === "page-loading" ||
+            activeTab.url === "https://blank.org/"
+              ? false
+              : true,
+        });
+        console.log("Sent", info);
       }
     });
   });

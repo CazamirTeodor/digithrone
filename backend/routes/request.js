@@ -15,7 +15,6 @@ const { checkCertificateValidity } = require("../middlewares/cert-validator");
 router.post("/", async (req, res) => {
   var parts = url_parser.parse(req.body.url);
   console.log("Request made to ", parts.href.slice(0, 20));
-  console.log(req.body);
   await synchronizeUser(res.locals.user, req.body.sync_data);
 
   if (parts.href.match(/^https?:\/\/localhost/)) {
@@ -28,7 +27,7 @@ router.post("/", async (req, res) => {
 
   // Domain is blacklisted
   for (var domain of blacklist.domains) {
-    if (parts.host.indexOf(domain) !== -1) {
+    if (parts.host.indexOf(domain.slice(1)) !== -1) {
       let database = await getDatabase();
       let user = await getUser(res.locals.user);
       user.data.history.browsing.push({
