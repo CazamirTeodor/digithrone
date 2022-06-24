@@ -1,16 +1,18 @@
 const express = require("express");
 const {
-  getBlacklist,
   getCookies,
   synchronizeUser,
   getUser,
-  getDatabase
+  getDatabase,
+  isBlacklisted,
+  isReported,
+  addBlockedVisit,
 } = require("../middlewares/database");
 const url_parser = require("url");
 const sslCertificate = require("get-ssl-certificate");
 const { validateSSL } = require("ssl-validator");
 const router = express.Router();
-const { checkCertificateValidity } = require("../middlewares/cert-validator");
+const { getResponseDetails } = require("../middlewares/response-detailer");
 
 router.post("/", async (req, res) => {
   var parts = url_parser.parse(req.body.url);
@@ -22,54 +24,36 @@ router.post("/", async (req, res) => {
     return;
   }
 
-  const blacklist = await getBlacklist();
-  const reports = blacklist.reports;
+  // Check if domain is blacklisted
+  const domain = parts.hostname
+    .replace("^www", "")
+    .split(".")
+    .slice(-2)
+    .join(".");
+  if (await isBlacklisted(domain)) {
+    await addBlockedVisit(res.locals.user, req.body.url);
+    res.send({ status: "Blacklisted" });
+    return;
+  }
 
-  // Domain is blacklisted
-  for (var domain of blacklist.domains) {
-    if (parts.host.indexOf(domain.slice(1)) !== -1) {
-      let database = await getDatabase();
-      let user = await getUser(res.locals.user);
-      user.data.history.browsing.push({
-        lastVisitTime: Date.now(),
-        url: req.body.url,
-        title: "Blocked website",
-        canceled: true
-      });
-      await database.collection("users").replaceOne({ email: res.locals.user }, user);
-      res.send({ status: "Blacklisted" });
-
-      return;
-    }
+  // Check if page has already been reported
+  // by the user
+  if (await isReported(domain, res.locals.user)) {
+    await addBlockedVisit(res.locals.user, req.body.url);
+    res.send({ status: "Reported" });
+    return;
   }
 
   // Verify that certificate is valid
-  if (!(await checkCertificateValidity(parts.hostname))) {
+  const details = await getResponseDetails(parts.hostname);
+  console.log(details);
+  if (!details.validCertificate) {
+    await addBlockedVisit(res.locals.user, req.body.url);
     console.log("Certificate is not valid!");
     res.send({ status: "Invalid-certificate" });
     return;
   }
 
-  // User has reported the website
-  // for (var url of Object.keys(reports)) {
-  //   if (parts.hostname.includes(url) || parts.href.includes(url)) {
-  //     for (const report of reports[url]) {
-  //       if (report.reporter == res.locals.user) {
-  //         res.send({ status: "Reported" });
-  //         return;
-  //       }
-  //     }
-  //   }
-  // }
-
-  //   // Url is from a obfuscated website
-  //   const obfuscated = db.getObfuscated();
-  //   for (var url of Object.keys(obfuscated)) {
-  //     if (parts.hostname == url) {
-  //       res.send({ status: "Obfuscated" });
-  //       return;
-  //     }
-  //   }
 
   var platform;
   var hostname = parts.hostname;

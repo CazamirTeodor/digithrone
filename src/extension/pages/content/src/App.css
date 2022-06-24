@@ -46,6 +46,10 @@
   left: 50%;
   width: 100%;
   transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .App .popup-content > p {
@@ -67,6 +71,11 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
 }
 
 .App .report-page-form {
@@ -76,8 +85,9 @@
   width: 30vw;
   color: white;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   transition: 0.3s;
+
 
 }
 
@@ -143,37 +153,32 @@
   text-align: center;
 }
 
+
+.App .popup-content .cancel-btn,
 .App .report-page .report-btn {
-  position: relative;
   margin-top: 1vw;
   width: 8vw;
-  height: 1.8vw;
   background-color: red;
   color: white;
-  display: inline-block;
   border-radius: 0.7vw;
   border: 3px solid transparent;
   transition: 0.3s;
   cursor: pointer;
 }
 
+.App .popup-content .cancel-btn,
 .App .report-page .report-btn > p{
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   letter-spacing: 1px;
   font-size: 0.8vw;
   font-weight: 600;
-  margin: 0;
-  padding: 0;
-  line-height: 2vw;
 }
 
+.App .popup-content .cancel-btn:hover,
 .App .report-page .report-btn:hover {
   border: 3px solid white
 }
 
+.App .popup-content .status,
 .App .report-page .status {
   color: white;
   letter-spacing: 1px;

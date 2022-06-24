@@ -77,7 +77,7 @@ class DownloadsCard extends React.Component {
       var matching_items = [];
       if (filtered_items.length > 0) {
         filtered_items.forEach((item) => {
-          let date = this.extractFullDate(item.startTime);
+          let date = this.extractFullDate(Date.parse(item.startTime));
 
           if (!matching_items.find((obj) => obj.date === date)) {
             matching_items.push({
@@ -91,12 +91,12 @@ class DownloadsCard extends React.Component {
         });
 
         matching_items.sort((a, b) => {
-          return b.time - a.time;
+          return b.date - a.date;
         });
 
         matching_items.forEach((obj) => {
           obj.items.sort((a, b) => {
-            return b.startTime - a.startTime;
+            return Date.parse(b.startTime) - Date.parse(a.startTime);
           });
         });
       }
@@ -121,7 +121,7 @@ class DownloadsCard extends React.Component {
             matching_items.map((obj, index) => {
               return (
                 <Dropdown
-                  forced={index === 0 ? true : false}
+                  expanded={index === 0 ? true : false}
                   items={obj.items}
                   onClickFunction={this.redirectToUrl}
                   type="downloads"

@@ -117,6 +117,7 @@ class BrowsingCard extends React.Component {
             matching_items.map((obj, index) => {
               return (
                 <Dropdown
+                  key={index}
                   expanded={index === 0 ? true : false}
                   items={obj.items}
                   onClickFunction={this.redirectToUrl}

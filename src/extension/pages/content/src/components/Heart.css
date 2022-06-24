@@ -3,6 +3,7 @@
     margin-top: 3vw;
     margin-bottom: -3vw;
     height: 10vw;
+    width: 100%;
 }
 
 
@@ -10,7 +11,7 @@
   position: absolute;
   left: 50%;
   transform: translate(-50%); 
-  width: 10vw;
+  width: 11vw;
 } 
 
 #pulsingheart #before, #pulsingheart #after { 
@@ -21,7 +22,7 @@
   width: 5.5vw; 
   height: 9vw;
   background: #aa0000; 
-  border-radius: 50px 50px 0 0; 
+  border-radius: 3vw 3vw 0 0; 
   transform: rotate(-45deg);  
   transform-origin: 0 100%;
   animation: pulsecolor 1s infinite;

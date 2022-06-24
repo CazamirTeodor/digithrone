@@ -1,5 +1,6 @@
 const { v1: uuidv1 } = require("uuid");
 const fs = require("fs");
+const fetch = require("node-fetch");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 async function getDatabase() {
@@ -95,10 +96,24 @@ async function authenticate(req, res, next) {
   }
 }
 
-async function getBlacklist() {
+async function isBlacklisted(domain) {
   const database = await getDatabase();
-  const blacklist = await database.collection("blacklist").find({}).toArray();
-  return await blacklist[0];
+  var entry = await database
+    .collection("blackweb")
+    .findOne({ domain: { $regex: domain } });
+
+  if (entry) return true;
+  return false;
+}
+
+async function isReported(domain, user) {
+  const database = await getDatabase();
+  var entry = await database
+    .collection("reports")
+    .findOne({ domain: domain, reporter: user });
+
+  if (entry) return true;
+  return false;
 }
 
 async function getObfuscated() {
@@ -199,7 +214,8 @@ async function synchronizeUser(user, sync_data) {
       if (
         user_data.data.history.browsing.find(
           (item) => item.lastVisitTime === new_item.lastVisitTime
-        )
+        ) ||
+        new_item.url === "https://blank.org/"
       ) {
         continue;
       } else {
@@ -229,6 +245,75 @@ async function synchronizeUser(user, sync_data) {
   console.log("User synchronized!");
 }
 
+async function addBlockedVisit(email, url) {
+  let database = await getDatabase();
+  let user = await getUser(email);
+  user.data.history.browsing.push({
+    lastVisitTime: Date.now(),
+    url: url,
+    title: "Blocked website",
+    canceled: true,
+  });
+  await database.collection("users").replaceOne({ email: email }, user);
+}
+
+async function addReport(user, reportData) {
+  const database = await getDatabase();
+  reportData.reporter = user;
+  var existing_report = await database
+    .collection("reports")
+    .findOne({ domain: reportData.domain, reporter: reportData.user });
+  if (existing_report) {
+    reportData.id = existing_report.id;
+    await database
+      .collection("reports")
+      .replaceOne(
+        { domain: reportData.domain, reporter: reportData.user },
+        reportData
+      );
+    console.log("Report updated!", reportData);
+  } else {
+    console.log("Added new report", reportData);
+    reportData.id = await database.collection("reports").insertOne(reportData);
+  }
+}
+
+async function cancelReport(user, domain) {
+  const database = await getDatabase();
+  console.log("Deleting report for domain: ", domain, user);
+  var info = await database
+    .collection("reports")
+    .deleteOne({ domain: domain, reporter: user });
+
+  if (info.deletedCount > 0) console.log("Report canceled!");
+  else console.log("Error happened during deletion!");
+}
+
+async function updateTSP() {
+  const db = await getDatabase();
+  var data = [];
+  fetch(
+    "https://esignature.ec.europa.eu/efda/tl-browser/api/v1/search/tsp_list"
+  )
+    .then((res) => res.json())
+    .then((json) => {
+      for (const tsp of json) {
+        tsp.services.forEach((service) =>
+          data.push({
+            name: tsp.name,
+            serviceName: service.serviceName,
+            qServiceTypes: service.qServiceTypes,
+          })
+        );
+      }
+      
+      // Replace wholte trusted_service_providers collection with data
+      db.collection("trusted_service_providers").deleteMany({});
+      db.collection("trusted_service_providers").insertMany(data);
+      console.log("TSPs updated!");
+    });
+}
+
 module.exports = {
   synchronizeUser,
   authenticate,
@@ -238,6 +323,11 @@ module.exports = {
   getDatabase,
   getCookies,
   getUser,
-  getBlacklist,
+  isBlacklisted,
+  isReported,
+  addReport,
+  addBlockedVisit,
+  cancelReport,
   getObfuscated,
+  updateTSP,
 };

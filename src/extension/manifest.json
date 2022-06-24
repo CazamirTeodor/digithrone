@@ -26,8 +26,8 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["/pages/content/build/static/js/main.719bb4da.js"],
-      "css": ["/pages/content/build/static/css/main.7560a1b5.css"]
+      "js": ["/pages/content/build/static/js/main.7247fbe8.js"],
+      "css": ["/pages/content/build/static/css/main.ba44c20a.css"]
     }
   ],
   "browser_action": {

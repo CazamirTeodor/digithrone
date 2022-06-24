@@ -21,26 +21,22 @@ class CookiesCard extends React.Component {
     let matching_items = [];
     let cookies_length = 0;
     if (this.props.items) {
-      var cookies = Object.keys(this.props.items).map((platform) => [
-        platform,
-        this.props.items[platform].length,
-      ]);
+      var platforms = Object.keys(this.props.items);
+      platforms.sort((a, b) => this.props.items[b].count - this.props.items[a].count);
 
-      cookies.sort((a, b) => b[1] - a[1]);
-
-      cookies.forEach((item) => {
-        cookies_length += item[1];
-      });
-
-      matching_items = cookies.filter((item) =>
-        item[0].toLowerCase().startsWith(this.state.searchTerm.toLowerCase())
+      matching_items = platforms.filter((platform) =>
+        platform.toLowerCase().startsWith(this.state.searchTerm.toLowerCase())
       );
+
+      Object.values(this.props.items).forEach((value) => {
+        cookies_length += value.count;
+      });
     }
 
-    console.log('cookies_length :>> ', cookies_length);
+    console.log("cookies_length :>> ", cookies_length);
     return (
       <div className="cookies-card card">
-        <CountUp className="title-number" end={cookies_length}/>
+        <CountUp className="title-number" end={cookies_length} />
         <p>Cookies</p>
         <input
           onChange={this.handleInput}
@@ -51,14 +47,14 @@ class CookiesCard extends React.Component {
         <div className="results-cookies">
           {matching_items.length > 0 ? (
             matching_items.map((item) => {
-              var url = this.props.items[item[0]][0].domain
+              var url = this.props.items[item].domain
                 .replace(/\./, "")
                 .replace(/^www\./, "");
               return (
                 <div className="cookie-container">
-                  <p className="number">{item[1]}</p>
+                  <p className="number">{this.props.items[item].count}</p>
                   <div className="platform">
-                    <p>{item[0]}</p>
+                    <p>{item}</p>
                     <div className="platform-icon-wrapper">
                       <img
                         id="platform-icon"

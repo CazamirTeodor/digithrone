@@ -1,5 +1,6 @@
 import React from "react";
 import logo from "../Assets/file.png";
+import { solveResourceURL } from "./Utils";
 
 class Dropdown extends React.Component {
   constructor(props) {
@@ -64,48 +65,47 @@ class Dropdown extends React.Component {
           <p className="header-text">{full_date}</p>
         </section>
 
-        {this.state.expanded ? (
-          <div>
-            <div className="separator"></div>
-            {this.props.items.map((item) => {
-              return (
-                <div
-                  className="dropdown-item"
-                  style={{
-                    backgroundColor: item.canceled ? "#570303" : "#202124",
-                  }}
-                  onClick={
-                    this.props.onClickFunction
-                      ? () => this.props.onClickFunction(item.url)
-                      : null
+        <div style={{ height: this.state.expanded ? "auto" : "0", transition: "0.3s" }}>
+          <div className="separator"></div>
+          {this.props.items.map((item) => {
+            return (
+              <div
+                key={item.id}
+                className="dropdown-item"
+                style={{
+                  backgroundColor: item.canceled ? "#570303" : "#202124",
+                }}
+                onClick={
+                  this.props.onClickFunction
+                    ? () => this.props.onClickFunction(item.url)
+                    : null
+                }
+              >
+                <img
+                  alt="item-logo"
+                  src={
+                    this.props.type === "downloads"
+                      ? solveResourceURL(logo)
+                      : `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&size=32&url=${new URL(item.url).origin}`
                   }
-                >
-                  <img
-                    alt="item-logo"
-                    src={
-                      this.props.type === "downloads"
-                        ? logo
-                        : `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&size=32&url=${item.url}`
-                    }
-                  />
-                  <div className="item-text-wrapper">
-                    <p className="item-name">
-                      {this.props.type === "browsing"
-                        ? item.title
-                        : item.filename}
-                    </p>
-                    <p className="item-url">{item.url}</p>
-                  </div>
-                  <p className="time">
+                />
+                <div className="item-text-wrapper">
+                  <p className="item-name">
                     {this.props.type === "browsing"
-                      ? this.extractClockTime(item.lastVisitTime)
-                      : this.extractClockTime(item.startTime)}
+                      ? item.title
+                      : item.filename.split("/").pop()}
                   </p>
+                  <p className="item-url">{item.url}</p>
                 </div>
-              );
-            })}
-          </div>
-        ) : null}
+                <p className="time">
+                  {this.props.type === "browsing"
+                    ? this.extractClockTime(item.lastVisitTime)
+                    : this.extractClockTime(item.startTime)}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }

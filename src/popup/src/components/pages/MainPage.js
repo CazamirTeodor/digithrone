@@ -78,10 +78,12 @@ class MainPage extends React.Component {
           // Append forced cookies
           Object.keys(res.prefferences.cookies.platforms).forEach(
             (platform) => {
-              if (platform in data.cookies)
-                if (res.prefferences.cookies.platforms[platform].forced) {
+              if (res.prefferences.cookies.platforms[platform].forced) {
+                if (platform in data.cookies) {
+                  console.log("Appending forced platform", platform);
                   sync_data.data.cookies[platform] = data.cookies[platform];
                 }
+              }
             }
           );
 
@@ -93,9 +95,11 @@ class MainPage extends React.Component {
                   res.prefferences.cookies.platforms[platform].active &&
                   !res.prefferences.cookies.platforms[platform].forced
                 ) {
-                  if (platform in data.cookies)
+                  if (platform in data.cookies) {
+                    console.log("Appending active platform", platform);
                     sync_data.data.cookies[platform] =
-                      data.cookies.platforms[platform];
+                      data.cookies[platform];
+                  }
                 }
               }
             );
@@ -120,6 +124,7 @@ class MainPage extends React.Component {
                   sendMessage({ action: "LoggedOut" }, () => {
                     clearInterval(this.state.heartbeatFunction);
                     this.props.history.push("/login");
+                    console.log("Logged out!");
                   });
                 });
               } else {

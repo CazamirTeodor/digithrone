@@ -158,6 +158,7 @@ function _StorageListener(data, areaName) {
 }
 
 function _OnBeforeRequestListener(details) {
+  console.log(details);
   if (details.url.startsWith("http://") && !details.url.includes("localhost")) {
     console.log(details, "redirected to https beforeRequest");
     return { redirectUrl: details.url.replace("http://", "https://") };
@@ -381,7 +382,10 @@ function _OnBeforeRequestListener(details) {
                         displayPopup({ type: "invalid-certificate" });
                         break;
                       case "Reported":
-                        displayPopup({ type: "page-reported" });
+                        displayPopup({
+                          type: "page-reported",
+                          url: details.url,
+                        });
                         break;
                       case "Obfuscated":
                         var path = details.url.replace(/^[a-z]+:\/\//, "");
@@ -867,7 +871,7 @@ function heartbeat() {
 }
 
 function report_url(data, tab) {
-  console.log("Reporting page...")
+  console.log("Reporting page...", tab);
   displayPopup({ type: "report-page", url: getDomainFromUrl(tab.url) });
 }
 
@@ -1122,7 +1126,6 @@ function updateOpenedTabs() {
 }
 
 function displayPopup(info) {
-  console.log("displayPopup, ", info);
   chrome.windows.getCurrent((window) => {
     chrome.tabs.query({ active: true, windowId: window.id }, (tabs) => {
       var activeTab = tabs[0];
@@ -1200,6 +1203,75 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         removeSessionCookie(() => console.log("User logged out!"))
       );
       break;
+    }
+
+    case "ReportPage":
+      {
+        chrome.storage.local.get(["server"], (result) => {
+          const server = result.server;
+          delete message.action;
+          sendRequest(
+            {
+              server: server,
+              route: "/report",
+              body: { ...message },
+            },
+            (res) => {
+              console.log("Sender: ", sender);
+              if (res) {
+                chrome.tabs.sendMessage(sender.tab.id, {
+                  info: { type: "report-page" },
+                  success: true,
+                  status: res.status,
+                });
+                setTimeout(() => {
+                  chrome.tabs.remove([sender.tab.id]);
+                }, 3000);
+              } else {
+                chrome.tabs.sendMessage(sender.tab.id, {
+                  tab: sender.tab.id,
+                  info: { type: "report-page" },
+                  success: false,
+                  status: res.status,
+                });
+              }
+            }
+          );
+        });
+      }
+      break;
+    case "CancelReport": {
+      chrome.storage.local.get(["server"], (result) => {
+        const server = result.server;
+        delete message.action;
+        sendRequest(
+          {
+            server: server,
+            route: "/cancel-report",
+            body: { domain: getDomainFromUrl(message.url) },
+          },
+          (res) => {
+            console.log("Sender: ", sender);
+            if (res) {
+              chrome.tabs.sendMessage(sender.tab.id, {
+                info: { type: "page-reported" },
+                success: true,
+                status: res.status,
+              });
+              setTimeout(() => {
+                chrome.tabs.update(sender.tab.id, { url: message.url });
+              }, 3000);
+            } else {
+              chrome.tabs.sendMessage(sender.tab.id, {
+                tab: sender.tab.id,
+                info: { type: "page-reported" },
+                success: false,
+                status: res.status,
+              });
+            }
+          }
+        );
+      });
     }
   }
 });

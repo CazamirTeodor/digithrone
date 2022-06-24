@@ -1,5 +1,4 @@
 import React from "react";
-// import MustLogin from "./components/MustLogin";
 import CloseImage from "./assets/close_image.png";
 import PadlockImage from "./assets/padlock.png";
 import InvalidCertificateImage from "./assets/invalid_certificate.png";
@@ -7,6 +6,7 @@ import BlacklistImage from "./assets/blacklist.png";
 import UserImage from "./assets/user.png";
 import ArrowImage from "./assets/arrow.png";
 import MaliciousDownloadImage from "./assets/download.png";
+import ReportedPageImage from "./assets/reported.png";
 import { solveResourceURL } from "./components/Utils";
 import "./App.css";
 import Heart from "./components/Heart";
@@ -22,6 +22,7 @@ class App extends React.Component {
       info: undefined,
       show: undefined,
       closable: undefined,
+      sender: undefined,
 
       status: undefined,
       loading: false,
@@ -37,11 +38,30 @@ class App extends React.Component {
     if (window?.chrome) {
       window.chrome.runtime.onMessage.addListener(
         (request, sender, sendResponse) => {
-          console.log("Received message:", request);
-          this.setState(
-            { show: true, info: request.info, closable: request.closable },
-            () => this.toggleScroll(false)
-          );
+          console.log("Received message:", request, sender);
+          if (
+            (request.info.type === "report-page" ||
+              request.info.type === "page-reported") &&
+            "success" in request
+          ) {
+            this.setState({
+              status: request.status,
+              loading: false,
+              sent: true,
+              success: request.success,
+            });
+          } else {
+            this.setState(
+              {
+                show: true,
+                info: request.info,
+                loading: false,
+                closable: request.closable,
+                sender: sender,
+              },
+              () => this.toggleScroll(false)
+            );
+          }
         }
       );
     } else {
@@ -68,7 +88,14 @@ class App extends React.Component {
     }
   };
 
-  cancelReport = (url) => {};
+  cancelReport = async () => {
+    this.setState({ loading: true, sent: false }, () => {
+      window.chrome.runtime.sendMessage(this.state.sender.id, {
+        action: "CancelReport",
+        url: this.state.info.url,
+      });
+    });
+  };
   reportPage = async () => {
     if (!this.state.reportOption) {
       this.setState({ status: "Please select a reason first!" });
@@ -83,43 +110,14 @@ class App extends React.Component {
       return;
     }
 
-    window.chrome.storage.local.get(["server"], async (result) => {
-      var tries = 0;
-      const max_tries = 3;
-      const retryInterval = 3000; // ms
-
-      this.setState({ loading: true, status: undefined, sent: false });
-
-      while (tries < max_tries) {
-        console.log(`Try #${tries + 1}`);
-
-        try {
-          const res = await fetch(`http://${result.server}:3001/report`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              url: this.state.info.url,
-              reason: this.state.reportOption,
-              description: this.state.reportDescription,
-              timestamp: Date.now(),
-            }),
-          });
-
-          if (res.status === 200) {
-            console.log(res);
-            this.setState({ sent: true, success: true, loading: false });
-            return;
-          }
-        } catch (e) {
-          console.log(e);
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, retryInterval));
-        tries += 1;
-      }
-
-      console.log("An error has occured!");
-      this.setState({ loading: false, success: false, sent: true });
+    this.setState({ loading: true, sent: false }, () => {
+      window.chrome.runtime.sendMessage(this.state.sender.id, {
+        action: "ReportPage",
+        domain: this.state.info.url,
+        reason: this.state.reportOption,
+        description: this.state.reportDescription,
+        timestamp: Date.now(),
+      });
     });
   };
 
@@ -127,6 +125,52 @@ class App extends React.Component {
     var component_to_render;
     if (this.state.info) {
       switch (this.state.info.type) {
+        case "page-reported":
+          component_to_render = (
+            <div className="popup-content">
+              <p>You have reported the page you are trying to reach.</p>
+              <img src={solveResourceURL(ReportedPageImage)} alt="report" />
+              <p>Would you like to cancel the report?</p>
+              <div
+                className={`cancel-btn ${
+                  this.state.loading ? "pulsing-btn" : null
+                }`}
+                onClick={this.cancelReport}
+                style={
+                  this.state.sent
+                    ? this.state.success
+                      ? { backgroundColor: "green" }
+                      : { backgroundColor: "red" }
+                    : this.state.loading
+                    ? { backgroundColor: "orange" }
+                    : { backgroundColor: "gray" }
+                }
+              >
+                <p>
+                  {this.state.loading
+                    ? "Sending..."
+                    : this.state.sent
+                    ? this.state.success
+                      ? "Success!"
+                      : "Failed!"
+                    : "Cancel"}
+                </p>
+              </div>
+              <p className="status">
+                {this.state.status
+                  ? this.state.sent
+                    ? this.state.success
+                      ? "The report has been successfully canceled! Your page will be reloaded!"
+                      : "Failed to cancel the report! " + this.state.status
+                    : this.state.loading
+                    ? null
+                    : this.state.status
+                  : null}
+              </p>
+            </div>
+          );
+          break;
+
         case "report-page":
           var report_options = [
             "Malware",
@@ -215,10 +259,6 @@ class App extends React.Component {
             </div>
           );
           break;
-
-        case "page-reported":
-          break;
-
         case "malicious-download":
           component_to_render = (
             <div className="popup-content">
@@ -313,8 +353,7 @@ class App extends React.Component {
           break;
       }
     }
-    console.log(this.state);
-    console.log(component_to_render);
+
     return (
       <div
         className="App"
