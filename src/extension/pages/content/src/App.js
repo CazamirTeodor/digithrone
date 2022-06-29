@@ -7,6 +7,9 @@ import UserImage from "./assets/user.png";
 import ArrowImage from "./assets/arrow.png";
 import MaliciousDownloadImage from "./assets/download.png";
 import ReportedPageImage from "./assets/reported.png";
+import Logo from "./assets/logo_fill_w.png";
+import Check from "./assets/check.png";
+import Failed from "./assets/failed.png";
 import { solveResourceURL } from "./components/Utils";
 import "./App.css";
 import Heart from "./components/Heart";
@@ -23,6 +26,7 @@ class App extends React.Component {
       show: undefined,
       closable: undefined,
       sender: undefined,
+      certificateInfo: undefined,
 
       status: undefined,
       loading: false,
@@ -50,6 +54,10 @@ class App extends React.Component {
               sent: true,
               success: request.success,
             });
+          } else if (request.info.type === "cert-info") {
+            this.setState({
+              certificateInfo: request.info.certificateInfo,
+            });
           } else {
             this.setState(
               {
@@ -66,8 +74,18 @@ class App extends React.Component {
       );
     } else {
       console.log("No chrome detected!");
-      this.setState({ show: true, info: { type }, closable: true }, () =>
-        this.toggleScroll(false)
+      this.setState(
+        {
+          show: true,
+          info: { type },
+          closable: true,
+          certificateInfo: {
+            issuer: "CertSIGN",
+            type: "Domain Validated",
+            isQWAC: true,
+          },
+        },
+        () => this.toggleScroll(false)
       );
     }
   }
@@ -170,7 +188,6 @@ class App extends React.Component {
             </div>
           );
           break;
-
         case "report-page":
           var report_options = [
             "Malware",
@@ -357,14 +374,68 @@ class App extends React.Component {
     return (
       <div
         className="App"
-        style={{
-          display: this.state.show ? "block" : "none",
-          animation: this.state.info?.type
-            ? "fade-in 0.3s ease-in-out"
-            : "fade-out 0.3s ease-in-out",
-        }}
+        style={
+          this.state.show
+            ? { width: "100%", height: "100%" }
+            : { width: "0", height: "0" }
+        }
       >
-        <div className="popup">
+        {this.state.certificateInfo ? (
+          <div className="certificate-info">
+            <div className="left"></div>
+            <div className="right"></div>
+            <img src={solveResourceURL(Logo)} alt="logo" />
+            <div className="content">
+              <div className="info row">
+                <div
+                  className="type"
+                  style={{
+                    backgroundColor:
+                      this.state.certificateInfo.type === "Domain Validated"
+                        ? "rgb(242, 187, 47)"
+                        : this.state.certificateInfo.type ===
+                          "Organisation Validated"
+                        ? "rgb(194, 244, 110)"
+                        : "rgb(42, 210, 172)",
+                  }}
+                >
+                  <p>
+                    {this.state.certificateInfo.type
+                      .split(" ")
+                      .map((word) => word.charAt(0))
+                      .join("")}
+                  </p>
+                </div>
+                <p>{this.state.certificateInfo.type}</p>
+              </div>
+              <div className="separator"></div>
+              <div className="issuer column">
+                <p>{this.state.certificateInfo.issuer}</p>
+                <div className="qwac row">
+                  <p>QWAC</p>
+                  <img
+                    className="status"
+                    src={
+                      this.state.certificateInfo.isQWAC
+                        ? solveResourceURL(Check)
+                        : solveResourceURL(Failed)
+                    }
+                    alt="qwac-status"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        <div
+          className="popup"
+          style={{
+            display: this.state.show ? "block" : "none",
+            animation: this.state.info?.type
+              ? "fade-in 0.3s ease-in-out"
+              : "fade-out 0.3s ease-in-out",
+          }}
+        >
           {this.state.info?.type === "must-login" ||
           this.state.info?.type === "session-invalid" ? (
             <img

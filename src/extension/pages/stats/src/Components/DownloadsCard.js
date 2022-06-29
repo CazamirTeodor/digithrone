@@ -89,9 +89,9 @@ class DownloadsCard extends React.Component {
             matching_items.find((obj) => obj.date === date).items.push(item);
           }
         });
-
+        console.log('matching_items :>> ', matching_items);
         matching_items.sort((a, b) => {
-          return b.date - a.date;
+          return Date.parse(b.time) - Date.parse(a.time);
         });
 
         matching_items.forEach((obj) => {

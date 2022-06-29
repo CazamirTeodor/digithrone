@@ -1,18 +1,16 @@
+const config = require("./config");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const redis = require("redis");
 const app = express();
 const cookie_parser = require("cookie-parser");
-
-const config = require("./config");
-const login_route = require("./routes/login");
-const request_route = require("./routes/request");
-const heartbeat_route = require("./routes/heartbeat");
-const report_route = require("./routes/report");
-const cancel_report_route = require("./routes/cancel-report");
-const user_route = require("./routes/user/index");
 const { authenticate, updateTSP } = require("./middlewares/database");
+
+const login_route = require("./routes/login");
+const heartbeat_route = require("./routes/heartbeat");
+const user_route = require("./routes/user/index");
+const admin_route = require("./routes/admin/index");
 
 app.use(cors({ credentials: true }));
 app.use(cookie_parser());
@@ -25,9 +23,7 @@ app.use("/heartbeat", heartbeat_route);
 app.use(authenticate);
 
 app.use("/user", user_route);
-app.use("/request", request_route);
-app.use("/report", report_route);
-app.use("/cancel-report", cancel_report_route);
+app.use("/admin", admin_route);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

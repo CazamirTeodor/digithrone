@@ -67,7 +67,7 @@ class CookiesPage extends React.Component {
       sendRequest(
         {
           server: result.server,
-          route: "/user/delete",
+          route: "/user/delete-data",
           body: { platforms: platforms },
         },
         async (res) => {

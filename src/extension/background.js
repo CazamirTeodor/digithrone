@@ -4,7 +4,7 @@ var opened_tabs = {};
 setRequestBlocker(true);
 
 function _HTTPRedirectBlocker(details) {
-  if (details.statusCode === 301 || details.statusCode === 302) {
+  if (details.statusCode >= 300 && details.statusCode < 400) {
     for (var header of details.responseHeaders) {
       if (header.name.toLowerCase() === "location") {
         if (header.value.startsWith("http://")) {
@@ -275,7 +275,7 @@ function _OnBeforeRequestListener(details) {
             // console.log("Current tab platform:", current_tab_platform);
             // console.log("Next request platform:", next_request_platform);
             sendRequest(
-              { server: result.server, route: "/request", body: details },
+              { server: result.server, route: "/user/request", body: details },
               (res) => {
                 if (res) {
                   if ("message" in res) {
@@ -345,20 +345,70 @@ function _OnBeforeRequestListener(details) {
                                   chrome.tabs.update(
                                     details.tabId,
                                     { url: details.url },
-                                    () =>
-                                      console.log(
-                                        `Made request to ${details.url} with backend cookies!`
-                                      )
+                                    (tab) => {
+                                      return new Promise((resolve) => {
+                                        chrome.tabs.onUpdated.addListener(
+                                          function onUpdated(
+                                            tabId,
+                                            updatedInfo
+                                          ) {
+                                            if (
+                                              tabId === tab.id &&
+                                              updatedInfo.status === "complete"
+                                            ) {
+                                              displayPopup({
+                                                type: "cert-info",
+                                                certificateInfo:
+                                                  res.responseInfo
+                                                    .certificateInfo,
+                                              });
+                                              chrome.tabs.onUpdated.removeListener(
+                                                onUpdated
+                                              );
+                                              resolve();
+                                              console.log(
+                                                `Made request to ${details.url} with backend cookies!`
+                                              );
+                                            }
+                                          }
+                                        );
+                                      });
+                                    }
                                   );
                                 });
                               } else {
                                 chrome.tabs.update(
                                   details.tabId,
                                   { url: details.url },
-                                  () =>
-                                    console.log(
-                                      `Made request to ${details.url} with local cookies!`
-                                    )
+                                  (tab) => {
+                                    return new Promise((resolve) => {
+                                      chrome.tabs.onUpdated.addListener(
+                                        function onUpdated(
+                                          tabId,
+                                          updatedInfo
+                                        ) {
+                                          if (
+                                            tabId === tab.id &&
+                                            updatedInfo.status === "complete"
+                                          ) {
+                                            displayPopup({
+                                              type: "cert-info",
+                                              certificateInfo:
+                                                res.responseInfo
+                                                  .certificateInfo,
+                                            });
+                                            chrome.tabs.onUpdated.removeListener(
+                                              onUpdated
+                                            );
+                                            resolve();
+                                            console.log(
+                                              `Made request to ${details.url} with local cookies!`
+                                            );
+                                          }
+                                        }
+                                      );
+                                    });
+                                  }
                                 );
                               }
                             }
@@ -368,10 +418,35 @@ function _OnBeforeRequestListener(details) {
                           chrome.tabs.update(
                             details.tabId,
                             { url: details.url },
-                            () =>
-                              console.log(
-                                `Made request to ${details.url} with no backend cookies!`
-                              )
+                            (tab) => {
+                              return new Promise((resolve) => {
+                                chrome.tabs.onUpdated.addListener(
+                                  function onUpdated(
+                                    tabId,
+                                    updatedInfo
+                                  ) {
+                                    if (
+                                      tabId === tab.id &&
+                                      updatedInfo.status === "complete"
+                                    ) {
+                                      displayPopup({
+                                        type: "cert-info",
+                                        certificateInfo:
+                                          res.responseInfo
+                                            .certificateInfo,
+                                      });
+                                      chrome.tabs.onUpdated.removeListener(
+                                        onUpdated
+                                      );
+                                      resolve();
+                                      console.log(
+                                        `Made request to ${details.url} with no backend cookies!`
+                                      );
+                                    }
+                                  }
+                                );
+                              });
+                            }
                           );
                         }
                         break;
@@ -386,16 +461,6 @@ function _OnBeforeRequestListener(details) {
                           type: "page-reported",
                           url: details.url,
                         });
-                        break;
-                      case "Obfuscated":
-                        var path = details.url.replace(/^[a-z]+:\/\//, "");
-                        chrome.tabs.update(
-                          details.tabId,
-                          {
-                            url: `http://${result.server}/3001/obfuscated/${path}`,
-                          },
-                          () => console.log("Redirected!")
-                        );
                         break;
                     }
                   });
@@ -478,11 +543,7 @@ function _OnClosedTabListener(tabId, removeInfo) {
                         );
                       } else {
                         // ! Redirect to page that says that backend is offline
-                        chrome.tabs.create({
-                          url: chrome.runtime.getURL(
-                            "/pages/blocked/blocked.html"
-                          ),
-                        });
+                        displayPopup({ type: "backend-offline" });
                       }
                     }
                   );
@@ -668,7 +729,7 @@ function sendRequest(
 
     var tries = 0;
     while (tries < maxTries) {
-      if (tries === 1 && route === "/request")
+      if (tries === 1 && route === "/user/request")
         displayPopup({ type: "page-loading" });
 
       try {
@@ -1213,7 +1274,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           sendRequest(
             {
               server: server,
-              route: "/report",
+              route: "/user/report",
               body: { ...message },
             },
             (res) => {
@@ -1247,7 +1308,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendRequest(
           {
             server: server,
-            route: "/cancel-report",
+            route: "/user/cancel-report",
             body: { domain: getDomainFromUrl(message.url) },
           },
           (res) => {

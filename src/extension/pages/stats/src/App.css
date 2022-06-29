@@ -49,6 +49,8 @@ background-color: rgb(29, 28, 33);
 }
 
 .title{
+  position: absolute;
+  top: -100px;
   color: white;
   text-align: center;
   font-size: 40px;
@@ -62,7 +64,7 @@ background-color: rgb(29, 28, 33);
   text-align: center;
   font-size: 23px;
   letter-spacing: 1px;
-  margin: 30px 0;
+  margin: 35px 0;
 }
 
 .cards-wrapper{
@@ -80,10 +82,10 @@ background-color: rgb(29, 28, 33);
   background-color: rgb(17, 17, 17);
   border-radius: 35px;
   border: 0.5px solid #707070;
-  padding: 10px;
+  padding: 35px 13px 10px 13px;
   width: 100%;
+  max-width: 350px;
   overflow: hidden;
-  padding-bottom: 20px;
   flex: 2 1 auto;
 }
 
@@ -106,9 +108,9 @@ background-color: rgb(29, 28, 33);
 .column {
   display: flex;
   flex-direction: column;
-  height: 90%;
+  height: 650px;
+  width: 400px;
   margin: 30px;
-  flex: 1 1 30%;
   align-items: center;
 }
 
@@ -118,15 +120,17 @@ background-color: rgb(29, 28, 33);
   border: 1px solid #707070;
   border-radius: 20px;
   padding: 10px 15px 7px 15px;
-  margin-bottom: 20px;
-  width: 70%;
+  margin: 10px 0 10px 0;
+  width: 200px;
+  max-width: 500px;
 }
 
 .malicious-card p {
   color: white;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: 1px;
-  margin: 0;
+  width: 150px;
+  margin: auto;
 }
 
 .malicious-card .number{
@@ -135,14 +139,10 @@ background-color: rgb(29, 28, 33);
   color: white;
 }
 
-
-
 .card .title-number{
   font-size: 33px;
   font-weight: 550;
-  letter-spacing: 4px;
-  margin-bottom: 0px;
-  margin-top: 10px;
+  letter-spacing: 3px;
 }
 
 .search {
@@ -220,10 +220,10 @@ background-color: rgb(29, 28, 33);
   border-radius: 15px;
   margin: 10px 15px 20px 15px;
   border: 0.5px solid #707070;
+  width: auto;
+  height: auto;
   overflow: hidden;
 }
-
-
 
 .dropdown p {
   margin: 0;
@@ -264,7 +264,6 @@ background-color: rgb(29, 28, 33);
   cursor: pointer;
   position: relative;
   transition: 0.2s;
-
 }
 
 .dropdown .dropdown-item:hover{
@@ -379,10 +378,6 @@ p[class="no-results"] {
 .cookie-container .platform #platform-icon:hover {
   opacity: 100%;
 }
-
-
-
-
 
 
 

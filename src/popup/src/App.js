@@ -44,6 +44,7 @@ class App extends React.Component {
             </Route>
             <Route path="/login" component={LoginPage} />
             <Route path="/dashboard">
+              {" "}
               <MainPage data={this.state.data} />
             </Route>
             <Route path="/cookies" component={CookiesPage} />

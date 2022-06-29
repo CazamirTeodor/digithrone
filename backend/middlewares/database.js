@@ -116,11 +116,6 @@ async function isReported(domain, user) {
   return false;
 }
 
-async function getObfuscated() {
-  const database = await getDatabase();
-  return await database.collection("obfuscated").find({}).toArray();
-}
-
 async function getCookies(user, platform) {
   const user_from_database = await getUser(user);
   try {
@@ -328,6 +323,5 @@ module.exports = {
   addReport,
   addBlockedVisit,
   cancelReport,
-  getObfuscated,
   updateTSP,
 };

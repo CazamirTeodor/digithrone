@@ -3,16 +3,15 @@ const {
   getCookies,
   synchronizeUser,
   getUser,
-  getDatabase,
   isBlacklisted,
   isReported,
   addBlockedVisit,
-} = require("../middlewares/database");
+} = require("../../middlewares/database");
 const url_parser = require("url");
 const sslCertificate = require("get-ssl-certificate");
 const { validateSSL } = require("ssl-validator");
 const router = express.Router();
-const { getResponseDetails } = require("../middlewares/response-detailer");
+const { getResponseDetails } = require("../../middlewares/response-detailer");
 
 router.post("/", async (req, res) => {
   var parts = url_parser.parse(req.body.url);
@@ -45,15 +44,14 @@ router.post("/", async (req, res) => {
   }
 
   // Verify that certificate is valid
-  const details = await getResponseDetails(parts.hostname);
-  console.log(details);
-  if (!details.validCertificate) {
+  const responseInfo = await getResponseDetails(parts.hostname);
+  console.log(responseInfo);
+  if (!responseInfo.certificateInfo.valid) {
     await addBlockedVisit(res.locals.user, req.body.url);
     console.log("Certificate is not valid!");
     res.send({ status: "Invalid-certificate" });
     return;
   }
-
 
   var platform;
   var hostname = parts.hostname;
@@ -76,22 +74,26 @@ router.post("/", async (req, res) => {
       const cookies = await getCookies(res.locals.user, platform);
       if (cookies && cookies.length) {
         console.log("Sent", cookies.length, "cookies for platform", platform);
-        res.send({ status: "Allow", cookies: cookies });
+        res.send({
+          status: "Allow",
+          cookies: cookies,
+          responseInfo: responseInfo,
+        });
       } else {
         console.log(
           "Cookies requested for platform",
           platform,
           "but none stored"
         );
-        res.send({ status: "Allow" });
+        res.send({ status: "Allow", responseInfo: responseInfo, });
       }
     } else {
       console.log("Cookies not requested for platform", platform);
-      res.send({ status: "Allow" });
+      res.send({ status: "Allow", responseInfo: responseInfo, });
     }
   } else {
     console.log("No cookies requested!", platform);
-    res.send({ status: "Allow" });
+    res.send({ status: "Allow", responseInfo: responseInfo, });
   }
 });
 

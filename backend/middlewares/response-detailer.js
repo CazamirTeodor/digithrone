@@ -24,8 +24,10 @@ const getSSLCertificateInfo = (host) => {
       const req = https.request(options);
       req
         .on("response", (res) => {
-          console.log("Res cert is");
-          resolve(res);
+          resolve({
+            contentType: res.headers["content-type"],
+            certificate: res.socket.getPeerCertificate(),
+          });
         })
         .on("error", reject);
       req.end();
@@ -43,12 +45,13 @@ const getResponseDetails = async (hostname) => {
   try {
     await getSSLCertificateInfo(hostname)
       .then(async (res) => {
-        const cert = res.connection.getPeerCertificate();
-        details.contentType = res.headers["content-type"];
-        details.certificateSubject = cert ? cert.subject : null;
-        details.certificateIssuer = cert ? cert.issuer : null;
-        details.validCertificate = true;
-        await getIssuerInfo(details.certificateIssuer);
+        details.contentType = res.contentType;
+        details.certificateInfo = {
+          valid: true,
+          issuer: res.certificate.issuer.O,
+          type: getCertType(res.certificate.subject),
+          isQWAC: await isQWAC(res.certificate.issuer),
+        };
       })
       .catch((e) => {
         console.log("Invalid certificate: ", e);
@@ -61,16 +64,27 @@ const getResponseDetails = async (hostname) => {
   return details;
 };
 
-const getIssuerInfo = async (issuer) => {
+const isQWAC = async (issuer) => {
   const db = await getDatabase();
   const issuer_data = await db.collection("trusted_service_providers").findOne({
     name: { $regex: issuer.O, $options: "i" },
     serviceName: { $regex: issuer.CN, $options: "i" },
   });
-  console.log("Issuer data: ", issuer_data);
+
+  if (issuer_data) return true;
+  return false;
 };
 
-const getCertType = (subject) => {};
+const getCertType = (subject) => {
+  var fields_nb = Object.keys(subject).length;
+
+  if ("CN" in subject && fields_nb === 1) return "Domain Validated";
+  if ("O" in subject && fields_nb === 2) return "Organisation Validated";
+  if ("CN" in subject && "O" in subject && fields_nb > 2)
+    return "Extended Validation";
+
+  return "UNKNOWN";
+};
 
 module.exports = {
   getResponseDetails,

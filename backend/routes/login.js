@@ -5,8 +5,6 @@ const crypto = require("crypto");
 const {
   validateCredentials,
   generateSession,
-  getBlacklist,
-  getObfuscated,
   getUser,
 } = require("../middlewares/database");
 const router = express.Router();
@@ -41,16 +39,10 @@ router.post("/", cors(corsOptions), async (req, res) => {
 
       // const blacklist = await getBlacklist();
       // const blacklist_urls = Object.keys(blacklist.urls);
-      const obfuscated_urls = [];
-      const websites = await getObfuscated();
-      websites.forEach((website) => {
-        obfuscated_urls.push(website.url);
-      });
       res.send({
         message: "Success!",
         name: user.name,
         prefferences: user.prefferences,
-        obfuscated: obfuscated_urls,
       });
     } else {
       res.send({ message: "Incorrect credentials!" });
